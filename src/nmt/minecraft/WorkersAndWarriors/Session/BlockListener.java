@@ -1,8 +1,11 @@
 package nmt.minecraft.WorkersAndWarriors.Session;
 
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.material.MaterialData;
 
 /**
  * Listens for block changes, and updates the game session.
@@ -69,4 +72,20 @@ public class BlockListener implements Listener {
 	private void onFlagPlace(BlockPlaceEvent e) {
 		
 	}
+	
+	/**
+	 * Helper function that goes through the dumb process of converting MaterialDate (which you can
+	 * get from {@link nmt.minecraft.WorkersAndWarriors.Config.PluginConfiguration#getTeam2Block()} and the 
+	 * like) and setting a block to be it. Cause it's dumb and not worth the time to try and figure out over
+	 * and over.
+	 * @param block The block to change the type of
+	 * @param data The MaterialData to set the given block to
+	 */
+	public static void setBlockType(Block block, MaterialData data) {
+		block.setType(data.getItemType());
+		BlockState state = block.getState();
+		state.setData(data);
+		state.update();
+	}
+	
 }
