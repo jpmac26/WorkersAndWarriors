@@ -1,4 +1,4 @@
-name: Workers&Warriors
+name: WorkersAndWarriors
 main: nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin
 version: 1.00
 permissions:
