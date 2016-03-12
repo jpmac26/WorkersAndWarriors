@@ -3,7 +3,10 @@ package nmt.minecraft.WorkersAndWarriors.Session;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.bukkit.OfflinePlayer;
+
 import nmt.minecraft.WorkersAndWarriors.Team.Team;
+import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
 
 /**
  * An individual game session. This is the starting block of a running game.<br />
@@ -56,6 +59,29 @@ public class GameSession {
 		
 		
 		return false;
+	}
+	
+	/**
+	 * Attempts to get the WWPlayer matching the passed offline player. This is effectively a check to see
+	 * whether the passed player is part of this session. If they are, their WWPlayer will be returned.
+	 * Otherwise, this method returns <i>null</i>
+	 * @param player
+	 * @return the corresponding WWPlayer, or <i>null</i> if that player isn't in this session
+	 */
+	public WWPlayer getPlayer(OfflinePlayer player) {
+		if (teams.isEmpty()) {
+			return null;
+		}
+		
+		WWPlayer cache = null;
+		for (Team team : teams) {
+			cache = team.getPlayer(player);
+			if (cache != null) {
+				return cache;
+			}
+		}
+		
+		return null;
 	}
 	
 	
