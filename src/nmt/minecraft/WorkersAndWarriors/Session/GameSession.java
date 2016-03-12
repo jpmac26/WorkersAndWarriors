@@ -1,10 +1,14 @@
 package nmt.minecraft.WorkersAndWarriors.Session;
 
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import org.bukkit.OfflinePlayer;
 
+import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
+import nmt.minecraft.WorkersAndWarriors.IO.ChatFormat;
 import nmt.minecraft.WorkersAndWarriors.Team.Team;
 import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
 
@@ -26,6 +30,13 @@ public class GameSession {
 	
 	private State state;
 	
+	private String name;
+	
+	/**
+	 * A list of players who have joined the session, but who are not on a team
+	 */
+	private List<WWPlayer> unsortedPlayers;
+	
 	private Set<Team> teams;
 	
 	/**
@@ -34,6 +45,7 @@ public class GameSession {
 	public GameSession() {
 		this.state = State.STOPPED;
 		teams = new HashSet<Team>();
+		unsortedPlayers = new LinkedList<WWPlayer>();
 	}
 	
 	/**
@@ -69,6 +81,15 @@ public class GameSession {
 	 * @return the corresponding WWPlayer, or <i>null</i> if that player isn't in this session
 	 */
 	public WWPlayer getPlayer(OfflinePlayer player) {
+		
+		if (!unsortedPlayers.isEmpty()) {
+			for (WWPlayer p : unsortedPlayers) {
+				if (p.getPlayer().getUniqueId().equals(player.getUniqueId())) {
+					return p;
+				}
+			}
+		}
+		
 		if (teams.isEmpty()) {
 			return null;
 		}
@@ -82,6 +103,14 @@ public class GameSession {
 		}
 		
 		return null;
+	}
+	
+	/**
+	 * Returns the current list of players who have not been put on a team.
+	 * @return
+	 */
+	public List<WWPlayer> getUnsortedPlayers() {
+		return unsortedPlayers;
 	}
 	
 	/**
@@ -142,5 +171,38 @@ public class GameSession {
 		return null;
 	}
 	
+	/**
+	 * Adds a player to this session with no team.<br />
+	 * Creates a WWPlayer for the player and returns it as well.
+	 * <p>
+	 * If the player <b>already is in</b> this sesssion, returns null and does nothing.
+	 * </p>
+	 * @param player The player who would like to join the session
+	 * @return A new WWPlayer object for the player, or null if the player already is in (or is null)
+	 */
+	public WWPlayer addPlayer(OfflinePlayer player) {
+		if (player == null) {
+			return null;
+		}
+		
+		if (getPlayer(player) != null) {
+			return null;
+		}
+		
+		WWPlayer.Type[] types = WWPlayer.Type.values();
+		WWPlayer newPlayer = new WWPlayer(player, 
+				types[
+				      WorkersAndWarriorsPlugin.random.nextInt(types.length)
+				      ]
+				);
+		
+		//TODO do cool stuff, like messages and tell them how to join a team, set class?
+		if (player.isOnline())  {
+			player.getPlayer().sendMessage(ChatFormat.SUCCESS.wrap(
+					"You've joined the game session ") + ChatFormat.SESSION.wrap(name));
+		}
+		
+		return newPlayer;
+	}
 	
 }
