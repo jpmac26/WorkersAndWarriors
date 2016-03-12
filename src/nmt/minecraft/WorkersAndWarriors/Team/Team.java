@@ -265,12 +265,15 @@ public class Team {
 		
 		for (WWPlayer player : players) {
 			player.spawn(getRandomSpawn());
-			player.giveBlock(quot);
 			
-			//give out the extra blocks too
-			if (rem > 0) {
-				player.giveBlock(1);
-				rem--;
+			if (player.getType() == WWPlayer.Type.WORKER) {
+				player.giveBlock(quot);
+				
+				//give out the extra blocks too
+				if (rem > 0) {
+					player.giveBlock(1);
+					rem--;
+				}
 			}
 		}
 	}
