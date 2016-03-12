@@ -16,7 +16,8 @@ import org.bukkit.material.MaterialData;
 import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
 
 /**
- * Static single-ton configuration class for grabbing details about plugin-wide configuration
+ * Static single-ton configuration class for grabbing details about plugin-wide configuration.<br />
+ * <b>If a getter doesn't exist</b> for a key value you want, use {@link #getValue(Key)} and just cast it.
  * @author Skyler
  *
  */
@@ -44,7 +45,9 @@ public class PluginConfiguration {
 		TEAM2GOALDATA("team2.goal.data", 0),
 		FLAGPROTECTSIZE("flagzone.size", 3),
 		FLAGISPROTECTED("flagzone.protected", true),
-		POINTSTOWIN("points", 10);
+		TEAMBLOCKS("teamblocks", 30),
+		POINTSTOWIN("points", 10),
+		RESPAWNTIME("respawn.time", 3);
 		
 		private String key;
 		
@@ -68,8 +71,14 @@ public class PluginConfiguration {
 		}
 	}
 	
+	/**
+	 * Static reference to the current config. Null if no config has been created yet
+	 */
 	public static PluginConfiguration config;
 	
+	/**
+	 * Map of all config options, stored by key. Fancy, eh?
+	 */
 	private Map<Key, Object> configMap;
 	
 	/**
@@ -258,6 +267,22 @@ public class PluginConfiguration {
 				Material.valueOf((String) getValue(Key.TEAM2GOAL)),
 				(byte) data		
 				);
+	}
+	
+	/**
+	 * Returns the maximum number of ablock a team should have.
+	 * @return
+	 */
+	public int getBlockCount() {
+		return (Integer) getValue(Key.TEAMBLOCKS);
+	}
+	
+	/**
+	 * Returns the cooldown time to respawn, <b>in seconds</b>
+	 * @return
+	 */
+	public int getRespawnCooldown() {
+		return (Integer) getValue(Key.RESPAWNTIME);
 	}
 	
 }

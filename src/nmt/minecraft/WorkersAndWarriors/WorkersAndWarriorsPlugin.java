@@ -5,15 +5,10 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.bukkit.Bukkit;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerEggThrowEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import nmt.minecraft.WorkersAndWarriors.Config.PluginConfiguration;
-import nmt.minecraft.WorkersAndWarriors.Session.BlockListener;
 import nmt.minecraft.WorkersAndWarriors.Session.GameSession;
 
 /**

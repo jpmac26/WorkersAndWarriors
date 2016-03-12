@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.util.Vector;
 
@@ -17,6 +18,8 @@ import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
 public class Team {
 	
 	private List<WWPlayer> players;
+	
+	private List<Location> spawnPoints;
 	
 	private FlagArea flagArea;
 	
