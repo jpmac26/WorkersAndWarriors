@@ -84,5 +84,63 @@ public class GameSession {
 		return null;
 	}
 	
+	/**
+	 * REturns the set of teams.
+	 * @return
+	 */
+	public Set<Team> getTeams() {
+		return teams;
+	}
+	
+	/**
+	 * Looks up a team from a given team name, returning it if it's in this session.
+	 * @param teamName
+	 * @return null if the team list is empty, the name is null, or team doensn't exist in this session. 
+	 * Otherwise, returns the team.
+	 */
+	public Team getTeam(String teamName) {
+		if (teams.isEmpty() || teamName == null) {
+			return null;
+		}
+		
+		for (Team team : teams) {
+			if (team.getTeamName().equals(teamName)) {
+				return team;
+			}
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Tries to get a team to match a specific player. That is, returns the team a given player is in, if
+	 * such a team exists in this session.
+	 * @param player 
+	 * @return The team the player is on, if they are in this session
+	 */
+	public Team getTeam(WWPlayer player) {
+		return getTeam(player.getPlayer());
+	}
+	
+	/**
+	 * Tries to get a team to match a specific player. That is, returns the team a given player is in, if
+	 * such a team exists in this session.
+	 * @param player 
+	 * @return The team the player is on, if they are in this session
+	 */
+	public Team getTeam(OfflinePlayer player) {
+		if (teams.isEmpty()) {
+			return null;
+		}
+		
+		for (Team team : teams) {
+			if (team.getPlayer(player) != null) {
+				return team;
+			}
+		}
+		
+		return null;
+	}
+	
 	
 }
