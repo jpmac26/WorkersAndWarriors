@@ -1,5 +1,7 @@
 package nmt.minecraft.WorkersAndWarriors.Team.WWPlayer;
 
+import org.bukkit.OfflinePlayer;
+
 /**
  * Player wrapper class.
  * <p>
@@ -15,5 +17,27 @@ package nmt.minecraft.WorkersAndWarriors.Team.WWPlayer;
  *
  */
 public class WWPlayer {
-
+	
+	private OfflinePlayer player;
+	
+	private boolean hasFlag;
+	
+	public WWPlayer(OfflinePlayer player) {
+		this.player = player;
+		this.hasFlag = false;
+	}
+	
+	
+	public OfflinePlayer getPlayer() {
+		return player;
+	}
+	
+	public boolean hasFlag() {
+		return hasFlag;
+	}
+	
+	public void setFlag(boolean flag) {
+		this.hasFlag = flag;
+	}
+	
 }

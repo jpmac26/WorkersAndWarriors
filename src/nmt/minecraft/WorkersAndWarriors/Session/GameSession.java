@@ -1,5 +1,10 @@
 package nmt.minecraft.WorkersAndWarriors.Session;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import nmt.minecraft.WorkersAndWarriors.Team.Team;
+
 /**
  * An individual game session. This is the starting block of a running game.<br />
  * The session should hold <i>all</i> of the information it needs to run. It's important attention is paid
@@ -18,11 +23,14 @@ public class GameSession {
 	
 	private State state;
 	
+	private Set<Team> teams;
+	
 	/**
 	 * Create a new game session in the default stopped state.
 	 */
 	public GameSession() {
 		this.state = State.STOPPED;
+		teams = new HashSet<Team>();
 	}
 	
 	/**
