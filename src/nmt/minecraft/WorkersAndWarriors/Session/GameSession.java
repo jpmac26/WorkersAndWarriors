@@ -40,10 +40,12 @@ public class GameSession {
 	private Set<Team> teams;
 	
 	/**
-	 * Create a new game session in the default stopped state.
+	 * Create a new game session in the default stopped state and with the given name.<br />
+	 * <b>PLEASE NOTE</b>: The given name should be unique (see {@link #equals(Object)})
 	 */
-	public GameSession() {
+	public GameSession(String name) {
 		this.state = State.STOPPED;
+		this.name = name;
 		teams = new HashSet<Team>();
 		unsortedPlayers = new LinkedList<WWPlayer>();
 	}
@@ -71,6 +73,14 @@ public class GameSession {
 		
 		
 		return false;
+	}
+	
+	public String getName() {
+		return this.name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 	/**
@@ -203,6 +213,33 @@ public class GameSession {
 		}
 		
 		return newPlayer;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof GameSession) {
+			GameSession og = (GameSession) o;
+			if (og.name.equals(name)) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 }
