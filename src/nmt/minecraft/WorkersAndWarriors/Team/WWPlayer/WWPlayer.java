@@ -40,4 +40,18 @@ public class WWPlayer {
 		this.hasFlag = flag;
 	}
 	
+	
+	
+	
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof WWPlayer) {
+			WWPlayer op = (WWPlayer) o;
+			return op.player.getUniqueId().equals(player.getUniqueId());
+		}
+		
+		return false;
+	}
+	
 }
