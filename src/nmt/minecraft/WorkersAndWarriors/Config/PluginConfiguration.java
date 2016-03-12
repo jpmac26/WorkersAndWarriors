@@ -7,9 +7,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import org.bukkit.ChatColor;
+import org.bukkit.DyeColor;
+import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.ChatColor;
+import org.bukkit.material.MaterialData;
+import org.bukkit.material.Wool;
 
 import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
 
@@ -30,8 +34,12 @@ public class PluginConfiguration {
 		VERSION("version", 1.00),
 		TEAM1COLOR("team1.color", ChatColor.RED),
 		TEAM1NAME("team1.name", "Red Team"),
+		TEAM1BLOCK("team1.block", (MaterialData) new Wool(DyeColor.RED)),
+		TEAM1GOAL("team1.goal", (MaterialData) new MaterialData(Material.REDSTONE_BLOCK)),
 		TEAM2COLOR("team2.color", ChatColor.BLUE),
 		TEAM2NAME("team2.name", "Blue Team"),
+		TEAM2BLOCK("team2.block", (MaterialData) new Wool(DyeColor.BLUE)),
+		TEAM2GOAL("team2.goal", (MaterialData) new MaterialData(Material.LAPIS_BLOCK)),
 		FLAGPROTECTSIZE("flagzone.size", 3),
 		FLAGISPROTECTED("flagzone.protected", true),
 		POINTSTOWIN("points", 10);
@@ -206,6 +214,22 @@ public class PluginConfiguration {
 	
 	public ChatColor getTeam2Color() {
 		return (ChatColor) getValue(Key.TEAM2COLOR);
+	}
+	
+	public MaterialData getTeam1Block() {
+		return (MaterialData) getValue(Key.TEAM1BLOCK);
+	}
+	
+	public MaterialData getTeam2Block() {
+		return (MaterialData) getValue(Key.TEAM2BLOCK);
+	}
+	
+	public MaterialData getTeam1FlagBlock() {
+		return (MaterialData) getValue(Key.TEAM1GOAL);
+	}
+	
+	public MaterialData getTeam2FlagBlock() {
+		return (MaterialData) getValue(Key.TEAM2GOAL);
 	}
 	
 }
