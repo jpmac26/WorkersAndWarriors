@@ -5,9 +5,15 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.bukkit.Bukkit;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerEggThrowEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import nmt.minecraft.WorkersAndWarriors.Config.PluginConfiguration;
+import nmt.minecraft.WorkersAndWarriors.Session.BlockListener;
 import nmt.minecraft.WorkersAndWarriors.Session.GameSession;
 
 /**
@@ -15,7 +21,7 @@ import nmt.minecraft.WorkersAndWarriors.Session.GameSession;
  * @author Skyler
  *
  */
-public class WorkersAndWarriorsPlugin extends JavaPlugin {
+public class WorkersAndWarriorsPlugin extends JavaPlugin implements Listener {
 	
 	private static final String configFileName = "config.yml";
 
@@ -28,6 +34,7 @@ public class WorkersAndWarriorsPlugin extends JavaPlugin {
 	
 	@Override
 	public void onLoad() {
+		WorkersAndWarriorsPlugin.plugin = this;
 		if (!getDataFolder().exists()) {
 			getDataFolder().mkdirs();
 		}
@@ -48,7 +55,6 @@ public class WorkersAndWarriorsPlugin extends JavaPlugin {
 	
 	@Override
 	public void onEnable() {
-		WorkersAndWarriorsPlugin.plugin = this;
 		
 		this.sessions = new HashSet<GameSession>();
 		
@@ -60,5 +66,4 @@ public class WorkersAndWarriorsPlugin extends JavaPlugin {
 			session.stop(true);
 		}
 	}
-	
 }

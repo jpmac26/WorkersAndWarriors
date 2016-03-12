@@ -8,12 +8,10 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
-import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.material.MaterialData;
-import org.bukkit.material.Wool;
 
 import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
 
@@ -32,14 +30,18 @@ public class PluginConfiguration {
 	public enum Key {
 		
 		VERSION("version", 1.00),
-		TEAM1COLOR("team1.color", ChatColor.RED),
+		TEAM1COLOR("team1.color", "RED"),
 		TEAM1NAME("team1.name", "Red Team"),
-		TEAM1BLOCK("team1.block", (MaterialData) new Wool(DyeColor.RED)),
-		TEAM1GOAL("team1.goal", (MaterialData) new MaterialData(Material.REDSTONE_BLOCK)),
-		TEAM2COLOR("team2.color", ChatColor.BLUE),
+		TEAM1BLOCK("team1.block.type", "WOOL"),
+		TEAM1BLOCKDATA("team1.block.data", 14),
+		TEAM1GOAL("team1.goal.type", "REDSTONE_BLOCK"),
+		TEAM1GOALDATA("team1.goal.data", 0),
+		TEAM2COLOR("team2.color", "BLUE"),
 		TEAM2NAME("team2.name", "Blue Team"),
-		TEAM2BLOCK("team2.block", (MaterialData) new Wool(DyeColor.BLUE)),
-		TEAM2GOAL("team2.goal", (MaterialData) new MaterialData(Material.LAPIS_BLOCK)),
+		TEAM2BLOCK("team2.block.type", "WOOL"),
+		TEAM2BLOCKDATA("team2.block.data", 11),
+		TEAM2GOAL("team2.goal.type", "LAPIS_BLOCK"),
+		TEAM2GOALDATA("team2.goal.data", 0),
 		FLAGPROTECTSIZE("flagzone.size", 3),
 		FLAGISPROTECTED("flagzone.protected", true),
 		POINTSTOWIN("points", 10);
@@ -81,7 +83,7 @@ public class PluginConfiguration {
 	 */
 	public static PluginConfiguration makeConfiguration(File configFile) {
 		
-		if (config == null) {
+		if (config == null && (configFile == null || !configFile.exists())) {
 			config = new PluginConfiguration();
 			for (Key key : Key.values()) {
 				config.configMap.put(key, key.getDefault());
@@ -119,7 +121,13 @@ public class PluginConfiguration {
 		//everything worked, yaml loaded. Now grab values
 		Object o;
 		for (Key key : Key.values()) {
+			boolean trip = false;
 			if (!yConfig.contains(key.getKey())) {
+				if (!trip) {
+					logger.info("Unable to find some keys. Setting default values for:");
+					trip = true;
+				}
+				logger.info(key.name() + " [" + key.getKey() + "]");
 				PluginConfiguration.config.configMap.put(key, key.getDefault());
 				continue;
 			}
@@ -209,27 +217,47 @@ public class PluginConfiguration {
 	}
 	
 	public ChatColor getTeam1Color() {
-		return (ChatColor) getValue(Key.TEAM1COLOR);
+		return ChatColor.valueOf((String) getValue(Key.TEAM1COLOR));
 	}
 	
 	public ChatColor getTeam2Color() {
-		return (ChatColor) getValue(Key.TEAM2COLOR);
+		return ChatColor.valueOf((String) getValue(Key.TEAM2COLOR));
 	}
 	
+	@SuppressWarnings("deprecation")
 	public MaterialData getTeam1Block() {
-		return (MaterialData) getValue(Key.TEAM1BLOCK);
+		int data = (Integer) getValue(Key.TEAM1BLOCKDATA);
+		return new MaterialData(
+				Material.valueOf((String) getValue(Key.TEAM1BLOCK)),
+				(byte) data		
+				);
 	}
 	
+	@SuppressWarnings("deprecation")
 	public MaterialData getTeam2Block() {
-		return (MaterialData) getValue(Key.TEAM2BLOCK);
+		int data = (Integer) getValue(Key.TEAM2BLOCKDATA);
+		return new MaterialData(
+				Material.valueOf((String) getValue(Key.TEAM2BLOCK)),
+				(byte) data		
+				);
 	}
 	
+	@SuppressWarnings("deprecation")
 	public MaterialData getTeam1FlagBlock() {
-		return (MaterialData) getValue(Key.TEAM1GOAL);
+		int data = (Integer) getValue(Key.TEAM1GOALDATA);
+		return new MaterialData(
+				Material.valueOf((String) getValue(Key.TEAM1GOAL)),
+				(byte) data		
+				);
 	}
 	
+	@SuppressWarnings("deprecation")
 	public MaterialData getTeam2FlagBlock() {
-		return (MaterialData) getValue(Key.TEAM2GOAL);
+		int data = (Integer) getValue(Key.TEAM2GOALDATA);
+		return new MaterialData(
+				Material.valueOf((String) getValue(Key.TEAM2GOAL)),
+				(byte) data		
+				);
 	}
 	
 }
