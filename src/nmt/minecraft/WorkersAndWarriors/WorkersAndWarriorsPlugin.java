@@ -3,6 +3,7 @@ package nmt.minecraft.WorkersAndWarriors;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 import org.bukkit.event.Listener;
@@ -19,6 +20,8 @@ import nmt.minecraft.WorkersAndWarriors.Session.GameSession;
 public class WorkersAndWarriorsPlugin extends JavaPlugin implements Listener {
 	
 	private static final String configFileName = "config.yml";
+	
+	public static final Random random = new Random();
 
 	public static WorkersAndWarriorsPlugin plugin;
 	

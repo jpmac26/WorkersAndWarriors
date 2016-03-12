@@ -8,6 +8,9 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.util.Vector;
 
+import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
+import nmt.minecraft.WorkersAndWarriors.Config.PluginConfiguration;
+import nmt.minecraft.WorkersAndWarriors.IO.ChatFormat;
 import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
 
 /**
@@ -58,6 +61,7 @@ public class Team {
 	public Team() {
 		players = new LinkedList<WWPlayer>();
 		this.flagArea = null;
+		this.spawnPoints = new LinkedList<Location>();
 	}
 	
 	/**
@@ -72,6 +76,25 @@ public class Team {
 		}
 		
 		return false;
+	}
+	
+	/**
+	 * Tries to remove a player from the team, cleaning them up and causing any handling of team-removal that
+	 * needs to (like making players no longer see thtem as a team member).
+	 * @param player
+	 * @return whether the palyer was on the team and has been removed
+	 */
+	public boolean removePlayer(WWPlayer player) {
+		if (player == null || !players.contains(player)) {
+			return false;
+		}
+		
+		players.remove(player);
+		sendMessage(ChatFormat.TEAM.wrap(player.getPlayer().getName() + " has left the team."));
+		
+		//TODO cool stuff?
+		
+		return true;
 	}
 	
 	/**
@@ -95,6 +118,40 @@ public class Team {
 	 */
 	public FlagArea getFlagArea() {
 		return flagArea;
+	}
+	
+	/**
+	 * Adds a spawn point to this team's available spawn point.
+	 * @param spawnPoint
+	 */
+	public void addSpawnPoint(Location spawnPoint) {
+		this.spawnPoints.add(spawnPoint);
+	}
+	
+	/**
+	 * Returns a random spawn point from this team's spawn points. Convenience :D
+	 * @return
+	 */
+	public Location getRandomSpawn() {
+		if (spawnPoints.isEmpty()) {
+			return null;
+		}
+		
+		return spawnPoints.get(
+				WorkersAndWarriorsPlugin.random.nextInt(spawnPoints.size())
+				);
+	}
+	
+	/**
+	 * Returns THE LIST of spawn points.
+	 * @return
+	 */
+	public List<Location> getSpawnPoints() {
+		return this.spawnPoints;
+	}
+	
+	public void clearSpawnPoints() {
+		spawnPoints.clear();
 	}
 	
 	/**
@@ -180,6 +237,41 @@ public class Team {
 			}
 			
 			player.getPlayer().getPlayer().sendMessage(message);
+		}
+	}
+	
+	/**
+	 * Prepares and spawns all players within this team at a random spawn point.<br />
+	 * Takes care of first-spawn stuff, like distributing blocks
+	 */
+	public void spawnTeam() {
+		int quot, rem, bteamsize = 0;
+		
+		for (WWPlayer player : players) {
+			if (player.getType() == WWPlayer.Type.WORKER)
+				bteamsize++;
+		}
+		
+		if (bteamsize == 0) {
+			WorkersAndWarriorsPlugin.plugin.getLogger().info(
+					ChatFormat.WARNING.wrap("There are no builders on team " + teamName)
+					);
+			quot = 0;
+			rem = 0;
+		} else {
+			quot = PluginConfiguration.config.getBlockCount() / bteamsize;
+			rem = PluginConfiguration.config.getBlockCount() % bteamsize;
+		}
+		
+		for (WWPlayer player : players) {
+			player.spawn(getRandomSpawn());
+			player.giveBlock(quot);
+			
+			//give out the extra blocks too
+			if (rem > 0) {
+				player.giveBlock(1);
+				rem--;
+			}
 		}
 	}
 	
