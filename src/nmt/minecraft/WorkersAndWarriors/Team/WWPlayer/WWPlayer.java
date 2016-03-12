@@ -1,5 +1,6 @@
 package nmt.minecraft.WorkersAndWarriors.Team.WWPlayer;
 
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 
 /**
@@ -18,13 +19,21 @@ import org.bukkit.OfflinePlayer;
  */
 public class WWPlayer {
 	
+	public enum Type {
+		WORKER,
+		WARRIOR
+	}
+	
 	private OfflinePlayer player;
+	
+	private Type type;
 	
 	private boolean hasFlag;
 	
-	public WWPlayer(OfflinePlayer player) {
+	public WWPlayer(OfflinePlayer player, Type type) {
 		this.player = player;
 		this.hasFlag = false;
+		this.type = type;
 	}
 	
 	
@@ -40,7 +49,39 @@ public class WWPlayer {
 		this.hasFlag = flag;
 	}
 	
+	public void setType(Type type) {
+		this.type = type;
+	}
 	
+	public Type getType() {
+		return type;
+	}
+	
+	/**
+	 * Pretty-spawns a player at a location.<br />
+	 * Sets gamemode, sets proper effects, etc
+	 * @param spawnLocation
+	 */
+	public void spawn(Location spawnLocation) {
+		
+	}
+	
+	/**
+	 * "<i>kills</i>" a player, queueing them for respawn.<br />
+	 * Handles gamemode, potion effects, etc
+	 */
+	public void die() {
+		
+	}
+	
+	/**
+	 * Gives the player blocks to place.<br />
+	 * Does not check whether this player is a builder (and therefore would be able to place it) or not.
+	 * @param count
+	 */
+	public void giveBlock(int count) {
+		
+	}
 	
 	
 	
