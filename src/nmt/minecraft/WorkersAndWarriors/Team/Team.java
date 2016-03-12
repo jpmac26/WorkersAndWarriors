@@ -3,6 +3,7 @@ package nmt.minecraft.WorkersAndWarriors.Team;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.util.Vector;
 
@@ -19,6 +20,10 @@ public class Team {
 	
 	private FlagArea flagArea;
 	
+	private ChatColor teamColor;
+	
+	private String teamName;
+	
 	/**
 	 * Creates a team, making a flag area from the passed points.
 	 * @param flagAreaPoint1
@@ -29,8 +34,23 @@ public class Team {
 		this.flagArea = new FlagArea(flagAreaPoint1, flagAreaPoint2);
 	}
 	
+	public Team(String name) {
+		this();
+		this.teamName = name;
+	}
+	
+	public Team(String name, ChatColor color) {
+		this(name);
+		this.teamColor = color;
+	}
+	
+	public Team(String name, ChatColor color, Vector flagArea1, Vector flagArea2) {
+		this(name, color);
+		this.flagArea = new FlagArea(flagArea1, flagArea2);
+	}
+	
 	/**
-	 * Creates a team with no defined flag area.
+	 * Creates a team with no defined flag area, no defined teamColor, and no Name!
 	 */
 	public Team() {
 		players = new LinkedList<WWPlayer>();
@@ -75,6 +95,47 @@ public class Team {
 	}
 	
 	/**
+	 * Sets the team name to the provided string.<br />
+	 * If name is null, does nothing. Doesn't reset name.
+	 * @param name
+	 */
+	public void setTeamName(String name) {
+		if (name == null) {
+			return;
+		}
+		
+		this.teamName = name;
+	}
+	
+	/**
+	 * Returns the team's name
+	 * @return
+	 */
+	public String getTeamName() {
+		return this.teamName;
+	}
+	
+	/**
+	 * If color is non-null, sets the team color. If null, does nothing.
+	 * @param color
+	 */
+	public void setTeamColor(ChatColor color) {
+		if (color == null) {
+			return;
+		}
+		
+		this.teamColor = color;
+	}
+	
+	/**
+	 * Returns the team's color
+	 * @return
+	 */
+	public ChatColor getTeamColor() {
+		return teamColor;
+	}
+	
+	/**
 	 * Returns the list of players currently in the team.
 	 * @return
 	 */
@@ -95,6 +156,28 @@ public class Team {
 		}
 		
 		return null;
+	}
+	
+	/**
+	 * Sends a message to the whole team.
+	 * @param message
+	 */
+	public void sendMessage(String message) {
+		if (message == null) {
+			return;
+		}
+		
+		if (players.isEmpty()) {
+			return;
+		}
+		
+		for (WWPlayer player : players) {
+			if (!player.getPlayer().isOnline()) {
+				continue;
+			}
+			
+			player.getPlayer().getPlayer().sendMessage(message);
+		}
 	}
 	
 }
