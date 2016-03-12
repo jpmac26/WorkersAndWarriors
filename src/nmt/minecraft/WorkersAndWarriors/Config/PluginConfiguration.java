@@ -64,9 +64,10 @@ public class PluginConfiguration {
 	
 	/**
 	 * Attempts to create a new {@link PluginConfiguration} based on the provided config file.<br />
-	 * If the file is null or the file doesn't exist, no action is performed. Otherwise, the stored 
-	 * PluginConfiguration is discarded and replaced with the one made by reading the file. The same 
-	 * PluginConfiguration is also returned.
+	 * If the file is null or the file doesn't exist but no config exists yet, a default config is made. If
+	 * the file is null or doesn't exist and there already exists a config, no action is performed. Otherwise,
+	 * the stored PluginConfiguration is discarded and replaced with the one made by reading the file. The 
+	 * same PluginConfiguration is also returned.
 	 * @param configFile
 	 * @return
 	 */
@@ -120,6 +121,21 @@ public class PluginConfiguration {
 		}
 		
 		return PluginConfiguration.config;
+	}
+	
+	/**
+	 * Completely overwrites the given file (creating if it doesn't exist) with the configuration currently
+	 * stored.
+	 * @param saveFile
+	 * @throws IOException 
+	 */
+	public static void save(File saveFile) throws IOException {
+		YamlConfiguration yConfig = new YamlConfiguration();
+		for (Key key : Key.values()) {
+			yConfig.set(key.getKey(), config.getValue(key));
+		}
+		
+		yConfig.save(saveFile);
 	}
 	
 	/**
