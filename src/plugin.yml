@@ -1,0 +1,13 @@
+name: Workers&Warriors
+main: nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin
+version: 1.00
+permissions:
+    WWAdmin:
+        default: op
+    WWPlayer:
+        default: true
+commands:
+    regicide:
+        permission: RegicideAdmin
+        usage: /regicide <Command> <Args>
+        description: This command is used to interact with the various commands within Regicide.

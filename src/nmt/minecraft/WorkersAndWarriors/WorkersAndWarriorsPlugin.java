@@ -36,7 +36,9 @@ public class WorkersAndWarriorsPlugin extends JavaPlugin {
 	
 	@Override
 	public void onDisable() {
-		
+		for (GameSession session : sessions) {
+			session.stop(true);
+		}
 	}
 	
 }
