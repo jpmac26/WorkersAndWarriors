@@ -72,6 +72,16 @@ public class PluginConfiguration {
 	 * @return
 	 */
 	public static PluginConfiguration makeConfiguration(File configFile) {
+		
+		if (config == null) {
+			config = new PluginConfiguration();
+			for (Key key : Key.values()) {
+				config.configMap.put(key, key.getDefault());
+			}
+			
+			return config;
+		}
+		
 		if (configFile == null || !configFile.exists()) {
 			return config;
 		}
@@ -130,6 +140,11 @@ public class PluginConfiguration {
 	 * @throws IOException 
 	 */
 	public static void save(File saveFile) throws IOException {
+		if (config == null) {
+			WorkersAndWarriorsPlugin.plugin.getLogger().warning("Null config cannot be saved! Skipping!");
+			return;
+		}
+		
 		YamlConfiguration yConfig = new YamlConfiguration();
 		for (Key key : Key.values()) {
 			yConfig.set(key.getKey(), config.getValue(key));
