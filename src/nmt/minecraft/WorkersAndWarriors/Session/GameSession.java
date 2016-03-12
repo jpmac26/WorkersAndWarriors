@@ -8,5 +8,47 @@ package nmt.minecraft.WorkersAndWarriors.Session;
  *
  */
 public class GameSession {
-
+	
+	public enum State {
+		STOPPED,
+		OPEN,
+		RUNNING,
+		ENDED;
+	}
+	
+	private State state;
+	
+	/**
+	 * Create a new game session in the default stopped state.
+	 */
+	public GameSession() {
+		this.state = State.STOPPED;
+	}
+	
+	/**
+	 * Attempts to start the game.
+	 * @return Whether or not the game was started as a result of this command (<b>false</b> if already 
+	 * running, not '<i>open</i>, etc)
+	 */
+	public boolean start() {
+		
+		if (state != State.OPEN) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * Stops (forcefully?) the game session. Deals with players, game blocks, etc
+	 * @param force Force the game to stop (if it's not running, for example)
+	 * @return Whether the game stopped as a result of this method
+	 */
+	public boolean stop(boolean force) {
+		
+		
+		return false;
+	}
+	
+	
 }
