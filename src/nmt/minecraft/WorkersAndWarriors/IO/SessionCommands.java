@@ -1,5 +1,8 @@
 package nmt.minecraft.WorkersAndWarriors.IO;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -30,6 +33,14 @@ public class SessionCommands implements CommandExecutor {
 		public final String getName() {
 			return this.commandName;
 		}
+	}
+	
+	public static List<String> getCommandList() {
+		List<String> list = new ArrayList<String>(SubCommand.values().length);
+		for (SubCommand s : SubCommand.values()) {
+			list.add(s.getName());
+		}
+		return list;
 	}
 	
 	private static SessionCommands executor = null;
