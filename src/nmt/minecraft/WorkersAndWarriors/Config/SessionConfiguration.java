@@ -226,7 +226,7 @@ public abstract class SessionConfiguration {
 		return team2;
 	}
 	
-	private static File getTemplateDirectory() {
+	public static File getTemplateDirectory() {
 		if (sessionDir == null) {
 			sessionDir = new File(WorkersAndWarriorsPlugin.plugin.getDataFolder(),
 					sessionDirName);
