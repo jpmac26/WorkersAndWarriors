@@ -8,6 +8,7 @@ import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.util.Vector;
 
 import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
 import nmt.minecraft.WorkersAndWarriors.Session.GameSession;
@@ -146,15 +147,15 @@ public abstract class SessionConfiguration {
 	@SuppressWarnings("unchecked")
 	private static Team loadTeam1(YamlConfiguration config) {
 		Team team1;
-		Location l1, l2;
+		Vector l1, l2;
 		if (config.contains(Key.TEAM1_GOAL_POINT1.getKey()) && config.contains(Key.TEAM1_GOAL_POINT2.getKey())) {
 			try {
-				l1 = (Location) config.get(Key.TEAM1_GOAL_POINT1.getKey());
-				l2 = (Location) config.get(Key.TEAM1_GOAL_POINT2.getKey());
+				l1 = (Vector) config.get(Key.TEAM1_GOAL_POINT1.getKey());
+				l2 = (Vector) config.get(Key.TEAM1_GOAL_POINT2.getKey());
 				team1 = new Team(PluginConfiguration.config.getTeam1Name(), 
 						PluginConfiguration.config.getTeam1Color(),
-						l1.toVector(),
-						l2.toVector()
+						l1,
+						l2
 						);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -187,15 +188,15 @@ public abstract class SessionConfiguration {
 	@SuppressWarnings("unchecked")
 	private static Team loadTeam2(YamlConfiguration config) {
 		Team team2;
-		Location l1, l2;
+		Vector l1, l2;
 		if (config.contains(Key.TEAM2_GOAL_POINT1.getKey()) && config.contains(Key.TEAM2_GOAL_POINT2.getKey())) {
 			try {
-				l1 = (Location) config.get(Key.TEAM2_GOAL_POINT1.getKey());
-				l2 = (Location) config.get(Key.TEAM2_GOAL_POINT2.getKey());
+				l1 = (Vector) config.get(Key.TEAM2_GOAL_POINT1.getKey());
+				l2 = (Vector) config.get(Key.TEAM2_GOAL_POINT2.getKey());
 				team2 = new Team(PluginConfiguration.config.getTeam2Name(), 
 						PluginConfiguration.config.getTeam2Color(),
-						l1.toVector(),
-						l2.toVector()
+						l1,
+						l2
 						);
 			} catch (Exception e) {
 				e.printStackTrace();
