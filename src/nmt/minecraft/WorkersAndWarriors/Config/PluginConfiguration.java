@@ -129,8 +129,8 @@ public class PluginConfiguration {
 		
 		//everything worked, yaml loaded. Now grab values
 		Object o;
+		boolean trip = false;
 		for (Key key : Key.values()) {
-			boolean trip = false;
 			if (!yConfig.contains(key.getKey())) {
 				if (!trip) {
 					logger.info("Unable to find some keys. Setting default values for:");

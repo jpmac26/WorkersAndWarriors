@@ -11,6 +11,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import nmt.minecraft.WorkersAndWarriors.Config.PluginConfiguration;
+import nmt.minecraft.WorkersAndWarriors.Config.SessionConfiguration;
 import nmt.minecraft.WorkersAndWarriors.Session.GameSession;
 import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
 
@@ -50,6 +51,11 @@ public class WorkersAndWarriorsPlugin extends JavaPlugin implements Listener {
 				e.printStackTrace();
 				getLogger().warning("Unable to save default config file!");
 			}
+		}
+		
+		File templateDirectory = new File(getDataFolder(), SessionConfiguration.sessionDirName);
+		if (!templateDirectory.exists()) {
+			templateDirectory.mkdirs();
 		}
 	}
 	
