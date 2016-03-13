@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -73,6 +74,11 @@ public class WorkersAndWarriorsPlugin extends JavaPlugin {
 		for (GameSession session : sessions) {
 			session.stop(true);
 		}
+	}
+
+
+	public void onReload() {
+		
 	}
 	
 	public Set<GameSession> getSessions() {
