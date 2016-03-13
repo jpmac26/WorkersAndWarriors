@@ -48,4 +48,12 @@ public class FlagArea {
 	public boolean isIn(Vector vect) {
 		return vect.isInAABB(min, max);
 	}
+
+	public Vector getMin() {
+		return min;
+	}
+
+	public Vector getMax() {
+		return max;
+	}
 }

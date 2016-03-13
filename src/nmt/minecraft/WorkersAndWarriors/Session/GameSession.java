@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 
 import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
@@ -40,6 +41,11 @@ public class GameSession {
 	private Set<Team> teams;
 	
 	/**
+	 * Lobby location for all players in this session.
+	 */
+	private Location sessionLobby;
+	
+	/**
 	 * Create a new game session in the default stopped state and with the given name.<br />
 	 * <b>PLEASE NOTE</b>: The given name should be unique (see {@link #equals(Object)})
 	 */
@@ -48,6 +54,7 @@ public class GameSession {
 		this.name = name;
 		teams = new HashSet<Team>();
 		unsortedPlayers = new LinkedList<WWPlayer>();
+		this.sessionLobby = null;
 	}
 	
 	/**
@@ -81,6 +88,24 @@ public class GameSession {
 	
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public void setLobbyLocation(Location loc) {
+		this.sessionLobby = loc;
+	}
+	
+	public Location getLobbyLocation() {
+		return sessionLobby;
+	}
+	
+	/**
+	 * Adds the given team to the session.<br />
+	 * Please note that at the time of this comment, generic teams aren't supported. Teams are staticly
+	 * defined in {@link nmt.minecraft.WorkersAndWarriors.Config.PluginConfiguration PluginConfiguration}.
+	 * @param team
+	 */
+	public void addTeam(Team team) {
+		teams.add(team);
 	}
 	
 	/**
