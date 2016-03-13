@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -31,18 +32,7 @@ public class PluginConfiguration {
 	public enum Key {
 		
 		VERSION("version", 1.00),
-		TEAM1COLOR("team1.color", "RED"),
-		TEAM1NAME("team1.name", "Red Team"),
-		TEAM1BLOCK("team1.block.type", "WOOL"),
-		TEAM1BLOCKDATA("team1.block.data", 14),
-		TEAM1GOAL("team1.goal.type", "REDSTONE_BLOCK"),
-		TEAM1GOALDATA("team1.goal.data", 0),
-		TEAM2COLOR("team2.color", "BLUE"),
-		TEAM2NAME("team2.name", "Blue Team"),
-		TEAM2BLOCK("team2.block.type", "WOOL"),
-		TEAM2BLOCKDATA("team2.block.data", 11),
-		TEAM2GOAL("team2.goal.type", "LAPIS_BLOCK"),
-		TEAM2GOALDATA("team2.goal.data", 0),
+		TEAM("team", new LinkedList<TeamConfiguration>()),
 		FLAGPROTECTSIZE("flagzone.size", 3),
 		FLAGISPROTECTED("flagzone.protected", true),
 		TEAMBLOCKS("teamblocks", 30),

@@ -173,9 +173,14 @@ public class TeamConfiguration implements ConfigurationSerializable {
 		this.goal = goal;
 	}
 	
+	private TeamConfiguration() {
+		
+	}
+	
 	public TeamConfiguration(Team team) {
 		this.name = team.getTeamName();
 		this.color = team.getTeamColor();
-		this.block = team.get
+		this.block = team.getBlockType();
+		this.goal = team.getGoalType();
 	}
 }
