@@ -50,9 +50,11 @@ public abstract class SessionConfiguration {
 	
 	public static final String sessionDirName = "SessionTemplates";
 	
+	private static File sessionDir = null;
+	
 	/**
 	 * Takes the provided file and attempts to create a {@link GameSession} from it.
-	 * @param sessionFile The file to attempt to load
+	 * @param templateName The template file name to load
 	 * @param sessionName a name to give the session
 	 * @return A new game session on success, null of failure (including if sessionFile is null or doesn't
 	 * exist)
@@ -61,10 +63,12 @@ public abstract class SessionConfiguration {
 	 * @throws FileNotFoundException 
 	 * @see {@link GameSession}
 	 */
-	public static GameSession loadSesson(File sessionFile, String sessionName) throws FileNotFoundException, IOException, InvalidConfigurationException {
-		if (sessionFile == null || !sessionFile.exists()) {
+	public static GameSession loadSesson(String templateName, String sessionName) throws FileNotFoundException, IOException, InvalidConfigurationException {
+		if (templateName == null) {
 			return null;
 		}
+		
+		File sessionFile = new File(getTemplateDirectory(), templateName);
 		
 		YamlConfiguration config = new YamlConfiguration();
 		config.load(sessionFile);
@@ -97,13 +101,13 @@ public abstract class SessionConfiguration {
 	 * Saves a {@link GameSession} out to file to be loaded later quicky.<br />
 	 * Note, this saves a <i>template</i> of the session; it doesn't store information about
 	 * the players that may be part of the session, or specifics about the state of the Session.
-	 * @param saveFile
+	 * @param templateName what to save the template. Will overwrite conflicts
 	 * @param session
 	 * @throws IOException 
 	 */
-	public static void saveSessionTemplate(File saveFile, GameSession session) throws IOException {
+	public static void saveSessionTemplate(String templateName, GameSession session) throws IOException {
 		
-		if (session == null) {
+		if (session == null || templateName == null) {
 			return;
 		}
 		
@@ -132,6 +136,8 @@ public abstract class SessionConfiguration {
 		
 		config.set(Key.TEAM1_SPAWNPOINTS.getKey(), team1.getSpawnPoints());
 		config.set(Key.TEAM2_SPAWNPOINTS.getKey(), team2.getSpawnPoints());
+		
+		File saveFile = new File(getTemplateDirectory(), templateName);
 		
 		config.save(saveFile);
 		
@@ -217,6 +223,18 @@ public abstract class SessionConfiguration {
 		}
 		
 		return team2;
+	}
+	
+	private static File getTemplateDirectory() {
+		if (sessionDir == null) {
+			sessionDir = new File(WorkersAndWarriorsPlugin.plugin.getDataFolder(),
+					sessionDirName);
+			if (!sessionDir.exists()) {
+				sessionDir.mkdirs();
+			}
+		}
+		
+		return sessionDir;
 	}
 	
 }
