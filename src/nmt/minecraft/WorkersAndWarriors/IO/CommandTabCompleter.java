@@ -36,6 +36,9 @@ public class CommandTabCompleter implements TabCompleter{
 		if (cmd.getName().equalsIgnoreCase(SessionCommands.baseCommand)) {
 			return completeSessionCommand(args);
 		}
+		if (cmd.getName().equalsIgnoreCase(PlayerCommands.baseCommand)) {
+			return completePlayerCommand(args);
+		}
 		return null;
 	}
 	
@@ -64,6 +67,32 @@ public class CommandTabCompleter implements TabCompleter{
 			 }
 			 
 		}
+		
+		return list;
+	}
+	
+	private List<String> completePlayerCommand(String[] args) {
+		List<String> list = null;
+		if(args.length == 1){
+			list=new ArrayList<String>();
+			List<String> tmpList;
+			 tmpList = PlayerCommands.getCommandList();//get the list of commands
+			 //only put the ones that start with the given
+			 
+			 if(args[0].isEmpty()){
+				 return tmpList;
+			 }
+			 
+			 for(String tmpString : tmpList){
+				 String incomplete = args[0].toLowerCase();
+				 if(startsWithIgnoreCase(tmpString,incomplete)){
+					 list.add(tmpString);
+				 }
+			 }
+		}
+		
+		
+		
 		
 		return list;
 	}

@@ -15,3 +15,9 @@ commands:
         permission: WWAdmin
         usage: /wwsession <Command> <Args>
         description: This command is used to interact with session-level commands
+        aliases: wws
+    wwplayer:
+        permission: WWPlayer
+        usage: /wwplayer <Command> <Args>
+        description: This command is used to interact with WorkersAndWarriors' Player commands
+        aliases: wwp
