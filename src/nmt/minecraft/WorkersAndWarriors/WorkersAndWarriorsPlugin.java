@@ -1,31 +1,19 @@
 package nmt.minecraft.WorkersAndWarriors;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerEggThrowEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.Vector;
 
 import nmt.minecraft.WorkersAndWarriors.Config.PluginConfiguration;
 import nmt.minecraft.WorkersAndWarriors.Config.SessionConfiguration;
 import nmt.minecraft.WorkersAndWarriors.Config.Util.ParsedLocation;
 import nmt.minecraft.WorkersAndWarriors.Config.Util.ParsedVector;
-import nmt.minecraft.WorkersAndWarriors.IO.ChatFormat;
 import nmt.minecraft.WorkersAndWarriors.Session.GameSession;
-import nmt.minecraft.WorkersAndWarriors.Team.Team;
 import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
 
 /**
