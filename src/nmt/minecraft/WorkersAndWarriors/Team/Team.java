@@ -6,6 +6,7 @@ import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.material.MaterialData;
 import org.bukkit.util.Vector;
 
 import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
@@ -30,6 +31,10 @@ public class Team {
 	
 	private String teamName;
 	
+	private MaterialData blockType;
+	
+	private MaterialData goalType;
+	
 	/**
 	 * Creates a team, making a flag area from the passed points.
 	 * @param flagAreaPoint1
@@ -53,6 +58,13 @@ public class Team {
 	public Team(String name, ChatColor color, Vector flagArea1, Vector flagArea2) {
 		this(name, color);
 		this.flagArea = new FlagArea(flagArea1, flagArea2);
+	}
+	
+	public Team(String name, ChatColor color, Vector flagArea1, Vector flagArea2, MaterialData blockType,
+			MaterialData goalType) {
+		this(name, color, flagArea1, flagArea2);
+		this.goalType = goalType;
+		this.blockType = blockType;
 	}
 	
 	/**
@@ -195,6 +207,22 @@ public class Team {
 		return teamColor;
 	}
 	
+	public MaterialData getBlockType() {
+		return blockType;
+	}
+
+	public void setBlockType(MaterialData blockType) {
+		this.blockType = blockType;
+	}
+
+	public MaterialData getGoalType() {
+		return goalType;
+	}
+
+	public void setGoalType(MaterialData goalType) {
+		this.goalType = goalType;
+	}
+
 	/**
 	 * Returns the list of players currently in the team.
 	 * @return
