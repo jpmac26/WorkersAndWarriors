@@ -13,6 +13,7 @@ import nmt.minecraft.WorkersAndWarriors.Config.PluginConfiguration;
 import nmt.minecraft.WorkersAndWarriors.Config.SessionConfiguration;
 import nmt.minecraft.WorkersAndWarriors.Config.Util.ParsedLocation;
 import nmt.minecraft.WorkersAndWarriors.Config.Util.ParsedVector;
+import nmt.minecraft.WorkersAndWarriors.IO.PlayerCommands;
 import nmt.minecraft.WorkersAndWarriors.IO.PluginCommands;
 import nmt.minecraft.WorkersAndWarriors.IO.SessionCommands;
 import nmt.minecraft.WorkersAndWarriors.Session.GameSession;
@@ -70,6 +71,7 @@ public class WorkersAndWarriorsPlugin extends JavaPlugin {
 		this.sessions = new HashSet<GameSession>();
 		PluginCommands.getExecutor();
 		SessionCommands.getExecutor();
+		PlayerCommands.getExecutor();
 	}
 	
 	@Override

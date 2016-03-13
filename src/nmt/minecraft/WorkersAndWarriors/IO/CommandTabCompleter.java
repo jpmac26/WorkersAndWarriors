@@ -7,10 +7,12 @@ import java.util.List;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Player;
 
 import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
 import nmt.minecraft.WorkersAndWarriors.Config.SessionConfiguration;
 import nmt.minecraft.WorkersAndWarriors.Session.GameSession;
+import nmt.minecraft.WorkersAndWarriors.Team.Team;
 
 public class CommandTabCompleter implements TabCompleter{
 	
@@ -37,7 +39,7 @@ public class CommandTabCompleter implements TabCompleter{
 			return completeSessionCommand(args);
 		}
 		if (cmd.getName().equalsIgnoreCase(PlayerCommands.baseCommand)) {
-			return completePlayerCommand(args);
+			return completePlayerCommand(sender, args);
 		}
 		return null;
 	}
@@ -71,7 +73,12 @@ public class CommandTabCompleter implements TabCompleter{
 		return list;
 	}
 	
-	private List<String> completePlayerCommand(String[] args) {
+	private List<String> completePlayerCommand(CommandSender sender, String[] args) {
+		
+		if (!(sender instanceof Player)) {
+			return new ArrayList<String>(1);
+		}
+		
 		List<String> list = null;
 		if(args.length == 1){
 			list=new ArrayList<String>();
@@ -89,7 +96,15 @@ public class CommandTabCompleter implements TabCompleter{
 					 list.add(tmpString);
 				 }
 			 }
+		} else if (args.length == 2) {
+			//wpg [cmd] [arg]
+			if (args[0].equalsIgnoreCase(PlayerCommands.SubCommand.TEAM.getName())) {
+				list = completeTeamCommand((Player) sender, args);
+			} else if (args[0].equalsIgnoreCase(PlayerCommands.SubCommand.JOIN.getName())) {
+				list = completeSessionJoinCommand((Player) sender, args);
+			}
 		}
+		
 		
 		
 		
@@ -181,6 +196,44 @@ public class CommandTabCompleter implements TabCompleter{
 			}
 		}
 		
+		
+		return list;
+	}
+	
+	private List<String> completeTeamCommand(Player sender, String[] args) {
+		//wwp team [team]
+		List<String> list;
+		
+		GameSession session = WorkersAndWarriorsPlugin.plugin.getSession(sender);
+		if (session == null) {
+			return new ArrayList<>(1);
+		}
+		
+		list = new ArrayList<String>(session.getTeams().size());
+		
+		if (session.getTeams().isEmpty()) {
+			return new ArrayList<>(1);
+		}
+		
+		for (Team team : session.getTeams()) {
+			if (args[1].isEmpty() || startsWithIgnoreCase(team.getTeamName(), args[1])) {
+				list.add(team.getTeamName());
+			}
+		}
+		
+		return list;	
+	}
+	
+	private List<String> completeSessionJoinCommand(Player sender, String[] args) {
+		//wwp join [session]
+		List<String> list = new ArrayList<>(WorkersAndWarriorsPlugin.plugin.getSessions().size());
+		
+		for(GameSession game : WorkersAndWarriorsPlugin.plugin.getSessions()){
+			//should only match games started with what's already been typed in					
+			if(args[1].isEmpty() || startsWithIgnoreCase(game.getName(),args[1])){
+				list.add(game.getName());
+			}
+		}
 		
 		return list;
 	}
