@@ -7,7 +7,11 @@ permissions:
     WWPlayer:
         default: true
 commands:
-    regicide:
-        permission: RegicideAdmin
-        usage: /regicide <Command> <Args>
-        description: This command is used to interact with the various commands within Regicide.
+    ww:
+        permission: WWAdmin
+        usage: /ww <Command> <Args>
+        description: This command is used to interact with plugin-level commands
+    wwsession:
+        permission: WWAdmin
+        usage: /wwsession <Command> <Args>
+        description: This command is used to interact with session-level commands
