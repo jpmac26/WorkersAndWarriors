@@ -13,6 +13,21 @@ import nmt.minecraft.WorkersAndWarriors.Config.SessionConfiguration;
 import nmt.minecraft.WorkersAndWarriors.Session.GameSession;
 
 public class CommandTabCompleter implements TabCompleter{
+	
+	private static CommandTabCompleter completer;
+	
+	public static CommandTabCompleter getCompleter() {
+		if (completer == null) {
+			completer = new CommandTabCompleter();
+		}
+		
+		return completer;
+	}
+	
+	private CommandTabCompleter() {
+		;
+	}
+	
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String alias, String[] args) {
 		if(cmd.getName().equalsIgnoreCase(PluginCommands.baseCommand)){

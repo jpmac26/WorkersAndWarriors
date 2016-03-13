@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -14,6 +13,8 @@ import nmt.minecraft.WorkersAndWarriors.Config.PluginConfiguration;
 import nmt.minecraft.WorkersAndWarriors.Config.SessionConfiguration;
 import nmt.minecraft.WorkersAndWarriors.Config.Util.ParsedLocation;
 import nmt.minecraft.WorkersAndWarriors.Config.Util.ParsedVector;
+import nmt.minecraft.WorkersAndWarriors.IO.PluginCommands;
+import nmt.minecraft.WorkersAndWarriors.IO.SessionCommands;
 import nmt.minecraft.WorkersAndWarriors.Session.GameSession;
 import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
 
@@ -67,6 +68,8 @@ public class WorkersAndWarriorsPlugin extends JavaPlugin {
 		ParsedVector.registerWithAliases();
 		
 		this.sessions = new HashSet<GameSession>();
+		PluginCommands.getExecutor();
+		SessionCommands.getExecutor();
 	}
 	
 	@Override

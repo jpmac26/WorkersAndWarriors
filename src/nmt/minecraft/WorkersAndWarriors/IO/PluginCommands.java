@@ -41,6 +41,8 @@ public class PluginCommands implements CommandExecutor {
 	
 	private PluginCommands() {
 		WorkersAndWarriorsPlugin.plugin.getCommand(baseCommand).setExecutor(this);
+		WorkersAndWarriorsPlugin.plugin.getCommand(baseCommand).setTabCompleter(
+				CommandTabCompleter.getCompleter());
 	}
 	
 	public static List<String> getCommandList() {

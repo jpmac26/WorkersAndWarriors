@@ -55,6 +55,8 @@ public class SessionCommands implements CommandExecutor {
 	
 	private SessionCommands() {
 		WorkersAndWarriorsPlugin.plugin.getCommand(baseCommand).setExecutor(this);
+		WorkersAndWarriorsPlugin.plugin.getCommand(baseCommand).setTabCompleter(
+				CommandTabCompleter.getCompleter());
 	}
 	
 	@Override
