@@ -149,6 +149,27 @@ public class GameSession {
 	}
 	
 	/**
+	 * Returns a list of all players that are part of this session, regardless of where they're at in
+	 * the session (unsorted or on a team).
+	 * @return
+	 */
+	public List<WWPlayer> getAllPlayers() {
+		List<WWPlayer> players = new LinkedList<>(unsortedPlayers);
+		
+		if (!teams.isEmpty()) {
+			for (Team t : teams) {
+				if (!t.getPlayers().isEmpty()) {
+					for (WWPlayer p : t.getPlayers()) {
+						players.add(p);
+					}
+				}
+			}
+		}
+		
+		return players;
+	}
+	
+	/**
 	 * REturns the set of teams.
 	 * @return
 	 */
