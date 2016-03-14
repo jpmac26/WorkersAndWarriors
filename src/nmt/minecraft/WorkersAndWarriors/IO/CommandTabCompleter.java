@@ -2,8 +2,11 @@ package nmt.minecraft.WorkersAndWarriors.IO;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -40,6 +43,9 @@ public class CommandTabCompleter implements TabCompleter{
 		}
 		if (cmd.getName().equalsIgnoreCase(PlayerCommands.baseCommand)) {
 			return completePlayerCommand(sender, args);
+		}
+		if (cmd.getName().equalsIgnoreCase(TeamCommands.baseCommand)) {
+			return completeTeamCommand(args);
 		}
 		return null;
 	}
@@ -99,7 +105,7 @@ public class CommandTabCompleter implements TabCompleter{
 		} else if (args.length == 2) {
 			//wpg [cmd] [arg]
 			if (args[0].equalsIgnoreCase(PlayerCommands.SubCommand.TEAM.getName())) {
-				list = completeTeamCommand((Player) sender, args);
+				list = completePlayerTeamCommand((Player) sender, args);
 			} else if (args[0].equalsIgnoreCase(PlayerCommands.SubCommand.JOIN.getName())) {
 				list = completeSessionJoinCommand((Player) sender, args);
 			}
@@ -107,6 +113,41 @@ public class CommandTabCompleter implements TabCompleter{
 		
 		
 		
+		
+		
+		return list;
+	}
+	
+	private List<String> completeTeamCommand(String[] args) {
+		List<String> list = null;
+
+		if(args.length == 1){
+			list=new ArrayList<String>();
+			List<String> tmpList;
+			 tmpList = TeamCommands.getCommandList();//get the list of commands
+			 //only put the ones that start with the given
+			 
+			 if(args[0].isEmpty()){
+				 return tmpList;
+			 }
+			 
+			 for(String tmpString : tmpList){
+				 String incomplete = args[0].toLowerCase();
+				 if(startsWithIgnoreCase(tmpString,incomplete)){
+					 list.add(tmpString);
+				 }
+			 }
+		} else if (args[0].equalsIgnoreCase(TeamCommands.SubCommand.CREATE.getName())) {
+			list = completeSimpleSessionCommand(args);
+		} else if (args[0].equalsIgnoreCase(TeamCommands.SubCommand.INFO.getName())
+				|| args[0].equalsIgnoreCase(TeamCommands.SubCommand.SETGOALAREA.getName())) {
+			list = completeSimpleTeamCommand(args);
+		} else if (args[0].equalsIgnoreCase(TeamCommands.SubCommand.SETBLOCK.getName())
+			|| args[0].equalsIgnoreCase(TeamCommands.SubCommand.SETGOALBLOCK.getName())) {
+			list = completeTeamBlockCommand(args);
+		} else if (args[0].equalsIgnoreCase(TeamCommands.SubCommand.SETCOLOR.getName())) {
+			list = completeTeamColorCommand(args);
+		}
 		
 		
 		return list;
@@ -200,7 +241,7 @@ public class CommandTabCompleter implements TabCompleter{
 		return list;
 	}
 	
-	private List<String> completeTeamCommand(Player sender, String[] args) {
+	private List<String> completePlayerTeamCommand(Player sender, String[] args) {
 		//wwp team [team]
 		List<String> list;
 		
@@ -232,6 +273,74 @@ public class CommandTabCompleter implements TabCompleter{
 			//should only match games started with what's already been typed in					
 			if(args[1].isEmpty() || startsWithIgnoreCase(game.getName(),args[1])){
 				list.add(game.getName());
+			}
+		}
+		
+		return list;
+	}
+	
+	private List<String> completeSimpleTeamCommand(String[] args) {
+		//wwt [subcommand] [session] [team]
+		List<String> list = null;
+		
+		if (args.length == 1) {
+			//just need simle list of sessions
+			list = completeSimpleSessionCommand(args);
+		} else if (args.length == 2) {
+			//on the team part, give list of teams
+			GameSession session = WorkersAndWarriorsPlugin.plugin.getSession(args[1]);
+			if (session == null) {
+				return new LinkedList<String>();
+			}
+			
+			list = new ArrayList<String>(session.getTeams().size());
+			
+			if (session.getTeams().isEmpty()) {
+				return new ArrayList<>(1);
+			}
+			
+			for (Team team : session.getTeams()) {
+				if (args[1].isEmpty() || startsWithIgnoreCase(team.getTeamName(), args[1])) {
+					list.add(team.getTeamName());
+				}
+			}
+			
+		}
+				
+		return list;
+	}
+	
+	private List<String> completeTeamBlockCommand(String[] args) {
+		//wwt [subcommand] [session] [team] [material/id] [data]
+		List<String> list = null;;
+		
+		if (args.length < 3) {
+			list = completeSimpleTeamCommand(args);
+		} else if (args.length == 3) {
+			//get material
+			list = new ArrayList<String>(Material.values().length);
+			for (Material mat : Material.values()) {
+				if (args[1].isEmpty() || startsWithIgnoreCase(mat.name(), args[1])) {
+					list.add(mat.name());
+				}
+			}
+		}
+		
+		return list;
+	}
+	
+	private List<String> completeTeamColorCommand(String[] args) {
+		List<String> list = null;
+		
+		if (args.length < 3) {
+			list = completeSimpleTeamCommand(args);
+		} else if (args.length == 3) {
+			//get color
+			list = new ArrayList<String>(ChatColor.values().length);
+			for (ChatColor color : ChatColor.values()) {
+				if (args[1].isEmpty() || startsWithIgnoreCase(color.name(), args[1])) {
+					list.add(color.name());
+				}
 			}
 		}
 		
