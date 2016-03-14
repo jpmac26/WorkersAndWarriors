@@ -9,10 +9,8 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.material.MaterialData;
 
 import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
 
@@ -32,12 +30,13 @@ public class PluginConfiguration {
 	public enum Key {
 		
 		VERSION("version", 1.00),
-		TEAM("team", new LinkedList<TeamConfiguration>()),
+		TEAM("teams", new LinkedList<TeamConfiguration>()),
 		FLAGPROTECTSIZE("flagzone.size", 3),
 		FLAGISPROTECTED("flagzone.protected", true),
 		TEAMBLOCKS("teamblocks", 30),
 		POINTSTOWIN("points", 10),
-		RESPAWNTIME("respawn.time", 3);
+		RESPAWNTIME("respawn.time", 3),
+		TEAMMAX("numberofteams", 2);
 		
 		private String key;
 		
@@ -207,56 +206,12 @@ public class PluginConfiguration {
 		return (Integer) getValue(Key.FLAGPROTECTSIZE);
 	}
 	
-	public String getTeam1Name() {
-		return (String) getValue(Key.TEAM1NAME);
-	}
-	
-	public String getTeam2Name() {
-		return (String) getValue(Key.TEAM2NAME);
-	}
-	
-	public ChatColor getTeam1Color() {
-		return ChatColor.valueOf((String) getValue(Key.TEAM1COLOR));
-	}
-	
-	public ChatColor getTeam2Color() {
-		return ChatColor.valueOf((String) getValue(Key.TEAM2COLOR));
-	}
-	
-	@SuppressWarnings("deprecation")
-	public MaterialData getTeam1Block() {
-		int data = (Integer) getValue(Key.TEAM1BLOCKDATA);
-		return new MaterialData(
-				Material.valueOf((String) getValue(Key.TEAM1BLOCK)),
-				(byte) data		
-				);
-	}
-	
-	@SuppressWarnings("deprecation")
-	public MaterialData getTeam2Block() {
-		int data = (Integer) getValue(Key.TEAM2BLOCKDATA);
-		return new MaterialData(
-				Material.valueOf((String) getValue(Key.TEAM2BLOCK)),
-				(byte) data		
-				);
-	}
-	
-	@SuppressWarnings("deprecation")
-	public MaterialData getTeam1FlagBlock() {
-		int data = (Integer) getValue(Key.TEAM1GOALDATA);
-		return new MaterialData(
-				Material.valueOf((String) getValue(Key.TEAM1GOAL)),
-				(byte) data		
-				);
-	}
-	
-	@SuppressWarnings("deprecation")
-	public MaterialData getTeam2FlagBlock() {
-		int data = (Integer) getValue(Key.TEAM2GOALDATA);
-		return new MaterialData(
-				Material.valueOf((String) getValue(Key.TEAM2GOAL)),
-				(byte) data		
-				);
+	/**
+	 * Returns the maximum number of teams allowed by the plugin configuration.
+	 * @return
+	 */
+	public int getMaxTeams() {
+		return (Integer) getValue(Key.TEAMMAX);
 	}
 	
 	/**

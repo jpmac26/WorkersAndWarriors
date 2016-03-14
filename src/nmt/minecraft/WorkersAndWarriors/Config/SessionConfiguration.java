@@ -3,14 +3,21 @@ package nmt.minecraft.WorkersAndWarriors.Config;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.util.Vector;
 
 import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
+import nmt.minecraft.WorkersAndWarriors.Config.TeamConfiguration.Key;
 import nmt.minecraft.WorkersAndWarriors.Session.GameSession;
 import nmt.minecraft.WorkersAndWarriors.Team.Team;
 
@@ -24,14 +31,104 @@ import nmt.minecraft.WorkersAndWarriors.Team.Team;
  */
 public abstract class SessionConfiguration {
 	
+	public static class TeamConfiguration implements ConfigurationSerializable {
+		
+		private static enum Key {
+			SPAWNPOINTS("spawnpoints", new ArrayList<Location>(1)),
+			GOALPOINT1("goal.point1", new Vector(0,0,0)),
+			GOALPOINT2("goal.point2", new Vector(0,0,0));
+			
+			private String key;
+			
+			private Object def;
+			
+			private Key(String key, Object def) {
+				this.key = key;
+				this.def = def;
+			}
+			
+			public String getKey() {
+				return key;
+			}
+			
+			public Object getDefault() {
+				return def;
+			}
+		}
+		/*
+		 * spawnpoints: []
+		 * goal:
+		 * 	point1: 
+		 * 		""
+		 *  point2:
+		 *  	""
+		 */
+		
+		private List<Location> spawns;
+		
+		private Vector goalPoint1;
+		
+		private Vector goalPoint2;
+		
+		@Override
+		public Map<String, Object> serialize() {
+			Map<String, Object> map = new HashMap<>();
+			
+			map.put(Key.SPAWNPOINTS.getKey(), spawns);
+			map.put(Key.GOALPOINT1.getKey(), goalPoint1);
+			map.put(Key.GOALPOINT2.getKey(), goalPoint2);
+			
+			return map;
+		}
+		
+		@SuppressWarnings("unchecked")
+		public static TeamConfiguration valueOf(Map<String, Object> map) {
+			if (map == null) {
+				return null;
+			}
+			
+			//for ease of use
+			Logger logger = WorkersAndWarriorsPlugin.plugin.getLogger(); 
+			
+			TeamConfiguration config = new TeamConfiguration();
+			
+			Object o;
+			boolean trip = false;
+			for (Key key : Key.values()) {
+				if (!map.containsKey(key.getKey())) {
+					if (!trip) {
+						logger.info("Unable to find some keys in team configuration. Setting default values for:");
+						trip = true;
+					}
+					logger.info(key.name() + " [" + key.getKey() + "]");
+					map.put(key.getKey(), key.getDefault());
+					continue;
+				}
+				
+				o = map.get(key.getKey());
+				if (!o.getClass().equals(key.getDefault().getClass())) {
+					//classes don't match! Invalid key entry!
+					logger.warning("Unable to load config value for key [" + ChatColor.BOLD + key.key + 
+							ChatColor.RESET + "] because of a class mismatch. Default used instead." );
+					logger.warning("  -> Class [" + o.getClass().getName() + "] <> [" + key.getDefault().getClass().getName() + "]");
+					map.put(key.getKey(), key.getDefault());
+					continue;
+				}
+			}
+			
+			//have map, now proceed
+			config.goalPoint1 = (Vector) map.get(Key.GOALPOINT1.getKey());
+			config.goalPoint2 = (Vector) map.get(Key.GOALPOINT2.getKey());
+			config.spawns = (List<Location>) map.get(Key.SPAWNPOINTS.getKey());
+			
+			return config;
+		}
+	}
+	
 	private enum Key {
 		SESSION_LOBBY("session.lobby"),
-		TEAM1_SPAWNPOINTS("team1.spawnpoints"),
-		TEAM2_SPAWNPOINTS("team2.spawnpoints"),
-		TEAM1_GOAL_POINT1("team1.goal.point1"),
-		TEAM1_GOAL_POINT2("team1.goal.point2"),
-		TEAM2_GOAL_POINT1("team2.goal.point1"),
-		TEAM2_GOAL_POINT2("team2.goal.point2");
+		TEAM("teams"),
+		TEAMMAX("maxteams");
 		
 		private String key;
 		
@@ -73,6 +170,25 @@ public abstract class SessionConfiguration {
 		
 		YamlConfiguration config = new YamlConfiguration();
 		config.load(sessionFile);
+		
+		if (!config.contains(Key.TEAMMAX.getKey())) {
+			throw new InvalidConfigurationException("Undefined number of teams defined in session config");
+		}
+		
+		if (!config.contains(Key.TEAM.getKey())) {
+			throw new InvalidConfigurationException("Team definitions were not found");
+		}
+		
+		@SuppressWarnings("unchecked")
+		List<TeamConfiguration> teams = (List<TeamConfiguration>) config.getList(Key.TEAM.getKey());
+		
+		int teamMax = config.getInt(Key.TEAMMAX.getKey());
+		int teamNum = teams.size();
+		
+		//check for size issues
+		if (teamMax > teamNum) {
+			throw new InvalidConfigurationException("Team maximum exceeds the number of defined teams");
+		}
 		
 		GameSession session = new GameSession(sessionName);
 		
