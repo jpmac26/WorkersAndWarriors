@@ -16,6 +16,7 @@ import nmt.minecraft.WorkersAndWarriors.Config.Util.ParsedVector;
 import nmt.minecraft.WorkersAndWarriors.IO.PlayerCommands;
 import nmt.minecraft.WorkersAndWarriors.IO.PluginCommands;
 import nmt.minecraft.WorkersAndWarriors.IO.SessionCommands;
+import nmt.minecraft.WorkersAndWarriors.IO.TeamCommands;
 import nmt.minecraft.WorkersAndWarriors.Session.GameSession;
 import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
 
@@ -48,6 +49,8 @@ public class WorkersAndWarriorsPlugin extends JavaPlugin {
 		
 		PluginConfiguration.makeConfiguration(configFile);
 		
+		
+		
 		if (!configFile.exists()) {
 			try {
 				PluginConfiguration.save(configFile);
@@ -72,6 +75,7 @@ public class WorkersAndWarriorsPlugin extends JavaPlugin {
 		PluginCommands.getExecutor();
 		SessionCommands.getExecutor();
 		PlayerCommands.getExecutor();
+		TeamCommands.getExecutor();
 	}
 	
 	@Override

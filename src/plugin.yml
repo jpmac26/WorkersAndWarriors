@@ -21,3 +21,8 @@ commands:
         usage: /wwplayer <Command> <Args>
         description: This command is used to interact with WorkersAndWarriors' Player commands
         aliases: wwp
+    wwteam:
+        permission: WWAdmin
+        usage: /wwteam <Command> <Args>
+        description: This command sets up teams for a session.
+        aliases: wwt
