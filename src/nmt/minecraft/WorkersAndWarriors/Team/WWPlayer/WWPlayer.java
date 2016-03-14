@@ -1,7 +1,10 @@
 package nmt.minecraft.WorkersAndWarriors.Team.WWPlayer;
 
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
+import org.bukkit.entity.Player;
 
 /**
  * Player wrapper class.
@@ -63,7 +66,19 @@ public class WWPlayer {
 	 * @param spawnLocation
 	 */
 	public void spawn(Location spawnLocation) {
-		
+		// Check if player is still online
+		if (!this.getPlayer().isOnline()) {
+			// Player is not online
+			System.out.println("Error! Attempted to spawn Offline player: " + this.getPlayer().getName());
+			return;
+		}
+		Player p = this.getPlayer().getPlayer();
+		// Set location
+		p.teleport(spawnLocation);
+		p.setGameMode(GameMode.SURVIVAL);
+		p.setHealth(20);
+		p.setTicksLived(0);
+		p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_DEATH, 1.0f, 1.0f);
 	}
 	
 	/**
