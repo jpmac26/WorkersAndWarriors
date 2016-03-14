@@ -40,6 +40,12 @@ public class GameSession {
 	
 	private Set<Team> teams;
 	
+	private int maxTeams;
+	
+	private int protectionSize;
+	
+	private int maxTeamBlock;
+	
 	/**
 	 * Lobby location for all players in this session.
 	 */
@@ -98,6 +104,30 @@ public class GameSession {
 		return sessionLobby;
 	}
 	
+	public int getMaxTeams() {
+		return maxTeams;
+	}
+
+	public void setMaxTeams(int maxTeams) {
+		this.maxTeams = maxTeams;
+	}
+
+	public int getProtectionSize() {
+		return protectionSize;
+	}
+
+	public void setProtectionSize(int protectionSize) {
+		this.protectionSize = protectionSize;
+	}
+
+	public int getMaxTeamBlock() {
+		return maxTeamBlock;
+	}
+
+	public void setMaxTeamBlock(int maxTeamBlock) {
+		this.maxTeamBlock = maxTeamBlock;
+	}
+
 	/**
 	 * Adds the given team to the session.<br />
 	 * Please note that at the time of this comment, generic teams aren't supported. Teams are staticly

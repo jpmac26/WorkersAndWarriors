@@ -1,13 +1,17 @@
 package nmt.minecraft.WorkersAndWarriors.Config;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.material.MaterialData;
+import org.bukkit.util.Vector;
 
 import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
 import nmt.minecraft.WorkersAndWarriors.Team.Team;
@@ -31,7 +35,10 @@ public class TeamConfiguration implements ConfigurationSerializable {
 		BLOCK("block.type", "WOOL"),
 		BLOCKDATA("block.data", 14),
 		GOAL("goal.type", "REDSTONE_BLOCK"),
-		GOALDATA("goal.data", 0);
+		GOALDATA("goal.data", 0),
+		SPAWNPOINTS("spawnpoints", new ArrayList<Location>(1)),
+		GOALPOINT1("goal.point1", new Vector(0,0,0)),
+		GOALPOINT2("goal.point2", new Vector(0,0,0));;
 		
 		private String key;
 		
@@ -63,6 +70,12 @@ public class TeamConfiguration implements ConfigurationSerializable {
 	
 	private MaterialData goal;
 	
+	private List<Location> spawns;
+	
+	private Vector goalPoint1;
+	
+	private Vector goalPoint2;
+	
 	@SuppressWarnings("deprecation")
 	@Override
 	public Map<String, Object> serialize() {
@@ -77,10 +90,14 @@ public class TeamConfiguration implements ConfigurationSerializable {
 		map.put(Key.GOAL.getKey(), goal.getItemType().name());
 		map.put(Key.GOALDATA.getKey(), goal.getData());
 		
+		map.put(Key.SPAWNPOINTS.getKey(), spawns);
+		map.put(Key.GOALPOINT1.getKey(), goalPoint1);
+		map.put(Key.GOALPOINT2.getKey(), goalPoint2);
+		
 		return map;
 	}
 	
-	@SuppressWarnings("deprecation")
+	@SuppressWarnings({ "deprecation", "unchecked" })
 	public static TeamConfiguration valueOf(Map<String, Object> map) {
 		
 		if (map == null) {
@@ -137,6 +154,10 @@ public class TeamConfiguration implements ConfigurationSerializable {
 				Material.valueOf((String) map.get(Key.GOAL)),
 				(byte) data		
 				);
+		
+		config.goalPoint1 = (Vector) map.get(Key.GOALPOINT1.getKey());
+		config.goalPoint2 = (Vector) map.get(Key.GOALPOINT2.getKey());
+		config.spawns = (List<Location>) map.get(Key.SPAWNPOINTS.getKey());
 		
 		return config;
 	}

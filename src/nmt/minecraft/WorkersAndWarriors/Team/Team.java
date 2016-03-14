@@ -10,7 +10,6 @@ import org.bukkit.material.MaterialData;
 import org.bukkit.util.Vector;
 
 import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
-import nmt.minecraft.WorkersAndWarriors.Config.PluginConfiguration;
 import nmt.minecraft.WorkersAndWarriors.IO.ChatFormat;
 import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
 
@@ -272,7 +271,7 @@ public class Team {
 	 * Prepares and spawns all players within this team at a random spawn point.<br />
 	 * Takes care of first-spawn stuff, like distributing blocks
 	 */
-	public void spawnTeam() {
+	public void spawnTeam(int teamBlockCount) {
 		int quot, rem, bteamsize = 0;
 		
 		for (WWPlayer player : players) {
@@ -287,8 +286,8 @@ public class Team {
 			quot = 0;
 			rem = 0;
 		} else {
-			quot = PluginConfiguration.config.getBlockCount() / bteamsize;
-			rem = PluginConfiguration.config.getBlockCount() % bteamsize;
+			quot = teamBlockCount / bteamsize;
+			rem = teamBlockCount % bteamsize;
 		}
 		
 		for (WWPlayer player : players) {

@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -30,13 +29,9 @@ public class PluginConfiguration {
 	public enum Key {
 		
 		VERSION("version", 1.00),
-		TEAM("teams", new LinkedList<TeamConfiguration>()),
-		FLAGPROTECTSIZE("flagzone.size", 3),
 		FLAGISPROTECTED("flagzone.protected", true),
-		TEAMBLOCKS("teamblocks", 30),
 		POINTSTOWIN("points", 10),
-		RESPAWNTIME("respawn.time", 3),
-		TEAMMAX("numberofteams", 2);
+		RESPAWNTIME("respawn.time", 3);
 		
 		private String key;
 		
@@ -200,26 +195,6 @@ public class PluginConfiguration {
 	
 	public boolean getFlagAreaProtected() {
 		return (Boolean) getValue(Key.FLAGISPROTECTED);
-	}
-	
-	public int getFlagAreaSize() {
-		return (Integer) getValue(Key.FLAGPROTECTSIZE);
-	}
-	
-	/**
-	 * Returns the maximum number of teams allowed by the plugin configuration.
-	 * @return
-	 */
-	public int getMaxTeams() {
-		return (Integer) getValue(Key.TEAMMAX);
-	}
-	
-	/**
-	 * Returns the maximum number of ablock a team should have.
-	 * @return
-	 */
-	public int getBlockCount() {
-		return (Integer) getValue(Key.TEAMBLOCKS);
 	}
 	
 	/**
