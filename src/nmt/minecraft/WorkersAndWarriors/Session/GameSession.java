@@ -305,7 +305,9 @@ public class GameSession {
 		return newPlayer;
 	}
 	
-	
+	public State getState() {
+		return this.state;
+	}
 	
 	
 	

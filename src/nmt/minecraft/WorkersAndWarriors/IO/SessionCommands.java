@@ -13,6 +13,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
 import nmt.minecraft.WorkersAndWarriors.Config.SessionConfiguration;
 import nmt.minecraft.WorkersAndWarriors.Session.GameSession;
+import nmt.minecraft.WorkersAndWarriors.Team.Team;
 
 public class SessionCommands implements CommandExecutor {
 
@@ -278,7 +279,61 @@ public class SessionCommands implements CommandExecutor {
 	}
 	
 	private boolean infoCommand(CommandSender sender, String[] args) {
-		return false;
+		//wws info [session]
+		if (args.length != 2 || args[1].isEmpty()) {
+			sender.sendMessage(
+					ChatFormat.USAGE + "Usage: /wws info " + ChatFormat.SESSION.wrap("[session]"));
+			return true;
+		}
+		
+		String name = args[1];
+		if (WorkersAndWarriorsPlugin.plugin.getSession(name) == null) {
+			sender.sendMessage(ChatFormat.ERROR + "Unable to locate session " + ChatFormat.SESSION.wrap(name));
+			sender.sendMessage(
+					ChatFormat.USAGE + "Usage: /wws info " + ChatFormat.SESSION.wrap("[session]"));
+			return true;
+		}
+		GameSession session = WorkersAndWarriorsPlugin.plugin.getSession(name);
+				
+		/*
+		 * Session - State
+		 * Players: Total: #    Unsorted: #
+		 * Teams: [list of teams]
+		 * Session Lobby: [set/unset]
+		 * Protection Size: #
+		 * Team Block Limit: #
+		 * For more information about a team, type /wwt info [team]
+		 */
+		
+		sender.sendMessage(ChatFormat.SESSION + session.getName() + " - " 
+				+ ChatFormat.SESSION.wrap(session.getState().name()));
+		sender.sendMessage(ChatFormat.INFO + "Players: "
+				+ ChatFormat.SUCCESS + session.getAllPlayers().size() + " total, "
+				+ ChatFormat.WARNING.wrap(session.getUnsortedPlayers().size() + " unsorted"));
+		
+		String teamLine = ChatFormat.INFO + "Teams:";
+		if (session.getTeams() == null) {
+			teamLine += ChatFormat.ERROR.wrap(" ERROR!");
+		} else if (session.getTeams().isEmpty()) {
+			teamLine += ChatFormat.WARNING.wrap(" None!");
+		} else {
+			teamLine += ChatFormat.TEAM;
+			for (Team t : session.getTeams()) {
+				teamLine += "  " + t.getTeamName();
+			}
+		}
+		sender.sendMessage(teamLine);
+		
+		sender.sendMessage(ChatFormat.INFO + "Session Lobby: " + 
+				session.getLobbyLocation() == null ? ChatFormat.WARNING.wrap("unset")
+												   : ChatFormat.SUCCESS.wrap("set")
+				);
+		sender.sendMessage(ChatFormat.INFO + "Protection Size: " + ChatFormat.SUCCESS.wrap("" + session.getProtectionSize()));
+		sender.sendMessage(ChatFormat.INFO + "Team Block Limit: " + ChatFormat.SUCCESS.wrap("" + session.getMaxTeamBlock()));
+		sender.sendMessage(ChatFormat.INFO + "For more information about a team, type "
+				+ ChatFormat.IMPORTANT + "/wwt info " + ChatFormat.TEAM.wrap("[team]"));
+			
+		return true;
 	}
 	
 	private boolean listCommand(CommandSender sender, String[] args) {
