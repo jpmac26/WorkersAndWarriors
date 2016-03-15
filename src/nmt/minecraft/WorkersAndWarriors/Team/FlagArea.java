@@ -27,6 +27,24 @@ public class FlagArea {
 				);
 	}
 	
+	public FlagArea(Vector center, int radius) {
+		if (center == null) {
+			center = new Vector(0,0,0);
+		}
+		
+		if (radius == 0) {
+			return;
+		}
+		
+		if (radius < 0) {
+			radius = -radius;
+		}
+		
+		Vector diff = new Vector(radius, radius, radius);
+		this.max = center.clone().add(diff);
+		this.min = center.clone().add(diff.multiply(-1));
+	}
+	
 	/**
 	 * Checks whether a given location is in the bounds of this area.<br />
 	 * Note, however, that <b>the Flag Area doesn't hold world information</b>. This

@@ -37,8 +37,7 @@ public class TeamConfiguration implements ConfigurationSerializable {
 		GOAL("goal.type", "REDSTONE_BLOCK"),
 		GOALDATA("goal.data", 0),
 		SPAWNPOINTS("spawnpoints", new ArrayList<Location>(1)),
-		GOALPOINT1("goal.point1", new Vector(0,0,0)),
-		GOALPOINT2("goal.point2", new Vector(0,0,0));;
+		GOALPOINT("goal.center", new Vector(0,0,0));
 		
 		private String key;
 		
@@ -72,9 +71,7 @@ public class TeamConfiguration implements ConfigurationSerializable {
 	
 	private List<Location> spawns;
 	
-	private Vector goalPoint1;
-	
-	private Vector goalPoint2;
+	private Vector goalPoint;
 	
 	@SuppressWarnings("deprecation")
 	@Override
@@ -91,8 +88,7 @@ public class TeamConfiguration implements ConfigurationSerializable {
 		map.put(Key.GOALDATA.getKey(), goal.getData());
 		
 		map.put(Key.SPAWNPOINTS.getKey(), spawns);
-		map.put(Key.GOALPOINT1.getKey(), goalPoint1);
-		map.put(Key.GOALPOINT2.getKey(), goalPoint2);
+		map.put(Key.GOALPOINT.getKey(), goalPoint);
 		
 		return map;
 	}
@@ -155,8 +151,7 @@ public class TeamConfiguration implements ConfigurationSerializable {
 				(byte) data		
 				);
 		
-		config.goalPoint1 = (Vector) map.get(Key.GOALPOINT1.getKey());
-		config.goalPoint2 = (Vector) map.get(Key.GOALPOINT2.getKey());
+		config.goalPoint = (Vector) map.get(Key.GOALPOINT.getKey());
 		config.spawns = (List<Location>) map.get(Key.SPAWNPOINTS.getKey());
 		
 		return config;
@@ -206,20 +201,12 @@ public class TeamConfiguration implements ConfigurationSerializable {
 		this.spawns = spawns;
 	}
 
-	public Vector getGoalPoint1() {
-		return goalPoint1;
+	public Vector getGoalPoint() {
+		return goalPoint;
 	}
 
-	public void setGoalPoint1(Vector goalPoint1) {
-		this.goalPoint1 = goalPoint1;
-	}
-
-	public Vector getGoalPoint2() {
-		return goalPoint2;
-	}
-
-	public void setGoalPoint2(Vector goalPoint2) {
-		this.goalPoint2 = goalPoint2;
+	public void setGoalPoint(Vector goalPoint) {
+		this.goalPoint = goalPoint;
 	}
 
 	public TeamConfiguration(Team team) {

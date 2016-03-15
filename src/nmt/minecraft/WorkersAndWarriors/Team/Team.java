@@ -115,12 +115,21 @@ public class Team {
 	 * @param point1
 	 * @param point2
 	 */
+	@Deprecated
 	public void setFlagArea(Vector point1, Vector point2) {
 		if (point1 == null || point2 == null) {
 			return;
 		}
 		
 		flagArea = new FlagArea(point1, point2);
+	}
+	
+	public void setFlagArea(Vector center, int radius) {
+		if (center == null) {
+			return;
+		}
+		
+		flagArea = new FlagArea(center, radius);
 	}
 	
 	/**

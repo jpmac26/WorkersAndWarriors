@@ -85,23 +85,6 @@ public abstract class SessionConfiguration {
 		}
 		
 
-		Team team;
-		for (TeamConfiguration tf : teams) {
-			team = new Team();
-			if (!tf.getSpawns().isEmpty()) {
-				for (Location spawn : tf.getSpawns()) {
-					team.addSpawnPoint(spawn);
-				}
-			}
-			
-			team.setBlockType(tf.getBlock());
-			team.setGoalType(tf.getGoal());
-			team.setTeamColor(tf.getColor());
-			team.setTeamName(tf.getName());
-			team.setFlagArea(tf.getGoalPoint1(), tf.getGoalPoint2());
-			
-			session.addTeam(team);
-		}
 		
 		if (config.contains(Key.TEAMBLOCKS.getKey()))
 		try {
@@ -115,6 +98,24 @@ public abstract class SessionConfiguration {
 			session.setProtectionSize(config.getInt(Key.FLAGPROTECTSIZE.getKey()));
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+
+		Team team;
+		for (TeamConfiguration tf : teams) {
+			team = new Team();
+			if (!tf.getSpawns().isEmpty()) {
+				for (Location spawn : tf.getSpawns()) {
+					team.addSpawnPoint(spawn);
+				}
+			}
+			
+			team.setBlockType(tf.getBlock());
+			team.setGoalType(tf.getGoal());
+			team.setTeamColor(tf.getColor());
+			team.setTeamName(tf.getName());
+			team.setFlagArea(tf.getGoalPoint(), session.getProtectionSize());
+			
+			session.addTeam(team);
 		}
 		
 		
