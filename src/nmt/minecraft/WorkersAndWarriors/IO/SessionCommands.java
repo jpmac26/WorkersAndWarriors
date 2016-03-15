@@ -22,7 +22,9 @@ public class SessionCommands implements CommandExecutor {
 		INFO("info"),
 		LIST("list"),
 		STOPALL("stopall"),
-		SAVETEMPLATE("save");
+		SAVETEMPLATE("save"),
+		SETBLOCKLIMIT("setblocklimit"),
+		SETFLAGPROTECTIONRADIUS("setgoalradius");
 		
 		private String commandName;
 		

@@ -3,22 +3,14 @@ package nmt.minecraft.WorkersAndWarriors.Config;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.util.Vector;
 
 import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
-import nmt.minecraft.WorkersAndWarriors.Config.TeamConfiguration.Key;
 import nmt.minecraft.WorkersAndWarriors.Session.GameSession;
 import nmt.minecraft.WorkersAndWarriors.Team.Team;
 
@@ -35,7 +27,6 @@ public abstract class SessionConfiguration {
 	private enum Key {
 		SESSION_LOBBY("session.lobby"),
 		TEAM("teams"),
-		TEAMMAX("maxteams"),
 		FLAGPROTECTSIZE("flagzone.size"),
 		TEAMBLOCKS("teamblocks"),;
 		
@@ -80,24 +71,8 @@ public abstract class SessionConfiguration {
 		YamlConfiguration config = new YamlConfiguration();
 		config.load(sessionFile);
 		
-		if (!config.contains(Key.TEAMMAX.getKey())) {
-			throw new InvalidConfigurationException("Undefined number of teams defined in session config");
-		}
-		
-		if (!config.contains(Key.TEAM.getKey())) {
-			throw new InvalidConfigurationException("Team definitions were not found");
-		}
-		
 		@SuppressWarnings("unchecked")
 		List<TeamConfiguration> teams = (List<TeamConfiguration>) config.getList(Key.TEAM.getKey());
-		
-		int teamMax = config.getInt(Key.TEAMMAX.getKey());
-		int teamNum = teams.size();
-		
-		//check for size issues
-		if (teamMax > teamNum) {
-			throw new InvalidConfigurationException("Team maximum exceeds the number of defined teams");
-		}
 		
 		GameSession session = new GameSession(sessionName);
 		
@@ -110,14 +85,38 @@ public abstract class SessionConfiguration {
 		}
 		
 
-		Team team1, team2;
+		Team team;
+		for (TeamConfiguration tf : teams) {
+			team = new Team();
+			if (!tf.getSpawns().isEmpty()) {
+				for (Location spawn : tf.getSpawns()) {
+					team.addSpawnPoint(spawn);
+				}
+			}
+			
+			team.setBlockType(tf.getBlock());
+			team.setGoalType(tf.getGoal());
+			team.setTeamColor(tf.getColor());
+			team.setTeamName(tf.getName());
+			team.setFlagArea(tf.getGoalPoint1(), tf.getGoalPoint2());
+			
+			session.addTeam(team);
+		}
 		
-		//Set up team teams
-		team1 = loadTeam1(config);
-		team2 = loadTeam2(config);
+		if (config.contains(Key.TEAMBLOCKS.getKey()))
+		try {
+			session.setMaxTeamBlock(config.getInt(Key.TEAMBLOCKS.getKey()));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
-		session.addTeam(team1);
-		session.addTeam(team2);
+		if (config.contains(Key.FLAGPROTECTSIZE.getKey()))
+		try {
+			session.setProtectionSize(config.getInt(Key.FLAGPROTECTSIZE.getKey()));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		
 		return session;
 		
@@ -138,30 +137,25 @@ public abstract class SessionConfiguration {
 		}
 		
 		YamlConfiguration config = new YamlConfiguration();
-		Team team1, team2;
-		team1 = session.getTeam(PluginConfiguration.config.getTeam1Name());
-		team2 = session.getTeam(PluginConfiguration.config.getTeam2Name());
 		
-		if (team1 == null || team2 == null) {
-			WorkersAndWarriorsPlugin.plugin.getLogger().warning("Unable to find defined teams when trying "
-					+ "to save session template. Aborting save!");
-			return;
+		if (!session.getTeams().isEmpty()) {
+			
+			//get configuration for each of these and throw out as a list
+			List<TeamConfiguration> confs = new LinkedList<>();
+			for (Team team : session.getTeams()) {
+				confs.add(
+						new TeamConfiguration(team)
+						);
+			}
+			
+			config.set(Key.TEAM.getKey(), confs);
 		}
+		
+		config.set(Key.FLAGPROTECTSIZE.getKey(), session.getProtectionSize());
+		
+		config.set(Key.TEAMBLOCKS.getKey(), session.getMaxTeamBlock());
 		
 		config.set(Key.SESSION_LOBBY.getKey(), session.getLobbyLocation());
-		
-		if (team1.getFlagArea() != null) {
-			config.set(Key.TEAM1_GOAL_POINT1.getKey(), team1.getFlagArea().getMin());
-			config.set(Key.TEAM1_GOAL_POINT2.getKey(), team1.getFlagArea().getMax());
-		}
-		
-		if (team2.getFlagArea() != null) {
-			config.set(Key.TEAM2_GOAL_POINT1.getKey(), team2.getFlagArea().getMin());
-			config.set(Key.TEAM2_GOAL_POINT2.getKey(), team2.getFlagArea().getMax());
-		}
-		
-		config.set(Key.TEAM1_SPAWNPOINTS.getKey(), team1.getSpawnPoints());
-		config.set(Key.TEAM2_SPAWNPOINTS.getKey(), team2.getSpawnPoints());
 		
 		File saveFile = new File(getTemplateDirectory(), templateName);
 		
@@ -169,87 +163,7 @@ public abstract class SessionConfiguration {
 		
 	}
 	
-	@SuppressWarnings("unchecked")
-	private static Team loadTeam1(YamlConfiguration config) {
-		Team team1;
-		Vector l1, l2;
-		if (config.contains(Key.TEAM1_GOAL_POINT1.getKey()) && config.contains(Key.TEAM1_GOAL_POINT2.getKey())) {
-			try {
-				l1 = (Vector) config.get(Key.TEAM1_GOAL_POINT1.getKey());
-				l2 = (Vector) config.get(Key.TEAM1_GOAL_POINT2.getKey());
-				team1 = new Team(PluginConfiguration.config.getTeam1Name(), 
-						PluginConfiguration.config.getTeam1Color(),
-						l1,
-						l2
-						);
-			} catch (Exception e) {
-				e.printStackTrace();
-				team1 = new Team(PluginConfiguration.config.getTeam1Name(), PluginConfiguration.config.getTeam1Color());
-			}
-		} else {
-			team1 = new Team(PluginConfiguration.config.getTeam1Name(), PluginConfiguration.config.getTeam1Color());
-		}
-		
-		//Try and get a list of spawn locations for team 1
-		if (config.contains(Key.TEAM1_SPAWNPOINTS.getKey())) {
-			List<Location> locs = null;
-			
-			try {
-				locs = (List<Location>) config.getList(Key.TEAM1_SPAWNPOINTS.getKey());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			
-			if (locs != null && !locs.isEmpty()) {
-				for (Location l : locs) {
-					team1.addSpawnPoint(l);
-				}
-			}
-		}
-		
-		return team1;
-	}
 	
-	@SuppressWarnings("unchecked")
-	private static Team loadTeam2(YamlConfiguration config) {
-		Team team2;
-		Vector l1, l2;
-		if (config.contains(Key.TEAM2_GOAL_POINT1.getKey()) && config.contains(Key.TEAM2_GOAL_POINT2.getKey())) {
-			try {
-				l1 = (Vector) config.get(Key.TEAM2_GOAL_POINT1.getKey());
-				l2 = (Vector) config.get(Key.TEAM2_GOAL_POINT2.getKey());
-				team2 = new Team(PluginConfiguration.config.getTeam2Name(), 
-						PluginConfiguration.config.getTeam2Color(),
-						l1,
-						l2
-						);
-			} catch (Exception e) {
-				e.printStackTrace();
-				team2 = new Team(PluginConfiguration.config.getTeam2Name(), PluginConfiguration.config.getTeam2Color());
-			}
-		} else {
-			team2 = new Team(PluginConfiguration.config.getTeam2Name(), PluginConfiguration.config.getTeam2Color());
-		}
-		
-		//Try and get a list of spawn locations for team 1
-		if (config.contains(Key.TEAM2_SPAWNPOINTS.getKey())) {
-			List<Location> locs = null;
-			
-			try {
-				locs = (List<Location>) config.getList(Key.TEAM2_SPAWNPOINTS.getKey());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			
-			if (locs != null && !locs.isEmpty()) {
-				for (Location l : locs) {
-					team2.addSpawnPoint(l);
-				}
-			}
-		}
-		
-		return team2;
-	}
 	
 	public static File getTemplateDirectory() {
 		if (sessionDir == null) {

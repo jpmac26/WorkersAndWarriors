@@ -198,6 +198,30 @@ public class TeamConfiguration implements ConfigurationSerializable {
 		
 	}
 	
+	public List<Location> getSpawns() {
+		return spawns;
+	}
+
+	public void setSpawns(List<Location> spawns) {
+		this.spawns = spawns;
+	}
+
+	public Vector getGoalPoint1() {
+		return goalPoint1;
+	}
+
+	public void setGoalPoint1(Vector goalPoint1) {
+		this.goalPoint1 = goalPoint1;
+	}
+
+	public Vector getGoalPoint2() {
+		return goalPoint2;
+	}
+
+	public void setGoalPoint2(Vector goalPoint2) {
+		this.goalPoint2 = goalPoint2;
+	}
+
 	public TeamConfiguration(Team team) {
 		this.name = team.getTeamName();
 		this.color = team.getTeamColor();
