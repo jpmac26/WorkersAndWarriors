@@ -64,7 +64,6 @@ public class DeathListener implements Listener {
 		// Player's should NOT 'die' by Minecraft definition, we 
 		// want to handle death by our own rules
 		e.setCancelled(true);
-		p.setHealth(20);
 		
 		// Obtain WW player for respawn behavior
 		WWPlayer wPlayer = s.getPlayer(p);
