@@ -8,6 +8,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
+import nmt.minecraft.WorkersAndWarriors.Session.GameSession;
+import nmt.minecraft.WorkersAndWarriors.Team.Team;
 
 public class TeamCommands implements CommandExecutor {
 
@@ -101,8 +103,33 @@ public class TeamCommands implements CommandExecutor {
 	}
 	
 	private boolean createCommand(CommandSender sender, String[] args) {
+		//wwt create [session] [team]
+		if (args.length != 3) {
+			sender.sendMessage(ChatFormat.USAGE + "Usage: /wwt " + SubCommand.CREATE.getName() 
+					+ ChatFormat.SESSION + " [session] " + ChatFormat.TEAM.wrap("[team]"));
+			return true;
+		}
 		
-		WorkersAndWarriorsPlugin.plugin.onReload();		
+		GameSession session = fetchSession(sender, args[1]);
+		if (session == null) {
+			sender.sendMessage(ChatFormat.USAGE + "Usage: /wwt " + SubCommand.CREATE.getName() 
+					+ ChatFormat.SESSION + " [session] " + ChatFormat.TEAM.wrap("[team]"));
+			return true;			
+		}
+		
+		if (session.getTeam(args[2]) != null) {
+			sender.sendMessage(ChatFormat.ERROR.wrap("A team with that name already is in that session!"));
+			sender.sendMessage(ChatFormat.USAGE + "Usage: /wwt " + SubCommand.CREATE.getName() 
+					+ ChatFormat.SESSION + " [session] " + ChatFormat.TEAM.wrap("[team]"));
+			return true;
+		}
+		
+		Team team = new Team(args[2]);
+		session.addTeam(team);
+		
+		sender.sendMessage(ChatFormat.SUCCESS + "Team " + ChatFormat.TEAM + args[2]
+				+ ChatFormat.SUCCESS + " added to " + ChatFormat.SESSION.wrap(args[1]));
+	
 		return true;
 	}
 	
@@ -128,6 +155,14 @@ public class TeamCommands implements CommandExecutor {
 	
 	private boolean setColorCommand(CommandSender sender, String[] args) {
 		return false;
+	}
+	
+	private GameSession fetchSession(CommandSender sender, String name) {
+		if (WorkersAndWarriorsPlugin.plugin.getSession(name) == null) {
+			sender.sendMessage(ChatFormat.ERROR + "Unable to locate session " + ChatFormat.SESSION.wrap(name));
+			return null;
+		}
+		return WorkersAndWarriorsPlugin.plugin.getSession(name);
 	}
 
 }
