@@ -309,8 +309,8 @@ public class SessionCommands implements CommandExecutor {
 		 * For more information about a team, type /wwt info [team]
 		 */
 		
-		sender.sendMessage(ChatFormat.SESSION + session.getName() + " - " 
-				+ ChatFormat.SESSION.wrap(session.getState().name()));
+		sender.sendMessage(ChatFormat.SESSION.wrap(session.getName()) + " - " 
+				+ ChatFormat.SUCCESS.wrap(session.getState().name()));
 		sender.sendMessage(ChatFormat.INFO + "Players: "
 				+ ChatFormat.SUCCESS + session.getAllPlayers().size() + " total, "
 				+ ChatFormat.WARNING.wrap(session.getUnsortedPlayers().size() + " unsorted"));
@@ -329,8 +329,8 @@ public class SessionCommands implements CommandExecutor {
 		sender.sendMessage(teamLine);
 		
 		sender.sendMessage(ChatFormat.INFO + "Session Lobby: " + 
-				session.getLobbyLocation() == null ? ChatFormat.WARNING.wrap("unset")
-												   : ChatFormat.SUCCESS.wrap("set")
+				(session.getLobbyLocation() == null ? ChatFormat.WARNING.wrap("unset")
+												   : ChatFormat.SUCCESS.wrap("set"))
 				);
 		sender.sendMessage(ChatFormat.INFO + "Protection Size: " + ChatFormat.SUCCESS.wrap("" + session.getProtectionSize()));
 		sender.sendMessage(ChatFormat.INFO + "Team Block Limit: " + ChatFormat.SUCCESS.wrap("" + session.getMaxTeamBlock()));
