@@ -123,7 +123,8 @@ public class SessionCommands implements CommandExecutor {
 		//wws create [name]
 		if (args.length != 2 || args[1].isEmpty()) {
 			sender.sendMessage(
-					ChatFormat.USAGE + "Usage: /wws create " + ChatFormat.SESSION.wrap("[name]"));
+					ChatFormat.USAGE + "Usage: /wws " + SubCommand.CREATE.getName() + " " 
+					+ ChatFormat.SESSION.wrap("[name]"));
 			return true;
 		}
 		
@@ -144,7 +145,7 @@ public class SessionCommands implements CommandExecutor {
 		//wws load [template name] [session name]
 		if (args.length != 3 || args[2].isEmpty()) {
 			sender.sendMessage(
-					ChatFormat.USAGE + "Usage: /wws load " 
+					ChatFormat.USAGE + "Usage: /wws " + SubCommand.LOADTEMPLATE.getName() + " " 
 							+ ChatFormat.TEMPLATE + "[template] " + ChatFormat.SESSION.wrap("[name]"));
 			return true;
 		}
@@ -187,7 +188,8 @@ public class SessionCommands implements CommandExecutor {
 		//wws open [session]
 		if (args.length != 2 || args[1].isEmpty()) {
 			sender.sendMessage(
-					ChatFormat.USAGE + "Usage: /wws open " + ChatFormat.SESSION.wrap("[session]"));
+					ChatFormat.USAGE + "Usage: /wws " + SubCommand.OPEN.getName() + " " 
+						+ ChatFormat.SESSION.wrap("[session]"));
 			return true;
 		}
 		
@@ -195,7 +197,8 @@ public class SessionCommands implements CommandExecutor {
 		if (WorkersAndWarriorsPlugin.plugin.getSession(name) == null) {
 			sender.sendMessage(ChatFormat.ERROR + "Unable to locate session " + ChatFormat.SESSION.wrap(name));
 			sender.sendMessage(
-					ChatFormat.USAGE + "Usage: /wws open " + ChatFormat.SESSION.wrap("[session]"));
+					ChatFormat.USAGE + "Usage: /wws " + SubCommand.OPEN.getName() + " " 
+						+ ChatFormat.SESSION.wrap("[session]"));
 			return true;
 		}
 		GameSession session = WorkersAndWarriorsPlugin.plugin.getSession(name);
@@ -203,7 +206,7 @@ public class SessionCommands implements CommandExecutor {
 		if (!session.open()) {
 			sender.sendMessage(ChatFormat.ERROR.wrap("Session not opened!"));
 			sender.sendMessage(ChatFormat.INFO + "This is usually because the session isn't ready to open. "
-					+ "Try using " + ChatFormat.IMPORTANT.wrap("/wws info name"));
+					+ "Try using " + ChatFormat.IMPORTANT.wrap("/wws " + SubCommand.INFO.getName() + " name"));
 			return true;
 		}
 		sender.sendMessage(ChatFormat.SUCCESS + "The session " + ChatFormat.SESSION + name 
@@ -216,7 +219,7 @@ public class SessionCommands implements CommandExecutor {
 		//wws start [session]
 		if (args.length != 2 || args[1].isEmpty()) {
 			sender.sendMessage(
-					ChatFormat.USAGE + "Usage: /wws start " + ChatFormat.SESSION.wrap("[session]"));
+					ChatFormat.USAGE + "Usage: /wws " + SubCommand.START.getName() + " " + ChatFormat.SESSION.wrap("[session]"));
 			return true;
 		}
 		
@@ -224,7 +227,7 @@ public class SessionCommands implements CommandExecutor {
 		if (WorkersAndWarriorsPlugin.plugin.getSession(name) == null) {
 			sender.sendMessage(ChatFormat.ERROR + "Unable to locate session " + ChatFormat.SESSION.wrap(name));
 			sender.sendMessage(
-					ChatFormat.USAGE + "Usage: /wws start " + ChatFormat.SESSION.wrap("[session]"));
+					ChatFormat.USAGE + "Usage: /wws " + SubCommand.START.getName() + " " + ChatFormat.SESSION.wrap("[session]"));
 			return true;
 		}
 		GameSession session = WorkersAndWarriorsPlugin.plugin.getSession(name);
@@ -232,7 +235,7 @@ public class SessionCommands implements CommandExecutor {
 		if (!session.start()) {
 			sender.sendMessage(ChatFormat.ERROR.wrap("Session not started!"));
 			sender.sendMessage(ChatFormat.INFO + "This is usually because the session isn't ready to start. "
-					+ "Try using " + ChatFormat.IMPORTANT.wrap("/wws info name"));
+					+ "Try using " + ChatFormat.IMPORTANT.wrap("/wws " + SubCommand.INFO.getName() + " name"));
 			return true;
 		}
 		sender.sendMessage(ChatFormat.SUCCESS + "The session " + ChatFormat.SESSION + name 
@@ -245,7 +248,7 @@ public class SessionCommands implements CommandExecutor {
 		//wws stop [session] {force}
 		if ((args.length != 2 && args.length != 3) || args[1].isEmpty()) {
 			sender.sendMessage(
-					ChatFormat.USAGE + "Usage: /wws stop " + ChatFormat.SESSION + "[session]"
+					ChatFormat.USAGE + "Usage: /wws " + SubCommand.STOP.getName() + " " + ChatFormat.SESSION + "[session]"
 						+ ChatFormat.USAGE.wrap(" {force?}"));
 			return true;
 		}
@@ -261,7 +264,7 @@ public class SessionCommands implements CommandExecutor {
 		if (WorkersAndWarriorsPlugin.plugin.getSession(name) == null) {
 			sender.sendMessage(ChatFormat.ERROR + "Unable to locate session " + ChatFormat.SESSION.wrap(name));
 			sender.sendMessage(
-					ChatFormat.USAGE + "Usage: /wws stop " + ChatFormat.SESSION + "[session]"
+					ChatFormat.USAGE + "Usage: /wws " + SubCommand.STOP.getName() + " " + ChatFormat.SESSION + "[session]"
 						+ ChatFormat.USAGE.wrap(" {force?}"));
 			return true;
 		}
@@ -270,7 +273,7 @@ public class SessionCommands implements CommandExecutor {
 		if (!session.stop(force)) {
 			sender.sendMessage(ChatFormat.ERROR.wrap("Session not stopped!"));
 			sender.sendMessage(ChatFormat.INFO + "This is usually because the session isn't ready to start. "
-					+ "Try using " + ChatFormat.IMPORTANT.wrap("/wws info name"));
+					+ "Try using " + ChatFormat.IMPORTANT.wrap("/wws " + SubCommand.INFO.getName() + " name"));
 			return true;
 		}
 		sender.sendMessage(ChatFormat.SUCCESS + "The session " + ChatFormat.SESSION + name 
@@ -291,7 +294,7 @@ public class SessionCommands implements CommandExecutor {
 		if (WorkersAndWarriorsPlugin.plugin.getSession(name) == null) {
 			sender.sendMessage(ChatFormat.ERROR + "Unable to locate session " + ChatFormat.SESSION.wrap(name));
 			sender.sendMessage(
-					ChatFormat.USAGE + "Usage: /wws info " + ChatFormat.SESSION.wrap("[session]"));
+					ChatFormat.USAGE + "Usage: /wws " + SubCommand.INFO.getName() + " " + ChatFormat.SESSION.wrap("[session]"));
 			return true;
 		}
 		GameSession session = WorkersAndWarriorsPlugin.plugin.getSession(name);
@@ -332,14 +335,14 @@ public class SessionCommands implements CommandExecutor {
 		sender.sendMessage(ChatFormat.INFO + "Protection Size: " + ChatFormat.SUCCESS.wrap("" + session.getProtectionSize()));
 		sender.sendMessage(ChatFormat.INFO + "Team Block Limit: " + ChatFormat.SUCCESS.wrap("" + session.getMaxTeamBlock()));
 		sender.sendMessage(ChatFormat.INFO + "For more information about a team, type "
-				+ ChatFormat.IMPORTANT + "/wwt info " + ChatFormat.TEAM.wrap("[team]"));
+				+ ChatFormat.IMPORTANT + "/wwt " + TeamCommands.SubCommand.INFO.getName() + " " + ChatFormat.TEAM.wrap("[team]"));
 			
 		return true;
 	}
 	
 	private boolean listCommand(CommandSender sender, String[] args) {
 		if (args.length != 1) {
-			sender.sendMessage(ChatFormat.USAGE.wrap("Usage: /wws list"));
+			sender.sendMessage(ChatFormat.USAGE.wrap("Usage: /wws " + SubCommand.LIST.getName()));
 			return true;
 		}
 		
@@ -360,7 +363,37 @@ public class SessionCommands implements CommandExecutor {
 	}
 	
 	private boolean stopAllCommand(CommandSender sender, String[] args) {
-		return false;
+		if (args.length != 1 && args.length != 2) {
+			sender.sendMessage(ChatFormat.USAGE.wrap("Usage: /wws " + SubCommand.STOPALL.getName()
+					+ " {force?}"));
+			return true;
+		}
+		
+		boolean force = false;
+		if (args.length == 3) {
+			if (!args[2].isEmpty() && (args[2].equalsIgnoreCase("true") || args[2].equalsIgnoreCase("force"))) {
+				force = true;
+			}
+		}		
+		
+		Set<GameSession> sessions = WorkersAndWarriorsPlugin.plugin.getSessions();
+		
+		if (sessions == null) {
+			sender.sendMessage(ChatFormat.ERROR.wrap("Error!"));
+		} else if (sessions.isEmpty()) {
+			sender.sendMessage(ChatFormat.WARNING.wrap("No sessions!"));
+		} else {
+			for (GameSession s : sessions) {
+				if (!s.stop(force)) {
+					sender.sendMessage(ChatFormat.ERROR + "Unable to stop session " 
+							+ ChatFormat.SESSION.wrap(s.getName()));
+				} else {
+					sender.sendMessage(ChatFormat.SESSION + s.getName()
+							+ ChatFormat.SUCCESS + " stopped successfully!");
+				}
+			}
+		}
+		return true;
 	}
 	
 	private boolean saveCommand(CommandSender sender, String[] args) {
