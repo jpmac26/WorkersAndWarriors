@@ -15,6 +15,7 @@ import nmt.minecraft.WorkersAndWarriors.Team.Team;
 import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
 
 /**
+ * This class handles all player deaths within WorkersAndWarriors.
  * @author williamfong
  *
  */
@@ -70,5 +71,9 @@ public class DeathListener implements Listener {
 		Team wTeam = s.getTeam(p);
 		Location respawnPoint = wTeam.getRandomSpawn();
 		wPlayer.spawn(respawnPoint);
+	}
+	
+	private void msgKiller(Player p, EntityDamageByEntityEvent e) {
+		
 	}
 }
