@@ -8,6 +8,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
+import nmt.minecraft.WorkersAndWarriors.Session.GameSession;
 
 public class SessionCommands implements CommandExecutor {
 
@@ -114,10 +115,19 @@ public class SessionCommands implements CommandExecutor {
 	
 	private boolean createCommand(CommandSender sender, String[] args) {
 		//wws create [name]
-		if (args.length != 2) {
-			sender.sendMessage(ChatFormat.USAGE + "Usage: /wws create " + ChatFormat.SESSION.wrap("[name]"));
-			return false;
+		if (args.length != 2 || args[1].isEmpty()) {
+			sender.sendMessage(
+					ChatFormat.USAGE + "Usage: /wws create " + ChatFormat.SESSION.wrap("[name]"));
+			return true;
 		}
+		
+		String name = args[1];
+		if (WorkersAndWarriorsPlugin.plugin.getSession(name) != null) {
+			sender.sendMessage(ChatFormat.ERROR.wrap("A session with that name already exists!"));
+			return true;
+		}
+		
+		WorkersAndWarriorsPlugin.plugin.addSession(new GameSession(name));
 			
 		return true;
 	}

@@ -3,7 +3,14 @@ package nmt.minecraft.WorkersAndWarriors.IO;
 import org.bukkit.ChatColor;
 
 /**
- * Holds standardized chat formats
+ * Holds standardized chat formats.<br />
+ * Some examples of usage:
+ * <p>
+ * <i>like {@link ChatColor}</i>: ChatFormat.WARNING + "Careful! " + ChatFormat.INFO + "There are words!"
+ * </p>
+ * <p>
+ * <i>using {@link #wrap(String)}</i>: ChatFormat.SUCCESS.wrap("Great job! Success!");
+ * </p>
  * @author Skyler
  *
  */
