@@ -112,6 +112,14 @@ public class SessionCommands implements CommandExecutor {
 				return saveCommand(sender, args);
 			}
 			
+			if (subCmd.equalsIgnoreCase(SubCommand.SETBLOCKLIMIT.getName())) {
+				return setBlockLimitCommand(sender, args);
+			}
+			
+			if (subCmd.equalsIgnoreCase(SubCommand.SETFLAGPROTECTIONRADIUS.getName())) {
+				return setProtectionRadiusCommand(sender, args);
+			}
+			
 			return false;
 		} else {
 			return false;
@@ -272,7 +280,7 @@ public class SessionCommands implements CommandExecutor {
 				
 		if (!session.stop(force)) {
 			sender.sendMessage(ChatFormat.ERROR.wrap("Session not stopped!"));
-			sender.sendMessage(ChatFormat.INFO + "This is usually because the session isn't ready to start. "
+			sender.sendMessage(ChatFormat.INFO + "This is usually because the session cannot safely stop. "
 					+ "Try using " + ChatFormat.IMPORTANT.wrap("/wws " + SubCommand.INFO.getName() + " name"));
 			return true;
 		}
@@ -310,7 +318,7 @@ public class SessionCommands implements CommandExecutor {
 		 */
 		
 		sender.sendMessage(ChatFormat.SESSION.wrap(session.getName()) + " - " 
-				+ ChatFormat.SUCCESS.wrap(session.getState().name()));
+				+ ChatFormat.SUCCESS .wrap(session.getState().name()));
 		sender.sendMessage(ChatFormat.INFO + "Players: "
 				+ ChatFormat.SUCCESS + session.getAllPlayers().size() + " total, "
 				+ ChatFormat.WARNING.wrap(session.getUnsortedPlayers().size() + " unsorted"));
@@ -426,6 +434,76 @@ public class SessionCommands implements CommandExecutor {
 		sender.sendMessage(ChatFormat.SUCCESS + "Session " + ChatFormat.SESSION + name 
 				+ ChatFormat.SUCCESS + " saved to file "
 				+ ChatFormat.TEMPLATE.wrap(template));
+		
+		return true;
+	}
+	
+	private boolean setBlockLimitCommand(CommandSender sender, String[] args) {
+		//wws setBlockLimit [session] [limit]
+		if (args.length != 3 || args[2].isEmpty()) {
+			sender.sendMessage(ChatFormat.USAGE + "Usage: /wwc " + SubCommand.SETBLOCKLIMIT.getName()
+					+ ChatFormat.SESSION + " [session] " + ChatFormat.USAGE.wrap("[limit]"));
+			return true;
+		}
+		
+		String name = args[1];
+		String limit = args[2];
+		
+		if (WorkersAndWarriorsPlugin.plugin.getSession(name) == null) {
+			sender.sendMessage(ChatFormat.ERROR + "Unable to locate session " + ChatFormat.SESSION.wrap(name));
+			sender.sendMessage(ChatFormat.USAGE + "Usage: /wwc " + SubCommand.SETBLOCKLIMIT.getName()
+					+ ChatFormat.SESSION + " [session] " + ChatFormat.USAGE.wrap("[limit]"));
+			return true;
+		}
+		
+		GameSession session = WorkersAndWarriorsPlugin.plugin.getSession(name);
+		int radius;
+		try {
+			radius = Integer.parseInt(limit);
+		} catch (NumberFormatException e) {
+			sender.sendMessage(ChatFormat.ERROR.wrap("Unable to parse integer " + limit));
+			sender.sendMessage(ChatFormat.USAGE + "Usage: /wwc " + SubCommand.SETBLOCKLIMIT.getName()
+					+ ChatFormat.SESSION + " [session] " + ChatFormat.USAGE.wrap("[limit]"));
+			return true;
+		}
+		
+		session.setMaxTeamBlock(radius);
+		sender.sendMessage(ChatFormat.SUCCESS.wrap("Protection radius set to " + radius));
+		
+		return true;
+	}
+	
+	private boolean setProtectionRadiusCommand(CommandSender sender, String[] args) {
+		//wws setProtectRadius [session] [limit]
+		if (args.length != 3 || args[2].isEmpty()) {
+			sender.sendMessage(ChatFormat.USAGE + "Usage: /wwc " + SubCommand.SETFLAGPROTECTIONRADIUS.getName()
+					+ ChatFormat.SESSION + " [session] " + ChatFormat.USAGE.wrap("[limit]"));
+			return true;
+		}
+		
+		String name = args[1];
+		String limit = args[2];
+		
+		if (WorkersAndWarriorsPlugin.plugin.getSession(name) == null) {
+			sender.sendMessage(ChatFormat.ERROR + "Unable to locate session " + ChatFormat.SESSION.wrap(name));
+			sender.sendMessage(ChatFormat.USAGE + "Usage: /wwc " + SubCommand.SETFLAGPROTECTIONRADIUS.getName()
+					+ ChatFormat.SESSION + " [session] " + ChatFormat.USAGE.wrap("[limit]"));
+			return true;
+		}
+		
+		GameSession session = WorkersAndWarriorsPlugin.plugin.getSession(name);
+		int radius;
+		try {
+			radius = Integer.parseInt(limit);
+		} catch (NumberFormatException e) {
+			sender.sendMessage(ChatFormat.ERROR.wrap("Unable to parse integer " + limit));
+			sender.sendMessage(ChatFormat.USAGE + "Usage: /wwc " + SubCommand.SETFLAGPROTECTIONRADIUS.getName()
+					+ ChatFormat.SESSION + " [session] " + ChatFormat.USAGE.wrap("[limit]"));
+			return true;
+		}
+		
+		session.setProtectionSize(radius);
+		sender.sendMessage(ChatFormat.SUCCESS.wrap("Protection radius set to " + radius));
 		
 		return true;
 	}
