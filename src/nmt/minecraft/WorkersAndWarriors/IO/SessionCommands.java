@@ -182,15 +182,99 @@ public class SessionCommands implements CommandExecutor {
 	}
 	
 	private boolean openCommand(CommandSender sender, String[] args) {
-		return false;
+		//wws open [session]
+		if (args.length != 2 || args[1].isEmpty()) {
+			sender.sendMessage(
+					ChatFormat.USAGE + "Usage: /wws open " + ChatFormat.SESSION.wrap("[session]"));
+			return true;
+		}
+		
+		String name = args[1];
+		if (WorkersAndWarriorsPlugin.plugin.getSession(name) == null) {
+			sender.sendMessage(ChatFormat.ERROR + "Unable to locate session " + ChatFormat.SESSION.wrap(name));
+			sender.sendMessage(
+					ChatFormat.USAGE + "Usage: /wws open " + ChatFormat.SESSION.wrap("[session]"));
+			return true;
+		}
+		GameSession session = WorkersAndWarriorsPlugin.plugin.getSession(name);
+				
+		if (!session.open()) {
+			sender.sendMessage(ChatFormat.ERROR.wrap("Session not opened!"));
+			sender.sendMessage(ChatFormat.INFO + "This is usually because the session isn't ready to open. "
+					+ "Try using " + ChatFormat.IMPORTANT.wrap("/wws info name"));
+			return true;
+		}
+		sender.sendMessage(ChatFormat.SUCCESS + "The session " + ChatFormat.SESSION + name 
+				+ ChatFormat.SUCCESS.wrap(" is now open!"));
+			
+		return true;
 	}
 	
 	private boolean startCommand(CommandSender sender, String[] args) {
-		return false;
+		//wws start [session]
+		if (args.length != 2 || args[1].isEmpty()) {
+			sender.sendMessage(
+					ChatFormat.USAGE + "Usage: /wws start " + ChatFormat.SESSION.wrap("[session]"));
+			return true;
+		}
+		
+		String name = args[1];
+		if (WorkersAndWarriorsPlugin.plugin.getSession(name) == null) {
+			sender.sendMessage(ChatFormat.ERROR + "Unable to locate session " + ChatFormat.SESSION.wrap(name));
+			sender.sendMessage(
+					ChatFormat.USAGE + "Usage: /wws start " + ChatFormat.SESSION.wrap("[session]"));
+			return true;
+		}
+		GameSession session = WorkersAndWarriorsPlugin.plugin.getSession(name);
+				
+		if (!session.start()) {
+			sender.sendMessage(ChatFormat.ERROR.wrap("Session not started!"));
+			sender.sendMessage(ChatFormat.INFO + "This is usually because the session isn't ready to start. "
+					+ "Try using " + ChatFormat.IMPORTANT.wrap("/wws info name"));
+			return true;
+		}
+		sender.sendMessage(ChatFormat.SUCCESS + "The session " + ChatFormat.SESSION + name 
+				+ ChatFormat.SUCCESS.wrap(" is now started!"));
+		
+		return true;
 	}
 	
 	private boolean stopCommand(CommandSender sender, String[] args) {
-		return false;
+		//wws stop [session] {force}
+		if ((args.length != 2 && args.length != 3) || args[1].isEmpty()) {
+			sender.sendMessage(
+					ChatFormat.USAGE + "Usage: /wws stop " + ChatFormat.SESSION + "[session]"
+						+ ChatFormat.USAGE.wrap(" {force?}"));
+			return true;
+		}
+		
+		boolean force = false;
+		if (args.length == 3) {
+			if (!args[2].isEmpty() && (args[2].equalsIgnoreCase("true") || args[2].equalsIgnoreCase("force"))) {
+				force = true;
+			}
+		}
+		
+		String name = args[1];
+		if (WorkersAndWarriorsPlugin.plugin.getSession(name) == null) {
+			sender.sendMessage(ChatFormat.ERROR + "Unable to locate session " + ChatFormat.SESSION.wrap(name));
+			sender.sendMessage(
+					ChatFormat.USAGE + "Usage: /wws stop " + ChatFormat.SESSION + "[session]"
+						+ ChatFormat.USAGE.wrap(" {force?}"));
+			return true;
+		}
+		GameSession session = WorkersAndWarriorsPlugin.plugin.getSession(name);
+				
+		if (!session.stop(force)) {
+			sender.sendMessage(ChatFormat.ERROR.wrap("Session not stopped!"));
+			sender.sendMessage(ChatFormat.INFO + "This is usually because the session isn't ready to start. "
+					+ "Try using " + ChatFormat.IMPORTANT.wrap("/wws info name"));
+			return true;
+		}
+		sender.sendMessage(ChatFormat.SUCCESS + "The session " + ChatFormat.SESSION + name 
+				+ ChatFormat.SUCCESS.wrap(" has been stopped!"));
+		
+		return true;
 	}
 	
 	private boolean infoCommand(CommandSender sender, String[] args) {
