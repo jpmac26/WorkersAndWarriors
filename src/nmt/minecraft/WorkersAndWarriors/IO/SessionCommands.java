@@ -1,13 +1,17 @@
 package nmt.minecraft.WorkersAndWarriors.IO;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.InvalidConfigurationException;
 
 import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
+import nmt.minecraft.WorkersAndWarriors.Config.SessionConfiguration;
 import nmt.minecraft.WorkersAndWarriors.Session.GameSession;
 
 public class SessionCommands implements CommandExecutor {
@@ -128,12 +132,53 @@ public class SessionCommands implements CommandExecutor {
 		}
 		
 		WorkersAndWarriorsPlugin.plugin.addSession(new GameSession(name));
+		sender.sendMessage(ChatFormat.SUCCESS + "Session " + ChatFormat.SESSION + name 
+				+ ChatFormat.SUCCESS.wrap(" created!"));
 			
 		return true;
 	}
 	
 	private boolean loadCommand(CommandSender sender, String[] args) {
-		return false;
+		//wws load [template name] [session name]
+		if (args.length != 3 || args[2].isEmpty()) {
+			sender.sendMessage(
+					ChatFormat.USAGE + "Usage: /wws load " 
+							+ ChatFormat.TEMPLATE + "[template] " + ChatFormat.SESSION.wrap("[name]"));
+			return true;
+		}
+		
+		String name = args[2];
+		String template = args[1];
+		if (WorkersAndWarriorsPlugin.plugin.getSession(name) != null) {
+			sender.sendMessage(ChatFormat.ERROR.wrap("A session with that name already exists!"));
+			return true;
+		}
+		
+		GameSession session = null;
+		try {
+			session = SessionConfiguration.loadSesson(template, name);
+		} catch (FileNotFoundException e) {
+			sender.sendMessage(ChatFormat.ERROR + "Unable to locate template file " + 
+					ChatFormat.TEMPLATE.wrap(template));
+			return true;
+		} catch (IOException e) {
+			e.printStackTrace();
+			sender.sendMessage(ChatFormat.ERROR.wrap("Encountered extreme IO error while attempting to read template!"));
+			sender.sendMessage(ChatFormat.INFO.wrap("See console for more information."));
+			WorkersAndWarriorsPlugin.plugin.getLogger().warning("IOException when loading template file!");
+			return true;
+		} catch (InvalidConfigurationException e) {
+			e.printStackTrace();
+			sender.sendMessage(ChatFormat.ERROR.wrap("An invalid template was detected!"));
+			sender.sendMessage(ChatFormat.INFO.wrap("See console for more information."));
+			return true;
+		}		
+		
+		WorkersAndWarriorsPlugin.plugin.addSession(session);
+		sender.sendMessage(ChatFormat.SUCCESS + "Session " + ChatFormat.SESSION + name 
+				+ ChatFormat.SUCCESS.wrap(" created!"));
+		
+		return true;
 	}
 	
 	private boolean openCommand(CommandSender sender, String[] args) {

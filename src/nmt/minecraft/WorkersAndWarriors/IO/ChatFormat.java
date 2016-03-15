@@ -20,6 +20,7 @@ public enum ChatFormat {
 	WARNING(ChatColor.YELLOW),
 	SESSION(ChatColor.DARK_PURPLE),
 	TEAM(ChatColor.BLUE),
+	TEMPLATE(ChatColor.GOLD),
 	SUCCESS(ChatColor.GREEN),
 	INFO(ChatColor.GRAY),
 	USAGE(ChatColor.RED),
