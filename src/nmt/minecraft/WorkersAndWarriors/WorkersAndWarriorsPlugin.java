@@ -143,4 +143,8 @@ public class WorkersAndWarriorsPlugin extends JavaPlugin {
 		
 		return null;
 	}
+
+	public void addSession(GameSession gameSession) {
+		this.sessions.add(gameSession);
+	}
 }

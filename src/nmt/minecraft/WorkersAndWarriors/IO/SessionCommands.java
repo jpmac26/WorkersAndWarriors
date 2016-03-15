@@ -113,8 +113,12 @@ public class SessionCommands implements CommandExecutor {
 	}
 	
 	private boolean createCommand(CommandSender sender, String[] args) {
-		
-		WorkersAndWarriorsPlugin.plugin.onReload();		
+		//wws create [name]
+		if (args.length != 2) {
+			sender.sendMessage(ChatFormat.USAGE + "Usage: /wws create " + ChatFormat.SESSION.wrap("[name]"));
+			return false;
+		}
+			
 		return true;
 	}
 	

@@ -15,6 +15,7 @@ public enum ChatFormat {
 	TEAM(ChatColor.BLUE),
 	SUCCESS(ChatColor.GREEN),
 	INFO(ChatColor.GRAY),
+	USAGE(ChatColor.RED),
 	IMPORTANT(ChatColor.DARK_GREEN, ChatColor.BOLD);
 	
 	private String format;
