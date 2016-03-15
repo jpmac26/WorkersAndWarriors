@@ -10,6 +10,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.material.MaterialData;
 import org.bukkit.util.Vector;
 
@@ -22,6 +23,42 @@ import nmt.minecraft.WorkersAndWarriors.Team.Team;
  *
  */
 public class TeamConfiguration implements ConfigurationSerializable {
+	
+	/**
+	 * Registers this class as configuration serializable with all defined 
+	 * {@link aliases aliases}
+	 */
+	public static void registerWithAliases() {
+		for (aliases alias : aliases.values()) {
+			ConfigurationSerialization.registerClass(TeamConfiguration.class, alias.getAlias());
+		}
+	}
+	
+	/**
+	 * Registers this class as configuration serializable with only the default alias
+	 */
+	public static void registerWithoutAliases() {
+		ConfigurationSerialization.registerClass(TeamConfiguration.class);
+	}
+	
+
+	private enum aliases {
+		LOCATIONUPPER("TEAMCONFIGURATION"),
+		LOCATIONLOWER("teamconfiguration"),
+		LOCATIONFORMAL("TeamConfiguration"),
+		DEFAULT(TeamConfiguration.class.getName()),
+		SIMPLE("Team");
+		
+		private String alias;
+		
+		private aliases(String alias) {
+			this.alias = alias;
+		}
+		
+		public String getAlias() {
+			return alias;
+		}
+	}
 	
 	/**
 	 * Class that holds keys and default values
@@ -139,15 +176,15 @@ public class TeamConfiguration implements ConfigurationSerializable {
 		
 		int data;
 		
-		data = (Integer) map.get(Key.BLOCKDATA);
+		data = (Integer) map.get(Key.BLOCKDATA.getKey());
 		config.block = new MaterialData(
-				Material.valueOf((String) map.get(Key.BLOCK)),
+				Material.valueOf((String) map.get(Key.BLOCK.getKey())),
 				(byte) data		
 				);
 
-		data = (Integer) map.get(Key.GOALDATA);
+		data = (Integer) map.get(Key.GOALDATA.getKey());
 		config.goal = new MaterialData(
-				Material.valueOf((String) map.get(Key.GOAL)),
+				Material.valueOf((String) map.get(Key.GOAL.getKey())),
 				(byte) data		
 				);
 		

@@ -11,6 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import nmt.minecraft.WorkersAndWarriors.Config.PluginConfiguration;
 import nmt.minecraft.WorkersAndWarriors.Config.SessionConfiguration;
+import nmt.minecraft.WorkersAndWarriors.Config.TeamConfiguration;
 import nmt.minecraft.WorkersAndWarriors.Config.Util.ParsedLocation;
 import nmt.minecraft.WorkersAndWarriors.Config.Util.ParsedVector;
 import nmt.minecraft.WorkersAndWarriors.IO.PlayerCommands;
@@ -41,6 +42,7 @@ public class WorkersAndWarriorsPlugin extends JavaPlugin {
 	@Override
 	public void onLoad() {
 		WorkersAndWarriorsPlugin.plugin = this;
+		TeamConfiguration.registerWithAliases();
 		if (!getDataFolder().exists()) {
 			getDataFolder().mkdirs();
 		}
