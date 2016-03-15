@@ -397,7 +397,37 @@ public class SessionCommands implements CommandExecutor {
 	}
 	
 	private boolean saveCommand(CommandSender sender, String[] args) {
-		return false;
+		//wws save session templatename
+		if (args.length != 3 || args[2].isEmpty()) {
+			sender.sendMessage(
+					ChatFormat.USAGE + "Usage: /wws " + SubCommand.SAVETEMPLATE.getName() + " " 
+							+ ChatFormat.SESSION + "[session] " + ChatFormat.TEMPLATE.wrap("[template]"));
+			return true;
+		}
+		
+		String name = args[1];
+		String template = args[2];
+		if (WorkersAndWarriorsPlugin.plugin.getSession(name) == null) {
+			sender.sendMessage(ChatFormat.ERROR + "Unable to find session" + ChatFormat.SESSION.wrap(name));
+			return true;
+		}
+		
+		GameSession session = WorkersAndWarriorsPlugin.plugin.getSession(name);
+		try {
+			SessionConfiguration.saveSessionTemplate(template, session);
+		} catch (IOException e) {
+			e.printStackTrace();
+			sender.sendMessage(ChatFormat.ERROR.wrap("Encountered extreme IO error while attempting to save template!"));
+			sender.sendMessage(ChatFormat.INFO.wrap("See console for more information."));
+			WorkersAndWarriorsPlugin.plugin.getLogger().warning("IOException when saving template file!");
+			return true;
+		}	
+		
+		sender.sendMessage(ChatFormat.SUCCESS + "Session " + ChatFormat.SESSION + name 
+				+ ChatFormat.SUCCESS + " saved to file "
+				+ ChatFormat.TEMPLATE.wrap(template));
+		
+		return true;
 	}
 
 }
