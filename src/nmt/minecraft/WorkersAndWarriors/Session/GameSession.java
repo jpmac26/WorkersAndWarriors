@@ -64,6 +64,20 @@ public class GameSession {
 	}
 	
 	/**
+	 * Opens up a game, allowing players to join
+	 * @return Whether or not the game was opened as a result of this method. False returns usually come from
+	 * a game session that's not in the right state (namely STOPPED)!
+	 */
+	public boolean open() {
+		
+		if (state != State.STOPPED) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	/**
 	 * Attempts to start the game.
 	 * @return Whether or not the game was started as a result of this command (<b>false</b> if already 
 	 * running, not '<i>open</i>, etc)
@@ -291,7 +305,9 @@ public class GameSession {
 		return newPlayer;
 	}
 	
-	
+	public State getState() {
+		return this.state;
+	}
 	
 	
 	
