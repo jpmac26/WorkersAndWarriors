@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -337,7 +338,25 @@ public class SessionCommands implements CommandExecutor {
 	}
 	
 	private boolean listCommand(CommandSender sender, String[] args) {
-		return false;
+		if (args.length != 1) {
+			sender.sendMessage(ChatFormat.USAGE.wrap("Usage: /wws list"));
+			return true;
+		}
+		
+		sender.sendMessage(ChatFormat.INFO.wrap("Current sessions: "));
+		Set<GameSession> sessions = WorkersAndWarriorsPlugin.plugin.getSessions();
+		
+		if (sessions == null) {
+			sender.sendMessage(ChatFormat.ERROR.wrap("Error!"));
+		} else if (sessions.isEmpty()) {
+			sender.sendMessage(ChatFormat.WARNING.wrap("No sessions!"));
+		} else {
+			for (GameSession s : sessions) {
+				sender.sendMessage(ChatFormat.SESSION.wrap(s.getName()));
+			}
+		}
+		
+		return true;
 	}
 	
 	private boolean stopAllCommand(CommandSender sender, String[] args) {
