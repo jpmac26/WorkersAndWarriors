@@ -27,7 +27,8 @@ public class TeamCommands implements CommandExecutor {
 		SETBLOCK("setblock"),
 		SETGOALBLOCK("setgoalblock"),
 		SETGOALAREA("setgoalarea"),
-		SETCOLOR("setcolor");
+		SETCOLOR("setcolor"),
+		SETSPAWN("setspawn");
 		
 		private String commandName;
 		
@@ -98,6 +99,10 @@ public class TeamCommands implements CommandExecutor {
 			
 			if (subCmd.equalsIgnoreCase(SubCommand.SETCOLOR.getName())) {
 				return setColorCommand(sender, args);
+			}
+			
+			if (subCmd.equalsIgnoreCase(SubCommand.SETSPAWN.getName())) {
+				return setSpawnAreaCommand(sender, args);
 			}
 			
 			return false;
@@ -471,6 +476,44 @@ public class TeamCommands implements CommandExecutor {
 		
 		team.setTeamColor(color);		
 		sender.sendMessage(ChatFormat.SUCCESS.wrap("Successfully set block data!"));
+		
+		return true;
+	}
+	
+	private boolean setSpawnAreaCommand(CommandSender sender, String[] args) {
+		//wwt setSpawn [session] [team]
+		if (args.length != 3) {
+			sender.sendMessage(ChatFormat.USAGE + "Usage: /wwt " + SubCommand.SETSPAWN.getName() 
+					+ ChatFormat.SESSION + " [session] " + ChatFormat.TEAM.wrap("[team]"));
+			return true;
+		}
+		
+		if (!(sender instanceof Player)) {
+			sender.sendMessage("Unfortunately, players must execute this command (for location)");
+			return true;
+		}
+		
+		GameSession session = fetchSession(sender, args[1]);
+		if (session == null) {
+			sender.sendMessage(ChatFormat.USAGE + "Usage: /wwt " + SubCommand.SETSPAWN.getName() 
+					+ ChatFormat.SESSION + " [session] " + ChatFormat.TEAM.wrap("[team]"));
+			return true;			
+		}
+		
+		Team team = session.getTeam(args[2]);
+		if (team == null) {
+			sender.sendMessage(ChatFormat.ERROR.wrap("Could not find team ")
+					+ ChatFormat.TEAM.wrap(args[2]));
+			sender.sendMessage(ChatFormat.USAGE + "Usage: /wwt " + SubCommand.SETSPAWN.getName() 
+					+ ChatFormat.SESSION + " [session] " + ChatFormat.TEAM.wrap("[team]"));
+			return true;
+		}
+		
+		Player player = (Player) sender;
+		
+		Location l = player.getLocation();
+		team.addSpawnPoint(l);
+		player.sendMessage(ChatFormat.SUCCESS.wrap("Spawn point added!"));
 		
 		return true;
 	}

@@ -32,7 +32,7 @@ public class CommandTabCompleter implements TabCompleter{
 	}
 	
 	private CommandTabCompleter() {
-		this.blockList = getBlockList();
+		blockList = getBlockList();
 	}
 	
 	@Override
@@ -142,7 +142,8 @@ public class CommandTabCompleter implements TabCompleter{
 		} else if (args[0].equalsIgnoreCase(TeamCommands.SubCommand.CREATE.getName())) {
 			list = completeSimpleSessionCommand(args);
 		} else if (args[0].equalsIgnoreCase(TeamCommands.SubCommand.INFO.getName())
-				|| args[0].equalsIgnoreCase(TeamCommands.SubCommand.SETGOALAREA.getName())) {
+				|| args[0].equalsIgnoreCase(TeamCommands.SubCommand.SETGOALAREA.getName())
+				|| args[0].equalsIgnoreCase(TeamCommands.SubCommand.SETSPAWN.getName())) {
 			list = completeSimpleTeamCommand(args);
 		} else if (args[0].equalsIgnoreCase(TeamCommands.SubCommand.SETBLOCK.getName())
 			|| args[0].equalsIgnoreCase(TeamCommands.SubCommand.SETGOALBLOCK.getName())) {
