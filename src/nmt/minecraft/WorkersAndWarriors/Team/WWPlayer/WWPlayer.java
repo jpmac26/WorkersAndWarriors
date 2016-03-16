@@ -73,12 +73,8 @@ public class WWPlayer {
 			return;
 		}
 		Player p = this.getPlayer().getPlayer();
-		// Set location
-		p.teleport(spawnLocation);
-		p.setGameMode(GameMode.SURVIVAL);
-		p.setHealth(20);
-		p.setTicksLived(0);
-		p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_DEATH, 1.0f, 1.0f);
+		// Wait for configured respawn time
+		
 	}
 	
 	/**
