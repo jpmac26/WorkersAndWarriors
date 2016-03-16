@@ -101,6 +101,7 @@ public abstract class SessionConfiguration {
 		}
 
 		Team team;
+		if (teams != null && !teams.isEmpty())
 		for (TeamConfiguration tf : teams) {
 			team = new Team();
 			if (!tf.getSpawns().isEmpty()) {

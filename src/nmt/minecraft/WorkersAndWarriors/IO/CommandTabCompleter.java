@@ -198,7 +198,7 @@ public class CommandTabCompleter implements TabCompleter{
 	private List<String> completeTemplateSubCommand(String[] args) {
 		//just wanna complete template list. 
 		List<String> list;
-		if (args.length == 2) {
+		if (args.length == 3) {
 			//complete template name
 			File[] files = SessionConfiguration.getTemplateDirectory().listFiles();
 			
@@ -209,12 +209,12 @@ public class CommandTabCompleter implements TabCompleter{
 			
 			return list;
 		} else if (args[0].equalsIgnoreCase(SessionCommands.SubCommand.SAVETEMPLATE.getName()) 
-				&& args.length == 3) {
+				&& args.length == 2) {
 			//saving takes an existing session. complete those names
 			list = new ArrayList<String>(WorkersAndWarriorsPlugin.plugin.getSessions().size());
 			for(GameSession game : WorkersAndWarriorsPlugin.plugin.getSessions()){
 				//should only match games started with what's already been typed in					
-				if(args[2].isEmpty() || startsWithIgnoreCase(game.getName(),args[2])){
+				if(args[1].isEmpty() || startsWithIgnoreCase(game.getName(),args[1])){
 					list.add(game.getName());
 				}
 			}

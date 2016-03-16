@@ -159,16 +159,16 @@ public class SessionCommands implements CommandExecutor {
 	}
 	
 	private boolean loadCommand(CommandSender sender, String[] args) {
-		//wws load [template name] [session name]
+		//wws load [session name] [template name]
 		if (args.length != 3 || args[2].isEmpty()) {
 			sender.sendMessage(
 					ChatFormat.USAGE + "Usage: /wws " + SubCommand.LOADTEMPLATE.getName() + " " 
-							+ ChatFormat.TEMPLATE + "[template] " + ChatFormat.SESSION.wrap("[name]"));
+							+ ChatFormat.SESSION.wrap("[name]") + ChatFormat.TEMPLATE + "[template] " );
 			return true;
 		}
 		
-		String name = args[2];
-		String template = args[1];
+		String name = args[1];
+		String template = args[2];
 		if (WorkersAndWarriorsPlugin.plugin.getSession(name) != null) {
 			sender.sendMessage(ChatFormat.ERROR.wrap("A session with that name already exists!"));
 			return true;
@@ -180,6 +180,9 @@ public class SessionCommands implements CommandExecutor {
 		} catch (FileNotFoundException e) {
 			sender.sendMessage(ChatFormat.ERROR + "Unable to locate template file " + 
 					ChatFormat.TEMPLATE.wrap(template));
+			sender.sendMessage(
+					ChatFormat.USAGE + "Usage: /wws " + SubCommand.LOADTEMPLATE.getName() + " " 
+							+ ChatFormat.SESSION.wrap("[name]") + ChatFormat.TEMPLATE + "[template] " );
 			return true;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -369,7 +372,8 @@ public class SessionCommands implements CommandExecutor {
 		sender.sendMessage(ChatFormat.INFO + "Protection Size: " + ChatFormat.SUCCESS.wrap("" + session.getProtectionSize()));
 		sender.sendMessage(ChatFormat.INFO + "Team Block Limit: " + ChatFormat.SUCCESS.wrap("" + session.getMaxTeamBlock()));
 		sender.sendMessage(ChatFormat.INFO + "For more information about a team, type "
-				+ ChatFormat.IMPORTANT + "/wwt " + TeamCommands.SubCommand.INFO.getName() + " " + ChatFormat.TEAM.wrap("[team]"));
+				+ ChatFormat.IMPORTANT + "/wwt " + TeamCommands.SubCommand.INFO.getName() 
+				+ ChatFormat.SESSION.wrap(" " + name) + ChatFormat.TEAM.wrap(" [team]"));
 			
 		return true;
 	}
