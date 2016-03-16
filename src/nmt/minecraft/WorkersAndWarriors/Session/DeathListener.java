@@ -55,6 +55,11 @@ public class DeathListener implements Listener {
 		if (p.getHealth() - e.getDamage() < 1) {
 			this.handleDeath(p, e, session);
 		}
+		
+		// If the killer was a Player entity, notify them
+		if (e.getDamager() instanceof Player) {
+			msgKiller((Player) e.getDamager(), e);
+		}
 	}
 	
 	/**
@@ -71,9 +76,21 @@ public class DeathListener implements Listener {
 		Team wTeam = s.getTeam(p);
 		Location respawnPoint = wTeam.getRandomSpawn();
 		wPlayer.spawn(respawnPoint);
+		
 	}
 	
-	private void msgKiller(Player p, EntityDamageByEntityEvent e) {
-		
+	/**
+	 * This method messages the killer
+	 * TODO If additional behavior is required: e.g player score/stats, this method
+	 * should be encapsulated with a larger method.
+	 * @param killer The Player killer
+	 * @param e The EntityDamageByEntityEvent
+	 */
+	private void msgKiller(Player killer, EntityDamageByEntityEvent e) {
+		// Get victim name
+		Player victim = (Player) e.getEntity();
+		String vName = victim.getDisplayName();
+		killer.sendMessage("Eliminated: " + vName);
+	
 	}
 }
