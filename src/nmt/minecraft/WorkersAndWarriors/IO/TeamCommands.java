@@ -134,7 +134,59 @@ public class TeamCommands implements CommandExecutor {
 	}
 	
 	private boolean infoCommand(CommandSender sender, String[] args) {
-		return false;
+		//wwt info [session] [team]
+		if (args.length != 3) {
+			sender.sendMessage(ChatFormat.USAGE + "Usage: /wwt " + SubCommand.INFO.getName() 
+					+ ChatFormat.SESSION + " [session] " + ChatFormat.TEAM.wrap("[team]"));
+			return true;
+		}
+		
+		GameSession session = fetchSession(sender, args[1]);
+		if (session == null) {
+			sender.sendMessage(ChatFormat.USAGE + "Usage: /wwt " + SubCommand.INFO.getName() 
+					+ ChatFormat.SESSION + " [session] " + ChatFormat.TEAM.wrap("[team]"));
+			return true;			
+		}
+		
+		Team team = session.getTeam(args[2]);
+		if (team == null) {
+			sender.sendMessage(ChatFormat.ERROR.wrap("Could not find team ")
+					+ ChatFormat.TEAM.wrap(args[2]));
+			sender.sendMessage(ChatFormat.USAGE + "Usage: /wwt " + SubCommand.INFO.getName() 
+					+ ChatFormat.SESSION + " [session] " + ChatFormat.TEAM.wrap("[team]"));
+			return true;
+		}
+		
+		/*
+		 * Team - Ready/Not Ready
+		 * Color: COLOR
+		 * Spawnpoints: #
+		 * FlagArea: [set/unset]
+		 * Block Type: [set/unset]
+		 * Flag Type: [set/unset]
+		 * Members: #
+		 */
+		sender.sendMessage(ChatFormat.TEAM.wrap(team.getTeamName()) + " - " + "");
+		sender.sendMessage(ChatFormat.INFO.wrap("Color: ")
+				+ (team.getTeamColor() == null ? ChatFormat.ERROR.wrap("Unset")
+						  : ChatFormat.SUCCESS.wrap(team.getTeamColor() + team.getTeamColor().name())));
+		sender.sendMessage(ChatFormat.INFO.wrap("Spawn Points: ")
+				+ (team.getSpawnPoints().isEmpty() ? ChatFormat.ERROR.wrap("None")
+						  : ChatFormat.SUCCESS.wrap("" + team.getSpawnPoints().size())));
+		sender.sendMessage(ChatFormat.INFO.wrap("Flag Area: ")
+				+ (team.getFlagArea() == null ? ChatFormat.ERROR.wrap("Unset")
+						  : ChatFormat.SUCCESS.wrap(team.getFlagArea().getMin() + " to " + team.getFlagArea().getMax())));
+		sender.sendMessage(ChatFormat.INFO.wrap("Block Type: ")
+				+ (team.getBlockType() == null ? ChatFormat.ERROR.wrap("Unset")
+						  : ChatFormat.SUCCESS.wrap("Set")));
+		sender.sendMessage(ChatFormat.INFO.wrap("Flag Type: ")
+				+ (team.getGoalType() == null ? ChatFormat.ERROR.wrap("Unset")
+											  : ChatFormat.SUCCESS.wrap("Set")));
+		sender.sendMessage(ChatFormat.INFO.wrap("Members: ") + 
+				(team.getPlayers().isEmpty() ? ChatFormat.WARNING.wrap("No players!") 
+											: ChatFormat.SUCCESS.wrap("" + team.getPlayers().size())));
+		
+		return true;
 	}
 	
 	private boolean listCommand(CommandSender sender, String[] args) {
