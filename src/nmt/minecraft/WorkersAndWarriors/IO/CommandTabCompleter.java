@@ -283,10 +283,10 @@ public class CommandTabCompleter implements TabCompleter{
 		//wwt [subcommand] [session] [team]
 		List<String> list = null;
 		
-		if (args.length == 1) {
+		if (args.length == 2) {
 			//just need simle list of sessions
 			list = completeSimpleSessionCommand(args);
-		} else if (args.length == 2) {
+		} else if (args.length == 3) {
 			//on the team part, give list of teams
 			GameSession session = WorkersAndWarriorsPlugin.plugin.getSession(args[1]);
 			if (session == null) {
@@ -300,7 +300,7 @@ public class CommandTabCompleter implements TabCompleter{
 			}
 			
 			for (Team team : session.getTeams()) {
-				if (args[1].isEmpty() || startsWithIgnoreCase(team.getTeamName(), args[1])) {
+				if (args[2].isEmpty() || startsWithIgnoreCase(team.getTeamName(), args[2])) {
 					list.add(team.getTeamName());
 				}
 			}
