@@ -251,5 +251,7 @@ public class TeamConfiguration implements ConfigurationSerializable {
 		this.color = team.getTeamColor();
 		this.block = team.getBlockType();
 		this.goal = team.getGoalType();
+		this.goalPoint = team.getFlagArea().getCenter();
+		this.spawns = team.getSpawnPoints();
 	}
 }

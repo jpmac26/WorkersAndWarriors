@@ -14,6 +14,10 @@ public class FlagArea {
 	
 	private Vector max;
 	
+	private Vector center;
+	
+	private int radius;
+	
 	public FlagArea(Vector point1, Vector point2) {
 		min = new Vector(
 				Math.min(point1.getX(), point2.getX()),
@@ -27,6 +31,11 @@ public class FlagArea {
 				);
 		min = min.toBlockVector();
 		max = max.toBlockVector();
+		
+		center = max.clone().subtract(min).multiply(.5);
+		center.add(min); //center = min + (max-min / 2);
+		
+		radius = (int) (min.distance(max) / 2);
 	}
 	
 	public FlagArea(Vector center, int radius) {
@@ -37,6 +46,9 @@ public class FlagArea {
 		if (radius < 0) {
 			radius = -radius;
 		}
+		
+		this.center = center.clone();
+		this.radius = radius;
 		
 		Vector diff = new Vector(radius, radius, radius);
 		this.max = center.clone().add(diff).toBlockVector();
@@ -71,5 +83,13 @@ public class FlagArea {
 
 	public Vector getMax() {
 		return max;
+	}
+
+	public Vector getCenter() {
+		return center;
+	}
+
+	public int getRadius() {
+		return radius;
 	}
 }
