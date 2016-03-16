@@ -166,7 +166,9 @@ public class TeamCommands implements CommandExecutor {
 		 * Flag Type: [set/unset]
 		 * Members: #
 		 */
-		sender.sendMessage(ChatFormat.TEAM.wrap(team.getTeamName()) + " - " + "");
+		sender.sendMessage(ChatFormat.TEAM.wrap(team.getTeamName()) + " - "
+				+ (team.isReady() ? ChatFormat.SUCCESS.wrap("Ready")
+								  : ChatFormat.ERROR.wrap("Not Ready")));
 		sender.sendMessage(ChatFormat.INFO.wrap("Color: ")
 				+ (team.getTeamColor() == null ? ChatFormat.ERROR.wrap("Unset")
 						  : ChatFormat.SUCCESS.wrap(team.getTeamColor() + team.getTeamColor().name())));

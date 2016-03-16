@@ -14,6 +14,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
 import nmt.minecraft.WorkersAndWarriors.Config.SessionConfiguration;
 import nmt.minecraft.WorkersAndWarriors.Session.GameSession;
+import nmt.minecraft.WorkersAndWarriors.Session.GameSession.State;
 import nmt.minecraft.WorkersAndWarriors.Team.Team;
 
 public class SessionCommands implements CommandExecutor {
@@ -317,8 +318,25 @@ public class SessionCommands implements CommandExecutor {
 		 * For more information about a team, type /wwt info [team]
 		 */
 		
+		String prompt = "";
+		if (session.getState() == State.STOPPED) {
+			prompt = " - ";
+			if (session.canOpen()) {
+				prompt += ChatFormat.SUCCESS.wrap("Can Open");
+			} else {
+				prompt += ChatFormat.ERROR.wrap("Cannot Open");
+			}
+		} else if (session.getState() == State.OPEN) {
+			prompt = " - ";
+			if (session.canStart()) {
+				prompt += ChatFormat.SUCCESS.wrap("Can Start");
+			} else {
+				prompt += ChatFormat.ERROR.wrap("Cannot Start");
+			}
+		}
+		
 		sender.sendMessage(ChatFormat.SESSION.wrap(session.getName()) + " - " 
-				+ ChatFormat.SUCCESS .wrap(session.getState().name()));
+				+ ChatFormat.SUCCESS .wrap(session.getState().name()) + prompt);
 		sender.sendMessage(ChatFormat.INFO + "Players: "
 				+ ChatFormat.SUCCESS + session.getAllPlayers().size() + " total, "
 				+ ChatFormat.WARNING.wrap(session.getUnsortedPlayers().size() + " unsorted"));
