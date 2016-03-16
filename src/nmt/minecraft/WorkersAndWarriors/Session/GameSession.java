@@ -56,7 +56,7 @@ public class GameSession {
 	 * <b>PLEASE NOTE</b>: The given name should be unique (see {@link #equals(Object)})
 	 */
 	public GameSession(String name) {
-		this.setState(State.STOPPED);
+		this.state = State.STOPPED;
 		this.name = name;
 		teams = new HashSet<Team>();
 		unsortedPlayers = new LinkedList<WWPlayer>();
@@ -385,10 +385,6 @@ public class GameSession {
 		}
 		
 		return false;
-	}
-
-	public void setState(State state) {
-		this.state = state;
 	}
 	
 }
