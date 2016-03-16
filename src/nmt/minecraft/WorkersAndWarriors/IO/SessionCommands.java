@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -380,8 +381,11 @@ public class SessionCommands implements CommandExecutor {
 		} else if (sessions.isEmpty()) {
 			sender.sendMessage(ChatFormat.WARNING.wrap("No sessions!"));
 		} else {
+			boolean color = false;
 			for (GameSession s : sessions) {
-				sender.sendMessage(ChatFormat.SESSION.wrap(s.getName()));
+				sender.sendMessage((color ? ChatColor.GREEN : ChatColor.DARK_PURPLE) + s.getName());
+				
+				color = !color;
 			}
 		}
 		

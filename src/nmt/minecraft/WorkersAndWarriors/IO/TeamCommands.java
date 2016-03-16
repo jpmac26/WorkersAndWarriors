@@ -3,6 +3,7 @@ package nmt.minecraft.WorkersAndWarriors.IO;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -192,6 +193,35 @@ public class TeamCommands implements CommandExecutor {
 	}
 	
 	private boolean listCommand(CommandSender sender, String[] args) {
+		//wwt list [session]
+		if (args.length != 2) {
+			sender.sendMessage(ChatFormat.USAGE + "Usage: /wwt " + SubCommand.LIST.getName() 
+					+ ChatFormat.SESSION + " [session] ");
+			return true;
+		}
+		
+		GameSession session = fetchSession(sender, args[1]);
+		if (session == null) {
+			sender.sendMessage(ChatFormat.USAGE + "Usage: /wwt " + SubCommand.LIST.getName() 
+					+ ChatFormat.SESSION + " [session] ");
+			return true;			
+		}
+		
+		sender.sendMessage(ChatFormat.INFO.wrap("Current Teams for session ") + ChatFormat.SESSION.wrap(args[1]));
+		String msg = "";
+		
+		if (session.getTeams().isEmpty()) {
+			msg = ChatFormat.ERROR.wrap("No teams!");
+		} else {
+			boolean color = false;
+			for (Team t : session.getTeams()) {
+				msg += (color ? ChatColor.DARK_BLUE : ChatColor.DARK_GREEN) + t.getTeamName();
+				color = !color;
+			}			
+		}
+		sender.sendMessage(msg);
+		
+		
 		return false;
 	}
 	
