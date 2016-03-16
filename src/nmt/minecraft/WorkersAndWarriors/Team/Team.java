@@ -323,15 +323,10 @@ public class Team {
 	public boolean isReady() {
 		/*
 		 * Check we have a team, name, block type, goal type, goal pos, color...
-		 * Also check we have players??
 		 */
 		
 		if (flagArea == null || teamColor == null || teamName == null || blockType == null
 				|| goalType == null || spawnPoints.isEmpty()) {
-			return false;
-		}
-		
-		if (players.isEmpty()) {
 			return false;
 		}
 		

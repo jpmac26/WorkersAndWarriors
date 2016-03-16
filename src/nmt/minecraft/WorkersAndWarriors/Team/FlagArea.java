@@ -32,10 +32,6 @@ public class FlagArea {
 			center = new Vector(0,0,0);
 		}
 		
-		if (radius == 0) {
-			return;
-		}
-		
 		if (radius < 0) {
 			radius = -radius;
 		}
