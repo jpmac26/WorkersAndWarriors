@@ -180,7 +180,9 @@ public class CommandTabCompleter implements TabCompleter{
 		} else if (args[0].equalsIgnoreCase(SessionCommands.SubCommand.INFO.getName())
 				|| args[0].equalsIgnoreCase(SessionCommands.SubCommand.OPEN.getName())
 				|| args[0].equalsIgnoreCase(SessionCommands.SubCommand.START.getName())
-				|| args[0].equalsIgnoreCase(SessionCommands.SubCommand.STOP.getName())) {
+				|| args[0].equalsIgnoreCase(SessionCommands.SubCommand.STOP.getName())
+				|| args[0].equalsIgnoreCase(SessionCommands.SubCommand.SETBLOCKLIMIT.getName())
+				|| args[0].equalsIgnoreCase(SessionCommands.SubCommand.SETFLAGPROTECTIONRADIUS.getName())) {
 			list = completeSimpleSessionCommand(args);
 		}		
 		
@@ -211,7 +213,7 @@ public class CommandTabCompleter implements TabCompleter{
 			list = new ArrayList<String>(WorkersAndWarriorsPlugin.plugin.getSessions().size());
 			for(GameSession game : WorkersAndWarriorsPlugin.plugin.getSessions()){
 				//should only match games started with what's already been typed in					
-				if(args[1].isEmpty() || startsWithIgnoreCase(game.getName(),args[1])){
+				if(args[2].isEmpty() || startsWithIgnoreCase(game.getName(),args[2])){
 					list.add(game.getName());
 				}
 			}
