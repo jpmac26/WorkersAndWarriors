@@ -182,7 +182,8 @@ public class CommandTabCompleter implements TabCompleter{
 				|| args[0].equalsIgnoreCase(SessionCommands.SubCommand.START.getName())
 				|| args[0].equalsIgnoreCase(SessionCommands.SubCommand.STOP.getName())
 				|| args[0].equalsIgnoreCase(SessionCommands.SubCommand.SETBLOCKLIMIT.getName())
-				|| args[0].equalsIgnoreCase(SessionCommands.SubCommand.SETFLAGPROTECTIONRADIUS.getName())) {
+				|| args[0].equalsIgnoreCase(SessionCommands.SubCommand.SETFLAGPROTECTIONRADIUS.getName())
+				|| args[0].equalsIgnoreCase(SessionCommands.SubCommand.SETLOBBY.getName())) {
 			list = completeSimpleSessionCommand(args);
 		}		
 		

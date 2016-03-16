@@ -7,10 +7,12 @@ import java.util.List;
 import java.util.Set;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.entity.Player;
 
 import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
 import nmt.minecraft.WorkersAndWarriors.Config.SessionConfiguration;
@@ -33,7 +35,8 @@ public class SessionCommands implements CommandExecutor {
 		STOPALL("stopall"),
 		SAVETEMPLATE("save"),
 		SETBLOCKLIMIT("setblocklimit"),
-		SETFLAGPROTECTIONRADIUS("setgoalradius");
+		SETFLAGPROTECTIONRADIUS("setgoalradius"),
+		SETLOBBY("setlobby");
 		
 		private String commandName;
 		
@@ -120,6 +123,10 @@ public class SessionCommands implements CommandExecutor {
 			
 			if (subCmd.equalsIgnoreCase(SubCommand.SETFLAGPROTECTIONRADIUS.getName())) {
 				return setProtectionRadiusCommand(sender, args);
+			}
+			
+			if (subCmd.equalsIgnoreCase(SubCommand.SETLOBBY.getName())) {
+				return setLobbyCommand(sender, args);
 			}
 			
 			return false;
@@ -463,7 +470,7 @@ public class SessionCommands implements CommandExecutor {
 	private boolean setBlockLimitCommand(CommandSender sender, String[] args) {
 		//wws setBlockLimit [session] [limit]
 		if (args.length != 3 || args[2].isEmpty()) {
-			sender.sendMessage(ChatFormat.USAGE + "Usage: /wwc " + SubCommand.SETBLOCKLIMIT.getName()
+			sender.sendMessage(ChatFormat.USAGE + "Usage: /wws " + SubCommand.SETBLOCKLIMIT.getName()
 					+ ChatFormat.SESSION + " [session] " + ChatFormat.USAGE.wrap("[limit]"));
 			return true;
 		}
@@ -473,7 +480,7 @@ public class SessionCommands implements CommandExecutor {
 		
 		if (WorkersAndWarriorsPlugin.plugin.getSession(name) == null) {
 			sender.sendMessage(ChatFormat.ERROR + "Unable to locate session " + ChatFormat.SESSION.wrap(name));
-			sender.sendMessage(ChatFormat.USAGE + "Usage: /wwc " + SubCommand.SETBLOCKLIMIT.getName()
+			sender.sendMessage(ChatFormat.USAGE + "Usage: /wws " + SubCommand.SETBLOCKLIMIT.getName()
 					+ ChatFormat.SESSION + " [session] " + ChatFormat.USAGE.wrap("[limit]"));
 			return true;
 		}
@@ -484,7 +491,7 @@ public class SessionCommands implements CommandExecutor {
 			radius = Integer.parseInt(limit);
 		} catch (NumberFormatException e) {
 			sender.sendMessage(ChatFormat.ERROR.wrap("Unable to parse integer " + limit));
-			sender.sendMessage(ChatFormat.USAGE + "Usage: /wwc " + SubCommand.SETBLOCKLIMIT.getName()
+			sender.sendMessage(ChatFormat.USAGE + "Usage: /wws " + SubCommand.SETBLOCKLIMIT.getName()
 					+ ChatFormat.SESSION + " [session] " + ChatFormat.USAGE.wrap("[limit]"));
 			return true;
 		}
@@ -498,7 +505,7 @@ public class SessionCommands implements CommandExecutor {
 	private boolean setProtectionRadiusCommand(CommandSender sender, String[] args) {
 		//wws setProtectRadius [session] [limit]
 		if (args.length != 3 || args[2].isEmpty()) {
-			sender.sendMessage(ChatFormat.USAGE + "Usage: /wwc " + SubCommand.SETFLAGPROTECTIONRADIUS.getName()
+			sender.sendMessage(ChatFormat.USAGE + "Usage: /wws " + SubCommand.SETFLAGPROTECTIONRADIUS.getName()
 					+ ChatFormat.SESSION + " [session] " + ChatFormat.USAGE.wrap("[limit]"));
 			return true;
 		}
@@ -508,7 +515,7 @@ public class SessionCommands implements CommandExecutor {
 		
 		if (WorkersAndWarriorsPlugin.plugin.getSession(name) == null) {
 			sender.sendMessage(ChatFormat.ERROR + "Unable to locate session " + ChatFormat.SESSION.wrap(name));
-			sender.sendMessage(ChatFormat.USAGE + "Usage: /wwc " + SubCommand.SETFLAGPROTECTIONRADIUS.getName()
+			sender.sendMessage(ChatFormat.USAGE + "Usage: /wws " + SubCommand.SETFLAGPROTECTIONRADIUS.getName()
 					+ ChatFormat.SESSION + " [session] " + ChatFormat.USAGE.wrap("[limit]"));
 			return true;
 		}
@@ -519,13 +526,44 @@ public class SessionCommands implements CommandExecutor {
 			radius = Integer.parseInt(limit);
 		} catch (NumberFormatException e) {
 			sender.sendMessage(ChatFormat.ERROR.wrap("Unable to parse integer " + limit));
-			sender.sendMessage(ChatFormat.USAGE + "Usage: /wwc " + SubCommand.SETFLAGPROTECTIONRADIUS.getName()
+			sender.sendMessage(ChatFormat.USAGE + "Usage: /wws " + SubCommand.SETFLAGPROTECTIONRADIUS.getName()
 					+ ChatFormat.SESSION + " [session] " + ChatFormat.USAGE.wrap("[limit]"));
 			return true;
 		}
 		
 		session.setProtectionSize(radius);
 		sender.sendMessage(ChatFormat.SUCCESS.wrap("Protection radius set to " + radius));
+		
+		return true;
+	}
+	
+	private boolean setLobbyCommand(CommandSender sender, String[] args) {
+		//wws setlobby [session]
+		if (args.length != 2) {
+			sender.sendMessage(ChatFormat.USAGE + "Usage: /wws " + SubCommand.SETLOBBY.getName() 
+					+ ChatFormat.SESSION + " [session] ");
+			return true;
+		}
+		
+		if (!(sender instanceof Player)) {
+			sender.sendMessage("Unfortunately, players must execute this command (for location)");
+			return true;
+		}
+				
+		String name = args[1];
+		if (WorkersAndWarriorsPlugin.plugin.getSession(name) == null) {
+			sender.sendMessage(ChatFormat.ERROR + "Unable to locate session " + ChatFormat.SESSION.wrap(name));
+			sender.sendMessage(
+					ChatFormat.USAGE + "Usage: /wws " + SubCommand.SETLOBBY.getName() + " " + ChatFormat.SESSION.wrap("[session]"));
+			return true;
+		}
+		GameSession session = WorkersAndWarriorsPlugin.plugin.getSession(name);
+		
+		Player player = (Player) sender;
+		
+		Location l = player.getLocation();
+		session.setLobbyLocation(l);
+		player.sendMessage(ChatFormat.SUCCESS.wrap("Session lobby location set!"));
 		
 		return true;
 	}
