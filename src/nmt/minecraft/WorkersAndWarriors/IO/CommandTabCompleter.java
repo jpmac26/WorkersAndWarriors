@@ -21,6 +21,8 @@ public class CommandTabCompleter implements TabCompleter{
 	
 	private static CommandTabCompleter completer;
 	
+	private static List<Material> blockList;
+	
 	public static CommandTabCompleter getCompleter() {
 		if (completer == null) {
 			completer = new CommandTabCompleter();
@@ -30,7 +32,7 @@ public class CommandTabCompleter implements TabCompleter{
 	}
 	
 	private CommandTabCompleter() {
-		;
+		this.blockList = getBlockList();
 	}
 	
 	@Override
@@ -314,13 +316,13 @@ public class CommandTabCompleter implements TabCompleter{
 		//wwt [subcommand] [session] [team] [material/id] [data]
 		List<String> list = null;;
 		
-		if (args.length < 3) {
+		if (args.length < 4) {
 			list = completeSimpleTeamCommand(args);
-		} else if (args.length == 3) {
+		} else if (args.length == 4) {
 			//get material
 			list = new ArrayList<String>(Material.values().length);
-			for (Material mat : Material.values()) {
-				if (args[1].isEmpty() || startsWithIgnoreCase(mat.name(), args[1])) {
+			for (Material mat : blockList) {
+				if (args[3].isEmpty() || startsWithIgnoreCase(mat.name(), args[3])) {
 					list.add(mat.name());
 				}
 			}
@@ -332,18 +334,28 @@ public class CommandTabCompleter implements TabCompleter{
 	private List<String> completeTeamColorCommand(String[] args) {
 		List<String> list = null;
 		
-		if (args.length < 3) {
+		if (args.length < 4) {
 			list = completeSimpleTeamCommand(args);
-		} else if (args.length == 3) {
+		} else if (args.length == 4) {
 			//get color
 			list = new ArrayList<String>(ChatColor.values().length);
 			for (ChatColor color : ChatColor.values()) {
-				if (args[1].isEmpty() || startsWithIgnoreCase(color.name(), args[1])) {
+				if (args[3].isEmpty() || startsWithIgnoreCase(color.name(), args[3])) {
 					list.add(color.name());
 				}
 			}
 		}
 		
+		return list;
+	}
+	
+	private static List<Material> getBlockList() {
+		List<Material> list = new ArrayList<Material>(Material.values().length / 2);
+		for (Material mat : Material.values()) {
+			if (mat.isBlock()) {
+				list.add(mat);
+			}
+		}
 		return list;
 	}
 
