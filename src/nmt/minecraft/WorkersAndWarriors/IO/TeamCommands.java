@@ -4,9 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.material.MaterialData;
 
 import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
 import nmt.minecraft.WorkersAndWarriors.Session.GameSession;
@@ -225,20 +229,250 @@ public class TeamCommands implements CommandExecutor {
 		return false;
 	}
 	
+	@SuppressWarnings("deprecation")
 	private boolean setBlockCommand(CommandSender sender, String[] args) {
-		return false;
+		//wwt setblock [session] [team] [block type] {data}
+		if (args.length != 4 && args.length != 5) {
+			sender.sendMessage(ChatFormat.USAGE + "Usage: /wwt " + SubCommand.SETBLOCK.getName() 
+					+ ChatFormat.SESSION + " [session] " + ChatFormat.TEAM.wrap("[team]")
+					+ ChatFormat.USAGE.wrap(" [block_type] {data}"));
+			return true;
+		}
+		
+		GameSession session = fetchSession(sender, args[1]);
+		if (session == null) {
+			sender.sendMessage(ChatFormat.USAGE + "Usage: /wwt " + SubCommand.SETBLOCK.getName() 
+					+ ChatFormat.SESSION + " [session] " + ChatFormat.TEAM.wrap("[team]")
+					+ ChatFormat.USAGE.wrap(" [block_type] {data}"));
+			return true;			
+		}
+		
+		Team team = session.getTeam(args[2]);
+		if (team == null) {
+			sender.sendMessage(ChatFormat.ERROR.wrap("Could not find team ")
+					+ ChatFormat.TEAM.wrap(args[2]));
+			sender.sendMessage(ChatFormat.USAGE + "Usage: /wwt " + SubCommand.SETBLOCK.getName() 
+					+ ChatFormat.SESSION + " [session] " + ChatFormat.TEAM.wrap("[team]")
+					+ ChatFormat.USAGE.wrap(" [block_type] {data}"));
+			return true;
+		}
+		
+		Material type = Material.matchMaterial(args[3]);
+		
+		if (type == null) {
+			//try just using the number...
+			int id;
+			try {
+				id = Integer.parseInt(args[3]);
+			} catch (NumberFormatException e) {
+				sender.sendMessage(ChatFormat.ERROR.wrap("Unable to locate material named " + args[3]));
+				sender.sendMessage(ChatFormat.USAGE + "Usage: /wwt " + SubCommand.SETBLOCK.getName() 
+					+ ChatFormat.SESSION + " [session] " + ChatFormat.TEAM.wrap("[team]")
+					+ ChatFormat.USAGE.wrap(" [block_type] {data}"));
+				return true;
+			}
+			
+			type = Material.getMaterial(id);
+			
+			if (type == null) {
+				sender.sendMessage(ChatFormat.ERROR.wrap("Unable to locate material with id " + id));
+				sender.sendMessage(ChatFormat.USAGE + "Usage: /wwt " + SubCommand.SETBLOCK.getName() 
+					+ ChatFormat.SESSION + " [session] " + ChatFormat.TEAM.wrap("[team]")
+					+ ChatFormat.USAGE.wrap(" [block_type] {data}"));
+				return true;				
+			}
+			
+			
+			
+		}
+		
+		//default anyways
+		byte data = 0;
+		if (args.length == 5) {
+			try {
+				data = Byte.parseByte(args[4]);
+			} catch (NumberFormatException e) {
+				sender.sendMessage(ChatFormat.ERROR.wrap("Unable to parse byte data " + args[4]));
+				sender.sendMessage(ChatFormat.USAGE + "Usage: /wwt " + SubCommand.SETBLOCK.getName() 
+					+ ChatFormat.SESSION + " [session] " + ChatFormat.TEAM.wrap("[team]")
+					+ ChatFormat.USAGE.wrap(" [block_type] {data}"));
+				return true;
+			}
+		}
+
+		MaterialData mdata = new MaterialData(type, data);
+		team.setBlockType(mdata);
+		
+		sender.sendMessage(ChatFormat.SUCCESS.wrap("Successfully set block data!"));
+		
+		return true;
 	}
 	
+	@SuppressWarnings("deprecation")
 	private boolean setGoalBlockCommand(CommandSender sender, String[] args) {
-		return false;
+		//wwt setblock [session] [team] [block type] {data}
+		if (args.length != 4 && args.length != 5) {
+			sender.sendMessage(ChatFormat.USAGE + "Usage: /wwt " + SubCommand.SETGOALBLOCK.getName() 
+					+ ChatFormat.SESSION + " [session] " + ChatFormat.TEAM.wrap("[team]")
+					+ ChatFormat.USAGE.wrap(" [block_type] {data}"));
+			return true;
+		}
+		
+		GameSession session = fetchSession(sender, args[1]);
+		if (session == null) {
+			sender.sendMessage(ChatFormat.USAGE + "Usage: /wwt " + SubCommand.SETGOALBLOCK.getName() 
+					+ ChatFormat.SESSION + " [session] " + ChatFormat.TEAM.wrap("[team]")
+					+ ChatFormat.USAGE.wrap(" [block_type] {data}"));
+			return true;			
+		}
+		
+		Team team = session.getTeam(args[2]);
+		if (team == null) {
+			sender.sendMessage(ChatFormat.ERROR.wrap("Could not find team ")
+					+ ChatFormat.TEAM.wrap(args[2]));
+			sender.sendMessage(ChatFormat.USAGE + "Usage: /wwt " + SubCommand.SETGOALBLOCK.getName() 
+					+ ChatFormat.SESSION + " [session] " + ChatFormat.TEAM.wrap("[team]")
+					+ ChatFormat.USAGE.wrap(" [block_type] {data}"));
+			return true;
+		}
+		
+		Material type = Material.matchMaterial(args[3]);
+		
+		if (type == null) {
+			//try just using the number...
+			int id;
+			try {
+				id = Integer.parseInt(args[3]);
+			} catch (NumberFormatException e) {
+				sender.sendMessage(ChatFormat.ERROR.wrap("Unable to locate material named " + args[3]));
+				sender.sendMessage(ChatFormat.USAGE + "Usage: /wwt " + SubCommand.SETGOALBLOCK.getName() 
+					+ ChatFormat.SESSION + " [session] " + ChatFormat.TEAM.wrap("[team]")
+					+ ChatFormat.USAGE.wrap(" [block_type] {data}"));
+				return true;
+			}
+			
+			type = Material.getMaterial(id);
+			
+			if (type == null) {
+				sender.sendMessage(ChatFormat.ERROR.wrap("Unable to locate material with id " + id));
+				sender.sendMessage(ChatFormat.USAGE + "Usage: /wwt " + SubCommand.SETGOALBLOCK.getName() 
+					+ ChatFormat.SESSION + " [session] " + ChatFormat.TEAM.wrap("[team]")
+					+ ChatFormat.USAGE.wrap(" [block_type] {data}"));
+				return true;				
+			}
+			
+			
+			
+		}
+		
+		//default anyways
+		byte data = 0;
+		if (args.length == 5) {
+			try {
+				data = Byte.parseByte(args[4]);
+			} catch (NumberFormatException e) {
+				sender.sendMessage(ChatFormat.ERROR.wrap("Unable to parse byte data " + args[4]));
+				sender.sendMessage(ChatFormat.USAGE + "Usage: /wwt " + SubCommand.SETGOALBLOCK.getName() 
+					+ ChatFormat.SESSION + " [session] " + ChatFormat.TEAM.wrap("[team]")
+					+ ChatFormat.USAGE.wrap(" [block_type] {data}"));
+				return true;
+			}
+		}
+
+		MaterialData mdata = new MaterialData(type, data);
+		team.setGoalType(mdata);
+		
+		sender.sendMessage(ChatFormat.SUCCESS.wrap("Successfully set goal block data!"));
+		
+		return true;
 	}
 	
 	private boolean setGoalAreaCommand(CommandSender sender, String[] args) {
-		return false;
+		//wwt setGoalArea [session] [team]
+		if (args.length != 3) {
+			sender.sendMessage(ChatFormat.USAGE + "Usage: /wwt " + SubCommand.SETGOALAREA.getName() 
+					+ ChatFormat.SESSION + " [session] " + ChatFormat.TEAM.wrap("[team]"));
+			return true;
+		}
+		
+		if (!(sender instanceof Player)) {
+			sender.sendMessage("Unfortunately, players must execute this command (for location)");
+			return true;
+		}
+		
+		GameSession session = fetchSession(sender, args[1]);
+		if (session == null) {
+			sender.sendMessage(ChatFormat.USAGE + "Usage: /wwt " + SubCommand.SETGOALAREA.getName() 
+					+ ChatFormat.SESSION + " [session] " + ChatFormat.TEAM.wrap("[team]"));
+			return true;			
+		}
+		
+		Team team = session.getTeam(args[2]);
+		if (team == null) {
+			sender.sendMessage(ChatFormat.ERROR.wrap("Could not find team ")
+					+ ChatFormat.TEAM.wrap(args[2]));
+			sender.sendMessage(ChatFormat.USAGE + "Usage: /wwt " + SubCommand.SETGOALAREA.getName() 
+					+ ChatFormat.SESSION + " [session] " + ChatFormat.TEAM.wrap("[team]"));
+			return true;
+		}
+		
+		Player player = (Player) sender;
+		
+		Location l = player.getLocation();
+		team.setFlagArea(l.toVector(), session.getProtectionSize());
+		player.sendMessage(ChatFormat.SUCCESS.wrap("Team's goal center block set with radius " 
+				+ session.getProtectionSize() + " (from Session)!"));
+		
+		return true;
 	}
 	
 	private boolean setColorCommand(CommandSender sender, String[] args) {
-		return false;
+		//wwt setColor [session] [team] [color]
+		if (args.length != 4) {
+			sender.sendMessage(ChatFormat.USAGE + "Usage: /wwt " + SubCommand.SETCOLOR.getName() 
+					+ ChatFormat.SESSION + " [session] " + ChatFormat.TEAM.wrap("[team]")
+					+ ChatFormat.USAGE.wrap(" [color]"));
+			return true;
+		}
+		
+		GameSession session = fetchSession(sender, args[1]);
+		if (session == null) {
+			sender.sendMessage(ChatFormat.USAGE + "Usage: /wwt " + SubCommand.SETCOLOR.getName() 
+					+ ChatFormat.SESSION + " [session] " + ChatFormat.TEAM.wrap("[team]")
+					+ ChatFormat.USAGE.wrap(" [color]"));
+			return true;			
+		}
+		
+		Team team = session.getTeam(args[2]);
+		if (team == null) {
+			sender.sendMessage(ChatFormat.ERROR.wrap("Could not find team ")
+					+ ChatFormat.TEAM.wrap(args[2]));
+			sender.sendMessage(ChatFormat.USAGE + "Usage: /wwt " + SubCommand.SETCOLOR.getName() 
+					+ ChatFormat.SESSION + " [session] " + ChatFormat.TEAM.wrap("[team]")
+					+ ChatFormat.USAGE.wrap(" [color]"));
+			return true;
+		}
+		
+		String name = args[3].toUpperCase();
+		ChatColor color = null;
+		try {
+			color = ChatColor.valueOf(name);
+		} catch (Exception e) {
+			color = null;
+		}
+		
+		if (color == null) {
+			sender.sendMessage(ChatFormat.ERROR.wrap("Unable to figure out what color " + args[3] + " is!"));
+			sender.sendMessage(ChatFormat.USAGE + "Usage: /wwt " + SubCommand.SETCOLOR.getName() 
+				+ ChatFormat.SESSION + " [session] " + ChatFormat.TEAM.wrap("[team]")
+				+ ChatFormat.USAGE.wrap(" [color]"));
+			return true;
+		}
+		
+		team.setTeamColor(color);		
+		sender.sendMessage(ChatFormat.SUCCESS.wrap("Successfully set block data!"));
+		
+		return true;
 	}
 	
 	private GameSession fetchSession(CommandSender sender, String name) {
