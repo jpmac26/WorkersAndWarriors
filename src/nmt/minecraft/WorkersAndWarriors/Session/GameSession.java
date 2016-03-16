@@ -309,7 +309,60 @@ public class GameSession {
 		return this.state;
 	}
 	
+	/**
+	 * Checks whether this session is ready to be <i>opened</i>.
+	 * @return
+	 */
+	public boolean canOpen() {
+		/*
+		 * Need to have some teams (at least 2..?)
+		 * state should be stopped. sessionLobby needs to be set.
+		 */
+		
+		if (state != State.STOPPED) {
+			return false;
+		}
+		
+		if (teams.isEmpty()) {
+			return false;
+		}
+		
+		for (Team team : teams) {
+			if (!team.isReady()) {
+				return false;
+			}
+		}
+		
+		if (sessionLobby == null) {
+			return false;
+		}
+		
+		return true;
+		
+	}
 	
+	/**
+	 * Checks whether the provided function is ready to be started
+	 * @return
+	 */
+	public boolean canStart() {
+		/*
+		 * needs to be opened. so needs to be openable. Half of our checks done there.
+		 * Needs to have protectionSize, maxTeamBlock set
+		 *                /\____ No way to check. Defaults to 0 (cause it's an int)
+		 * Needs to have some players somewhere! (at least 2 players)
+		 */
+		
+		if (!canOpen()) {
+			return false;
+		}
+		
+		if (this.getAllPlayers().size() < 2) {
+			return false;
+		}
+		
+		return true;
+	}
 	
 	
 	

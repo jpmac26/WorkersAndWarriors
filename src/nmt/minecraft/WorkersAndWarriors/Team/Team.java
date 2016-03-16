@@ -314,4 +314,28 @@ public class Team {
 		}
 	}
 	
+	/**
+	 * Performs a personalized check to make sure that this team object would be ready to open if the
+	 * game is opened.
+	 * @return
+	 * @see {@link nmt.minecraft.WorkersAndWarriors.Session.GameSession#start() GameSession.oepn()}
+	 */
+	public boolean isReady() {
+		/*
+		 * Check we have a team, name, block type, goal type, goal pos, color...
+		 * Also check we have players??
+		 */
+		
+		if (flagArea == null || teamColor == null || teamName == null || blockType == null
+				|| goalType == null || spawnPoints.isEmpty()) {
+			return false;
+		}
+		
+		if (players.isEmpty()) {
+			return false;
+		}
+		
+		return true;
+	}
+	
 }
