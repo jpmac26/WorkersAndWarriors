@@ -305,6 +305,15 @@ public class GameSession {
 		return newPlayer;
 	}
 	
+	public boolean removePlayer(WWPlayer player) {
+		return removePlayer(player.getPlayer());
+	}
+	
+	public boolean removePlayer(OfflinePlayer player) {
+		//TODO
+		return false;
+	}
+	
 	public State getState() {
 		return this.state;
 	}
