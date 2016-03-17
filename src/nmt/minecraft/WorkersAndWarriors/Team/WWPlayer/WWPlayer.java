@@ -1,9 +1,7 @@
 package nmt.minecraft.WorkersAndWarriors.Team.WWPlayer;
 
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 /**

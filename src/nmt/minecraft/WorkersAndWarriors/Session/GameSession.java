@@ -5,10 +5,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
 import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
+import nmt.minecraft.WorkersAndWarriors.Config.PluginConfiguration;
 import nmt.minecraft.WorkersAndWarriors.IO.ChatFormat;
 import nmt.minecraft.WorkersAndWarriors.Team.Team;
 import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
@@ -72,6 +75,19 @@ public class GameSession {
 		
 		if (state != State.STOPPED) {
 			return false;
+		}
+		
+		state = State.OPEN;
+		
+		if (PluginConfiguration.config.getBroadcastOpen()) {
+			for (Player p : Bukkit.getOnlinePlayers()) {
+				if (WorkersAndWarriorsPlugin.plugin.getSession(p) == null) {
+					p.sendMessage(ChatFormat.SUCCESS.wrap("The session ") + ChatFormat.SESSION.wrap(name)
+							+ ChatFormat.SUCCESS.wrap(" has opened!"));
+					p.sendMessage(ChatFormat.INFO.wrap("use    /wwp join ") + ChatFormat.SESSION.wrap(name)
+							+ ChatFormat.INFO.wrap("    to join"));
+				}
+			}
 		}
 		
 		return true;

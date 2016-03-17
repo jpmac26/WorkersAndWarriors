@@ -31,7 +31,8 @@ public class PluginConfiguration {
 		VERSION("version", 1.00),
 		FLAGISPROTECTED("flagzone.protected", true),
 		POINTSTOWIN("points", 10),
-		RESPAWNTIME("respawn.time", 3);
+		RESPAWNTIME("respawn.time", 3),
+		BROADCASTOPEN("notifications.open", true);
 		
 		private String key;
 		
@@ -203,6 +204,10 @@ public class PluginConfiguration {
 	 */
 	public int getRespawnCooldown() {
 		return (Integer) getValue(Key.RESPAWNTIME);
+	}
+	
+	public boolean getBroadcastOpen() {
+		return (Boolean) getValue(Key.BROADCASTOPEN);
 	}
 	
 }

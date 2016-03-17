@@ -9,7 +9,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
-import nmt.minecraft.WorkersAndWarriors.IO.TeamCommands.SubCommand;
 import nmt.minecraft.WorkersAndWarriors.Session.GameSession;
 import nmt.minecraft.WorkersAndWarriors.Team.Team;
 import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
