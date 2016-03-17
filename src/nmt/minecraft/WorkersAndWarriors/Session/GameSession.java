@@ -318,6 +318,8 @@ public class GameSession {
 					"You've joined the game session ") + ChatFormat.SESSION.wrap(name));
 		}
 		
+		this.unsortedPlayers.add(newPlayer);
+		
 		return newPlayer;
 	}
 	
