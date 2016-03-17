@@ -1,6 +1,7 @@
 package nmt.minecraft.WorkersAndWarriors.Session;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -328,7 +329,28 @@ public class GameSession {
 	}
 	
 	public boolean removePlayer(OfflinePlayer player) {
-		//TODO
+		if (unsortedPlayers != null && !unsortedPlayers.isEmpty()) {
+			Iterator<WWPlayer> it = unsortedPlayers.iterator();
+			while (it.hasNext()) {
+				if (it.next().getPlayer().getUniqueId().equals(player.getUniqueId())) {
+					it.remove();
+					return true;
+				}
+			}
+		}
+		
+		WWPlayer p = getPlayer(player);
+		if (p == null) {
+			return false;
+		}
+		
+		//they're on a team somewhere!
+		for (Team t : teams) {
+			if (t.removePlayer(p)) {
+				return true;
+			}
+		}
+		
 		return false;
 	}
 	

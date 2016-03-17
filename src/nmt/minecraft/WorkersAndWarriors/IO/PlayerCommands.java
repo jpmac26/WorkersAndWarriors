@@ -155,37 +155,35 @@ public class PlayerCommands implements CommandExecutor {
 	}
 	
 	private boolean teamCommand(Player sender, String[] args) {
-		//wwp team [session] [team]
-		if (args.length != 3) {
+		//wwp team [team]
+		if (args.length != 2) {
 			sender.sendMessage(ChatFormat.USAGE + "Usage: /wwtp " + SubCommand.TEAM.getName() 
-					+ ChatFormat.SESSION + " [session] " + ChatFormat.TEAM.wrap("[team]"));
+					+ ChatFormat.TEAM.wrap(" [team]"));
 			return true;
 		}
 		
-		GameSession session = WorkersAndWarriorsPlugin.plugin.getSession(args[1]);
+		GameSession session = WorkersAndWarriorsPlugin.plugin.getSession(sender);
+		
 		if (session == null) {
-			sender.sendMessage(ChatFormat.ERROR + "Unable to locate session " + ChatFormat.SESSION.wrap(args[1]));
-			sender.sendMessage(ChatFormat.USAGE + "Usage: /wwp " + SubCommand.TEAM.getName() 
-					+ ChatFormat.SESSION + " [session] " + ChatFormat.TEAM.wrap("[team]"));
+			sender.sendMessage(ChatFormat.WARNING.wrap("You must join a session first!"));
+			sender.sendMessage(ChatFormat.INFO.wrap("To join, use /wwp join ") 
+					+ ChatFormat.SESSION.wrap("[session]"));
 			return true;			
 		}
 		
-		WWPlayer wp = session.getPlayer(sender);
-		if (wp == null) {
-			sender.sendMessage(ChatFormat.WARNING.wrap("You must join the session first!"));
-			sender.sendMessage(ChatFormat.INFO.wrap("To join, use /wwp join ") 
-					+ ChatFormat.SESSION.wrap(args[1]));
-			return true;
-		}
+		WWPlayer wp = session.getPlayer(sender);		
 		
-		Team team = session.getTeam(args[2]);
+		Team team = session.getTeam(args[1]);
 		if (team == null) {
 			sender.sendMessage(ChatFormat.ERROR.wrap("Could not find team ")
-					+ ChatFormat.TEAM.wrap(args[2]));
+					+ ChatFormat.TEAM.wrap(args[1]));
 			sender.sendMessage(ChatFormat.USAGE + "Usage: /wwp " + SubCommand.TEAM.getName() 
-					+ ChatFormat.SESSION + " [session] " + ChatFormat.TEAM.wrap("[team]"));
+					+ ChatFormat.TEAM.wrap(" [team]"));
 			return true;
 		}
+
+		//if they're on a team or unsorted, remove them so we can insert them cleanly
+		session.removePlayer(wp);
 		
 		team.addPlayer(wp);
 		sender.sendMessage(ChatFormat.SUCCESS.wrap("You have joined the team ") 
