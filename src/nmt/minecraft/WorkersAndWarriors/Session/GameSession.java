@@ -402,7 +402,17 @@ public class GameSession {
 		 * Needs to have some players somewhere! (at least 2 players)
 		 */
 		
-		if (!canOpen()) {
+		if (teams.isEmpty()) {
+			return false;
+		}
+		
+		for (Team team : teams) {
+			if (!team.isReady()) {
+				return false;
+			}
+		}
+		
+		if (sessionLobby == null) {
 			return false;
 		}
 		
