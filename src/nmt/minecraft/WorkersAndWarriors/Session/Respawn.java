@@ -61,6 +61,7 @@ public class Respawn {
 		p.setGameMode(GameMode.SURVIVAL);
 		p.setHealth(20);
 		p.setTicksLived(0);
+		p.getActivePotionEffects().clear();
 		// Apply potion effects
 		for (PotionEffect e : this.effects){
 			p.addPotionEffect(e);
