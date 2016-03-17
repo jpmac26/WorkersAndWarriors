@@ -127,7 +127,7 @@ public class PluginConfiguration {
 			}
 			
 			o = yConfig.get(key.getKey());
-			if (!o.getClass().equals(key.getDefault().getClass())) {
+			if (!key.getDefault().getClass().isInstance(o)) {
 				//classes don't match! Invalid key entry!
 				logger.warning("Unable to load config value for key [" + ChatColor.BOLD + key.key + 
 						ChatColor.RESET + "] because of a class mismatch. Default used instead." );
