@@ -18,8 +18,10 @@ import nmt.minecraft.WorkersAndWarriors.IO.PlayerCommands;
 import nmt.minecraft.WorkersAndWarriors.IO.PluginCommands;
 import nmt.minecraft.WorkersAndWarriors.IO.SessionCommands;
 import nmt.minecraft.WorkersAndWarriors.IO.TeamCommands;
+import nmt.minecraft.WorkersAndWarriors.Session.BlockListener;
 import nmt.minecraft.WorkersAndWarriors.Session.GameSession;
 import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
+import org.bukkit.Bukkit;
 
 /**
  * Main plugin class. Creates top-level infrastructure, excluding game-session-specific componenets.
@@ -35,6 +37,8 @@ public class WorkersAndWarriorsPlugin extends JavaPlugin {
 	public static WorkersAndWarriorsPlugin plugin;
 	
 	private Set<GameSession> sessions;
+        
+        public BlockListener Listener;
 	
 
 	
@@ -78,6 +82,8 @@ public class WorkersAndWarriorsPlugin extends JavaPlugin {
 		SessionCommands.getExecutor();
 		PlayerCommands.getExecutor();
 		TeamCommands.getExecutor();
+                
+                //Bukkit.getPluginManager().registerEvents(Listener, this);
 	}
 	
 	@Override

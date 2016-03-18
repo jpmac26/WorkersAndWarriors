@@ -1,5 +1,9 @@
 package nmt.minecraft.WorkersAndWarriors.Session;
 
+import java.util.ArrayList;
+import java.util.List;
+import nmt.minecraft.WorkersAndWarriors.Team.Team;
+import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.event.Listener;
@@ -22,11 +26,13 @@ import org.bukkit.material.MaterialData;
 public class BlockListener implements Listener {
 
 	private GameSession session;
-	
-	public BlockListener(GameSession session) {
+		
+        public BlockListener(GameSession session) {
 		this.session = session;
 	}
-	
+	        
+        //List<Team> teams = new ArrayList<Team>(session.getTeams());
+        
 	//REMEMBER: make sur a player is in a game before trying to handle anything.
 	//Do this via session.getPlayer() type thing. 
 	
@@ -34,13 +40,29 @@ public class BlockListener implements Listener {
 	 * Called when a NON-FLAG block is broken
 	 * @param e
 	 */
-	private void onBlockBreak(BlockBreakEvent e) {
+	private void onBlockBreak(BlockBreakEvent e) {                          //presumably done, are we doing anything once the block is successfully broken?
 		//check if player is a worker
 		//if not, don't allow it
-		//if so, make sure it's the opponent's block type
+		//if so, make sure it's any team's block type
 		//and if it is, allow it. 
 		//otherwise, cancel
 		//e.setCancelled(true);
+            boolean flag0 = false;
+            if (session.getPlayer(e.getPlayer()) != null){
+                if (session.getPlayer(e.getPlayer()).getType() == WWPlayer.Type.WARRIOR){
+                    e.setCancelled(true);
+                } else if (session.getPlayer(e.getPlayer()).getType() == WWPlayer.Type.WORKER){                  
+                    for(Team team : session.getTeams()){
+                        if(team.getBlockType() == e.getBlock().getState().getData()){
+                            flag0 = true;
+                        }
+                    } if (flag0 = false){
+                        e.setCancelled(true);
+                        
+                    }
+                }
+                
+            }
 	}
 	
 	/**
