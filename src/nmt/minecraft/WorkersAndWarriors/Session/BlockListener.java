@@ -106,7 +106,7 @@ public class BlockListener implements Listener {
         //and if it is, allow it. 
         //otherwise, cancel
         //e.setCancelled(true);
-    	
+
         if (session.getPlayer(e.getPlayer()) != null) {
             if (session.getPlayer(e.getPlayer()).getType() == WWPlayer.Type.WARRIOR) {
                 e.setCancelled(true);
@@ -152,7 +152,7 @@ public class BlockListener implements Listener {
             player.getPlayer().getPlayer().getInventory().addItem(stack);
             e.setCancelled(true);
             e.getBlock().setType(Material.AIR);
-            
+
         }
     }
 
@@ -162,18 +162,23 @@ public class BlockListener implements Listener {
      * @param e
      */
     private void onFlagPlace(BlockPlaceEvent e) {
-    	WWPlayer player = session.getPlayer(e.getPlayer());
+        WWPlayer player = session.getPlayer(e.getPlayer());
         for (Team team : session.getTeams()) {
-                    if (team.getFlagArea().isIn(e.getBlock().getLocation())) {
-                        team.addPoints(1);
-                        player.setFlag(false);
-                        team.resetFlagBlock();
-                        e.getBlockReplacedState().setType(Material.AIR);
-                        
-                        e.getBlock().getLocation().getWorld().playEffect(e.getBlock().getLocation(), Effect.HAPPY_VILLAGER, 90000);
-                        //TODO
+            if (team.getFlagArea().isIn(e.getBlock().getLocation())) {
+                team.addPoints(1);
+                player.setFlag(false);
+                for (Team team2 : session.getTeams()) {
+                    if (team2.getGoalType().equals(e.getBlock().getState().getData())) {
+                        team2.resetFlagBlock();
                         break;
                     }
+                }
+                e.getBlockReplacedState().setType(Material.AIR);
+
+                e.getBlock().getLocation().getWorld().playEffect(e.getBlock().getLocation(), Effect.HAPPY_VILLAGER, 90000);
+                //TODO
+                break;
+            }
         }
 
     }
