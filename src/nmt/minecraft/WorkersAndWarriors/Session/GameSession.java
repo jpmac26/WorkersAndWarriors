@@ -203,7 +203,7 @@ public class GameSession {
 			bListener = null;
 			
 			for (WWPlayer p : getAllPlayers()) {
-				removePlayer(p);
+				removePlayer(p.getPlayer(), true);
 			}
 			
 			state = State.STOPPED;
@@ -213,7 +213,7 @@ public class GameSession {
 		if (state == State.OPEN) {
 			state = State.STOPPED;
 			for (WWPlayer p : getAllPlayers()) {
-				removePlayer(p);
+				removePlayer(p.getPlayer(), true);
 			}
 			return true;
 		}
@@ -465,6 +465,10 @@ public class GameSession {
 	}
 	
 	public boolean removePlayer(OfflinePlayer player) {
+		return removePlayer(player, false);
+	}
+	
+	public boolean removePlayer(OfflinePlayer player, boolean teleport) {
 		if (unsortedPlayers != null && !unsortedPlayers.isEmpty()) {
 			Iterator<WWPlayer> it = unsortedPlayers.iterator();
 			WWPlayer cache;
