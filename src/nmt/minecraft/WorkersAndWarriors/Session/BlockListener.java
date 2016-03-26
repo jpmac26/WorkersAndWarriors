@@ -1,5 +1,6 @@
 package nmt.minecraft.WorkersAndWarriors.Session;
 
+import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.event.EventHandler;
@@ -32,6 +33,7 @@ public class BlockListener implements Listener {
 
     public BlockListener(GameSession session) {
         this.session = session;
+        Bukkit.getPluginManager().registerEvents(WorkersAndWarriorsPlugin.plugin, this);
     }
 
     //REMEMBER: make sur a player is in a game before trying to handle anything.
