@@ -105,20 +105,18 @@ public class BlockListener implements Listener {
         //otherwise, cancel
         //e.setCancelled(true);
     	
-        boolean flag4 = false;
         if (session.getPlayer(e.getPlayer()) != null) {
             if (session.getPlayer(e.getPlayer()).getType() == WWPlayer.Type.WARRIOR) {
                 e.setCancelled(true);
             } else if (session.getPlayer(e.getPlayer()).getType() == WWPlayer.Type.WORKER) {
                 for (Team team : session.getTeams()) {
                     if (team.getGoalType().equals(e.getBlock().getState().getData()) && !team.equals(session.getTeam(session.getPlayer(e.getPlayer())))) {
-                        flag4 = true;
                         this.onFlagPlace(e);
-                        break;
+                        return;
                     }
                 }
 
-                if (!session.getTeam(session.getPlayer(e.getPlayer())).getBlockType().equals(e.getBlock().getState().getData()) || flag4 == false) {
+                if (!session.getTeam(session.getPlayer(e.getPlayer())).getBlockType().equals(e.getBlock().getState().getData())) {
 
                     e.setCancelled(true);
                     return;
@@ -147,7 +145,8 @@ public class BlockListener implements Listener {
             e.setCancelled(true);
         } else if (session.getPlayer(e.getPlayer()).getType() == WWPlayer.Type.WORKER) {
             player.setFlag(true);
-            e.getBlock().getDrops().clear();
+            e.setCancelled(true);
+            e.getBlock().setType(Material.AIR);
             player.getPlayer().getPlayer().getInventory().addItem(new ItemStack(e.getBlock().getState().getType(), 1));
         }
     }

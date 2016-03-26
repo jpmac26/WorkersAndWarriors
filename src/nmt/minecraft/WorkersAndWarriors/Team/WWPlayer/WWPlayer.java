@@ -2,10 +2,20 @@ package nmt.minecraft.WorkersAndWarriors.Team.WWPlayer;
 
 import static nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin.plugin;
 
+import org.bukkit.Color;
+import org.bukkit.DyeColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
+
+import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
+import nmt.minecraft.WorkersAndWarriors.Team.Team;
 
 /**
  * Player wrapper class.
@@ -24,8 +34,66 @@ import org.bukkit.entity.Player;
 public class WWPlayer {
 	
 	public enum Type {
-		WORKER,
-		WARRIOR
+		WORKER(new ItemStack(Material.LEATHER_HELMET), null, null, null, new ItemStack(Material.STONE_PICKAXE), null),
+		WARRIOR(new ItemStack(Material.LEATHER_HELMET), new ItemStack(Material.CHAINMAIL_CHESTPLATE), new ItemStack(Material.CHAINMAIL_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS), new ItemStack(Material.STONE_SWORD), new ItemStack(Material.SHIELD));
+		
+		private ItemStack[] equips;
+		
+		private Type() {
+			equips = new ItemStack[6];
+		}
+		
+		private Type(ItemStack head, ItemStack chest, ItemStack legs, ItemStack boots, ItemStack main, ItemStack off) {
+			equips = new ItemStack[6];
+			equips[0] = head;
+			equips[1] = chest;
+			equips[2] = legs;
+			equips[3] = boots;
+			equips[4] = main;
+			equips[5] = off; 
+			
+			
+		}
+		
+		public void outfitPlayer(WWPlayer player) {
+			if (!player.getPlayer().isOnline()) {
+				return;
+			}
+			
+			Player p = player.getPlayer().getPlayer();
+			Team t = WorkersAndWarriorsPlugin.plugin.getSession(player).getTeam(player);
+			Color color = Color.AQUA;
+			DyeColor dc;
+			
+			try {
+				dc = DyeColor.valueOf(t.getTeamColor().name());
+			} catch (Exception e) {
+				//unable to get that color
+				dc = null;
+			}
+			if (dc != null) {
+				color = color.mixDyes(dc);
+				for (ItemStack item : equips) {
+					if (item == null) {
+						continue;
+					}
+					
+					ItemMeta meta = item.getItemMeta();
+					if (meta instanceof LeatherArmorMeta) {
+						LeatherArmorMeta lMeta = (LeatherArmorMeta) meta;
+						lMeta.setColor(color);
+					}
+				}
+			}
+			
+			EntityEquipment equipment = p.getEquipment();
+			equipment.setHelmet(equips[0]);
+			equipment.setChestplate(equips[1]);
+			equipment.setLeggings(equips[2]);
+			equipment.setBoots(equips[3]);
+			equipment.setItemInMainHand(equips[4]);
+			equipment.setItemInOffHand(equips[5]);
+		}
 	}
 	
 	private OfflinePlayer player;
@@ -87,7 +155,11 @@ public class WWPlayer {
 		}
 		Player p = this.getPlayer().getPlayer();
 		p.teleport(spawnLocation);
+		
 		p.setGameMode(GameMode.SURVIVAL);
+		p.getInventory().clear();
+		
+		type.outfitPlayer(this);
 	}
 	
 	/**

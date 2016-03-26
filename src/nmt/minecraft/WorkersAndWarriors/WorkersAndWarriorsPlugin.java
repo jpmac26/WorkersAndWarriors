@@ -6,7 +6,9 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import nmt.minecraft.WorkersAndWarriors.Config.PluginConfiguration;
@@ -79,6 +81,11 @@ public class WorkersAndWarriorsPlugin extends JavaPlugin {
 		SessionCommands.getExecutor();
 		PlayerCommands.getExecutor();
 		TeamCommands.getExecutor();
+		
+		MaterialData d1 = new MaterialData(Material.TORCH, (byte) 0),
+				d2 = new MaterialData(Material.TORCH, (byte) 0);
+		
+		System.out.println(d1.equals(d2) ? "Success" : "OOOOOOOOOOOOOOOOO<MMMMMGAGSGGGGGGGGGGGGGGGG");
                 
                 //Bukkit.getPluginManager().registerEvents(Listener, this);
 	}
