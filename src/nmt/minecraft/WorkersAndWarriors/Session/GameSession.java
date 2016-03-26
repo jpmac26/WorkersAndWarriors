@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
@@ -112,9 +113,82 @@ public class GameSession {
 			return false;
 		}
 		
+		state = State.RUNNING;
+		
 		this.bListener = new BlockListener(this);
 		
+		distributePlayers();
+		
+		for (Team t : teams)
+		for (WWPlayer p : t.getPlayers()) {
+			p.spawn(t.getRandomSpawn());
+		}
+		
 		return true;
+	}
+	
+	/**
+	 * Moves players and automatically balances teams.
+	 * This method performs the balancing and returns nothing.
+	 */
+	private void distributePlayers() {
+		//first figure out how many players each team should have. Then add unsorted
+		//to below that. Then take max, apply to min?
+		
+		//where do we stop? It won't be exactly even.
+		//maybe get number for each, re-add each player and take those that are over and put in pool.
+		
+		//two pass; First pass, chop extra
+		//second pass, fill
+		
+		int cap = (getAllPlayers().size() / teams.size()); //rounds down
+		int extra = (getAllPlayers().size() % teams.size());
+		
+		ListIterator<WWPlayer> it;
+		WWPlayer cache;
+		int localCap;
+		
+		for (Team t : teams) {
+			localCap = cap + (extra-- > 0 ? 1 : 0);
+			if (t.getPlayers().size() > localCap) {
+				it = t.getPlayers().listIterator();
+				for (int i = 0; i < localCap; i++) {
+					it.next();
+				}
+				
+				cache = it.next();
+				t.removePlayer(cache);
+				this.unsortedPlayers.add(cache);
+			}
+		}
+		
+		//now, distribute displaced
+		it = unsortedPlayers.listIterator();
+		for (Team t : teams) {
+			if (t.getPlayers().size() < cap) {
+				t.addPlayer(it.next());
+				it.remove();
+			}
+		}
+		
+		//finally, distribute extras (remainder)
+		if (!unsortedPlayers.isEmpty()) {
+			//sanity check
+			if (unsortedPlayers.size() >= teams.size()) {
+				WorkersAndWarriorsPlugin.plugin.getLogger().warning("Invalid size in distribution!!!");
+				WorkersAndWarriorsPlugin.plugin.getLogger().warning("unsorted held " + unsortedPlayers.size()
+						+ " players modulus!");
+				return;
+			}
+			
+			it = unsortedPlayers.listIterator();
+			for (Team t : teams) {
+				t.addPlayer(it.next());
+				it.remove();
+			}
+			
+		}
+		
 	}
 	
 	/**
