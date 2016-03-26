@@ -76,7 +76,7 @@ public class BlockListener implements Listener {
                                 wwp.giveBlock(1);
                                 flag1 = true;
                             }
-                        } while (flag1 = false);
+                        } while (flag1 == false);
                     }
                 }
                 if (flag0 == false) {
