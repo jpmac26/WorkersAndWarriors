@@ -6,6 +6,8 @@ import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
+import org.bukkit.entity.Player;
 import org.bukkit.material.MaterialData;
 import org.bukkit.scoreboard.Score;
 import org.bukkit.util.Vector;
@@ -360,6 +362,15 @@ public class Team {
 		// Since we are returned a set of scores, assume the first
 		Score s = this.session.getScoreboard().getScores(this.teamName).iterator().next();
 		s.setScore(points);
+		
+		// Alert players
+		this.sendMessage("Your team scored!");;
+		for (WWPlayer p : this.getPlayers()) {
+			Player tmp = ((Player) p.getPlayer());
+			tmp.playSound(tmp.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 10, 1);
+			tmp.playSound(tmp.getLocation(), Sound.ENTITY_FIREWORK_BLAST, 8, 1);
+			tmp.playSound(tmp.getLocation(), Sound.ENTITY_FIREWORK_LARGE_BLAST, 8, 1);
+		}
 	}
 	
 	/**
