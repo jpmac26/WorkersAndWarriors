@@ -2,6 +2,7 @@ package nmt.minecraft.WorkersAndWarriors.Session;
 
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -40,7 +41,8 @@ public class BlockListener implements Listener {
      *
      * @param e
      */
-    private void onBlockBreak(BlockBreakEvent e) {
+    @EventHandler
+    public void onBlockBreak(BlockBreakEvent e) {
         //check if player is a worker
         //if not, don't allow it
         //if so, make sure it's any team's block type
@@ -54,6 +56,15 @@ public class BlockListener implements Listener {
                 e.setCancelled(true);
             } else if (session.getPlayer(e.getPlayer()).getType() == WWPlayer.Type.WORKER) {
                 for (Team team : session.getTeams()) {
+                	
+                	if (team.getGoalType().equals(e.getBlock().getState().getData())) {
+                		flag0 = true;
+                		
+                		onFlagBreak(e);
+                		
+                		break;
+                	}
+                	
                     if (team.getBlockType() == e.getBlock().getState().getData()) {
                         flag0 = true;
                         do {
@@ -66,7 +77,7 @@ public class BlockListener implements Listener {
                         } while (flag1 = false);
                     }
                 }
-                if (flag0 = false) {
+                if (flag0 == false) {
                     e.setCancelled(true);
 
                 }
@@ -80,7 +91,8 @@ public class BlockListener implements Listener {
      *
      * @param e
      */
-    private void onBlockPlace(BlockPlaceEvent e) {
+    @EventHandler
+    public void onBlockPlace(BlockPlaceEvent e) {
         //check if player is a worker AND this is in a valid place
         //if not, don't allow it
         //if so, make sure it's the opponent's block type
@@ -92,24 +104,16 @@ public class BlockListener implements Listener {
 
     /**
      * Called when a Flag block is broken
-     *
+     * Only called when a flag has been broken...
      * @param e
      */
     private void onFlagBreak(BlockBreakEvent e) {
-        boolean flag2 = false;
-        if (session.getPlayer(e.getPlayer()) != null) {
-            if (session.getPlayer(e.getPlayer()).getType() == WWPlayer.Type.WARRIOR) {
-                e.setCancelled(true);
-            } else if (session.getPlayer(e.getPlayer()).getType() == WWPlayer.Type.WORKER) {
-                for (Team team : session.getTeams()) {
-                    if (team.getGoalType() == e.getBlock().getState().getData() && session.getTeam(session.getPlayer(e.getPlayer())).getGoalType() != e.getBlock().getState().getData()) {
-                        flag2 = true;
-                    }
-                    if (flag2 = false) {
-                        e.setCancelled(true);
-                    }
-                }
-            }
+    	WWPlayer player = session.getPlayer(e.getPlayer());
+        
+        if (session.getPlayer(e.getPlayer()).getType() == WWPlayer.Type.WARRIOR) {
+            e.setCancelled(true);
+        } else if (session.getPlayer(e.getPlayer()).getType() == WWPlayer.Type.WORKER) {
+            player.setFlag(true);                    
         }
     }
         /**
