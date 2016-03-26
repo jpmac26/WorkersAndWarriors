@@ -469,6 +469,8 @@ public class GameSession {
 		if (player.isOnline())  {
 			player.getPlayer().sendMessage(ChatFormat.SUCCESS.wrap(
 					"You've joined the game session ") + ChatFormat.SESSION.wrap(name));
+			player.getPlayer().sendMessage(ChatFormat.INFO + "You've been given the " + ChatFormat.CLASS 
+						+ newPlayer.getType().name().toLowerCase() + ChatFormat.INFO.wrap(" class."));
 			player.getPlayer().teleport(sessionLobby);
 		}
 		
