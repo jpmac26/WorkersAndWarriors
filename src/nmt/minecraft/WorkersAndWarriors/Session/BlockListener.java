@@ -114,7 +114,7 @@ public class BlockListener implements Listener {
                     }
                 }
 
-                if (session.getTeam(session.getPlayer(e.getPlayer())).getBlockType() != e.getBlock().getState().getData() || flag4 == false) {
+                if (!session.getTeam(session.getPlayer(e.getPlayer())).getBlockType().equals(e.getBlock().getState().getData()) || flag4 == false) {
                     e.setCancelled(true);
                 }
                 for (Team team : session.getTeams()) {
