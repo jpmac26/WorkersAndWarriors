@@ -80,6 +80,7 @@ public class Team {
 		players = new LinkedList<WWPlayer>();
 		this.flagArea = null;
 		this.spawnPoints = new LinkedList<Location>();
+		this.session = session;
 	}
 	
 	/**
