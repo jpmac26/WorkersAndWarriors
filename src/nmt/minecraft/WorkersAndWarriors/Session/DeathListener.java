@@ -9,6 +9,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
 import nmt.minecraft.WorkersAndWarriors.Session.GameSession.State;
@@ -63,8 +65,8 @@ public class DeathListener implements Listener {
 			// If the killer was a Player entity, notify them
 			if (e.getDamager() instanceof Player) {
 				msgKiller((Player) e.getDamager(), e);
-				p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_DEATH, 1, 1);
-				((Player) e.getDamager()).playSound(p.getLocation(), Sound.ENTITY_VILLAGER_DEATH, 1, 1);
+				p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_DEATH, 10, 1);
+				((Player) e.getDamager()).playSound(p.getLocation(), Sound.ENTITY_VILLAGER_DEATH, 10, 1);
 			}
 			
 			// For gameplay, play audio for players
@@ -85,6 +87,7 @@ public class DeathListener implements Listener {
 		WWPlayer wPlayer = this.session.getPlayer(p);
 		Team wTeam = this.session.getTeam(p);
 		Respawn respawn = new Respawn(wPlayer, wTeam);
+		respawn.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 4, 4));
 		respawn.respawnPlayer();
 		
 	}

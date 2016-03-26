@@ -64,14 +64,11 @@ public class Respawn implements Tickable<Object>{
 		p.setExhaustion(0.0f);
 		p.setSaturation(15.0f);
 		p.setFoodLevel(20);
-		p.setTicksLived(0);
 		p.getActivePotionEffects().clear();
 		// Apply potion effects
 		for (PotionEffect e : this.effects){
 			p.addPotionEffect(e);
 		}
-		
-		p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_DEATH, 1.0f, 1.0f);
 	}
 	
 	/**
