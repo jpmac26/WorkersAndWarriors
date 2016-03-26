@@ -60,7 +60,7 @@ public class Respawn implements Tickable<Object>{
 		Player p = (Player) this.wPlayer.getPlayer();
 		p.teleport(spawnLocation);
 		p.setGameMode(GameMode.SURVIVAL);
-		p.setHealth(20);
+		p.setHealth(p.getMaxHealth());
 		p.setTicksLived(0);
 		p.getActivePotionEffects().clear();
 		// Apply potion effects

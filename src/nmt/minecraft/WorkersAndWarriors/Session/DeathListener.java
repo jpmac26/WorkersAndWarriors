@@ -4,7 +4,6 @@
 package nmt.minecraft.WorkersAndWarriors.Session;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -59,12 +58,12 @@ public class DeathListener implements Listener {
 		// Check to see if damage is 'fatal'
 		if (p.getHealth() - e.getDamage() < 1) {
 			this.handleDeath(p, e);
-		}
-		
-		// If the killer was a Player entity, notify them
-		if (e.getDamager() instanceof Player) {
-			msgKiller((Player) e.getDamager(), e);
-		}
+			
+			// If the killer was a Player entity, notify them
+			if (e.getDamager() instanceof Player) {
+				msgKiller((Player) e.getDamager(), e);
+			}
+		}	
 	}
 	
 	/**
@@ -79,8 +78,8 @@ public class DeathListener implements Listener {
 		// Obtain WW player for respawn behavior
 		WWPlayer wPlayer = this.session.getPlayer(p);
 		Team wTeam = this.session.getTeam(p);
-		Location respawnPoint = wTeam.getRandomSpawn();
-		wPlayer.spawn(respawnPoint);
+		Respawn respawn = new Respawn(wPlayer, wTeam);
+		respawn.respawnPlayer();
 		
 	}
 	
