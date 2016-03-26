@@ -24,7 +24,8 @@ public enum ChatFormat {
 	SUCCESS(ChatColor.GREEN),
 	INFO(ChatColor.GRAY),
 	USAGE(ChatColor.RED),
-	IMPORTANT(ChatColor.DARK_GREEN, ChatColor.BOLD);
+	IMPORTANT(ChatColor.DARK_GREEN, ChatColor.BOLD),
+	CLASS(ChatColor.AQUA);
 	
 	private String format;
 	
