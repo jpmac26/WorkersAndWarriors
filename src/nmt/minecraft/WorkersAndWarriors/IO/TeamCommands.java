@@ -134,7 +134,7 @@ public class TeamCommands implements CommandExecutor {
 			return true;
 		}
 		
-		Team team = new Team(args[2]);
+		Team team = new Team(session, args[2]);
 		session.addTeam(team);
 		
 		sender.sendMessage(ChatFormat.SUCCESS + "Team " + ChatFormat.TEAM + args[2]
