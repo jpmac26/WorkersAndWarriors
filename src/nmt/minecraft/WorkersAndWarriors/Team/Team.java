@@ -7,6 +7,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.material.MaterialData;
+import org.bukkit.scoreboard.Score;
 import org.bukkit.util.Vector;
 
 import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
@@ -353,6 +354,11 @@ public class Team {
 			session.win(this);
 			
 		}
+		
+		// Update score
+		// Since we are returned a set of scores, assume the first
+		Score s = this.session.getScoreboard().getScores(this.teamName).iterator().next();
+		s.setScore(points);
 	}
 	
 	/**
