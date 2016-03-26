@@ -1,15 +1,14 @@
 package nmt.minecraft.WorkersAndWarriors.Session;
 
-import java.util.ArrayList;
-import java.util.List;
-import nmt.minecraft.WorkersAndWarriors.Team.Team;
-import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.material.MaterialData;
+
+import nmt.minecraft.WorkersAndWarriors.Team.Team;
+import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
 
 /**
  * Listens for block changes, and updates the game session.
