@@ -145,7 +145,8 @@ public class BlockListener implements Listener {
             e.setCancelled(true);
         } else if (session.getPlayer(e.getPlayer()).getType() == WWPlayer.Type.WORKER) {
             player.setFlag(true);
-            e.getBlock().getDrops().clear();
+            e.setCancelled(true);
+            e.getBlock().setType(Material.AIR);
             player.getPlayer().getPlayer().getInventory().addItem(new ItemStack(e.getBlock().getState().getType(), 1));
         }
     }
