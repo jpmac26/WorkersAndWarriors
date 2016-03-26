@@ -76,7 +76,7 @@ public class BlockListener implements Listener {
                                 wwp.giveBlock(1);
                                 flag1 = true;
                             }
-                        } while (flag1 = false);
+                        } while (flag1 == false);
                     }
                 }
                 if (flag0 == false) {
@@ -114,14 +114,9 @@ public class BlockListener implements Listener {
                         break;
                     }
                 }
-                
-                /*
-                 * Team 1 TEAM1 
-                 * Team 2
-                 */
-                
-                //if (not my block || Its a flag and i handled it)
-                if (session.getTeam(session.getPlayer(e.getPlayer())).getBlockType() != e.getBlock().getState().getData() || flag4 == false) {
+
+                if (!session.getTeam(session.getPlayer(e.getPlayer())).getBlockType().equals(e.getBlock().getState().getData()) || flag4 == false) {
+
                     e.setCancelled(true);
                     return;
                 }
