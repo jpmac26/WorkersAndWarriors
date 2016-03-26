@@ -1,6 +1,8 @@
 package nmt.minecraft.WorkersAndWarriors.Team.WWPlayer;
 
 import static nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin.plugin;
+
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -86,6 +88,7 @@ public class WWPlayer {
 		}
 		Player p = this.getPlayer().getPlayer();
 		p.teleport(spawnLocation);
+		p.setGameMode(GameMode.SURVIVAL);
 	}
 	
 	/**
