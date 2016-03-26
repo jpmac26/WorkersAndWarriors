@@ -82,6 +82,7 @@ public class WWPlayer {
 					if (meta instanceof LeatherArmorMeta) {
 						LeatherArmorMeta lMeta = (LeatherArmorMeta) meta;
 						lMeta.setColor(color);
+						item.setItemMeta(lMeta);
 					}
 				}
 			}
