@@ -15,7 +15,7 @@ import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
 
 /**
  * This class handles the respawn mechanics
- * TODO Make it work with the scheduler, so the DeathListener only <br />
+ * TODO Make it work with the scheduler, so the {@link DeathListener} only <br />
  * has to handle scheduling the respawn. The class does the rest.
  * TODO We might also need to make sure the player is still logged <br />
  * into a session, they may disconnect in the time from when the <br />
@@ -32,7 +32,7 @@ public class Respawn implements Tickable{
 	/**
 	 * Default constructor for the Respawn Class, on its own <br />
 	 * it will not store any additional information other than <br />
-	 * the WWPlayer and the Team the WWPlayer is on.
+	 * the {@link WWPlayer} and the {@link Team} the {@link WWPlayer} is on.
 	 * @param wPlayer
 	 * @param wTeam
 	 */
@@ -43,7 +43,7 @@ public class Respawn implements Tickable{
 	}
 	
 	/**
-	 * This method adds a potion effect that will be applied to a player <br />
+	 * This method adds a {@link PotionEffect} that will be applied to a player <br />
 	 * when they respawn. Any number of effects can be applied; duplicate <br />
 	 * effects are not considered and will adopt Bukkit behaviors.
 	 * @param effect
@@ -70,7 +70,12 @@ public class Respawn implements Tickable{
 		
 		p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_DEATH, 1.0f, 1.0f);
 	}
-
+	
+	/**
+	 * This method describes the behavior a Respawn instance takes <br />
+	 * when it is called by a {@link scheduler}.
+	 * @param reference An optional object reference.
+	 */
 	@Override
 	public void alarm(Object reference) {
 		this.respawnPlayer();

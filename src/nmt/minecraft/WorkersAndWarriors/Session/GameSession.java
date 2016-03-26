@@ -117,11 +117,19 @@ public class GameSession {
 		
 		this.bListener = new BlockListener(this);
 		
-		distributePlayers();
+		// Team Balance
+		this.distributePlayers();
 		
+		// Spawn Players
 		for (Team t : teams)
 		for (WWPlayer p : t.getPlayers()) {
 			p.spawn(t.getRandomSpawn());
+		}
+		
+		// Distribute Blocks
+		for (Team t : teams) {
+			t.spawnTeam(this.maxTeamBlock);
+			t.resetFlagBlock();
 		}
 		
 		return true;
@@ -206,12 +214,12 @@ public class GameSession {
 				removePlayer(p);
 			}
 			
-			state = State.STOPPED;
+			state = State.ENDED;
 			return true;
 		}
 		
 		if (state == State.OPEN) {
-			state = State.STOPPED;
+			state = State.ENDED;
 			for (WWPlayer p : getAllPlayers()) {
 				removePlayer(p);
 			}
