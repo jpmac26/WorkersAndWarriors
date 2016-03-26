@@ -10,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
 
 import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
 import nmt.minecraft.WorkersAndWarriors.Config.PluginConfiguration;
@@ -54,6 +55,8 @@ public class GameSession {
 	 * Lobby location for all players in this session.
 	 */
 	private Location sessionLobby;
+	
+	private BlockListener bListener;
 	
 	/**
 	 * Create a new game session in the default stopped state and with the given name.<br />
@@ -105,6 +108,8 @@ public class GameSession {
 			return false;
 		}
 		
+		this.bListener = new BlockListener(this);
+		
 		return true;
 	}
 	
@@ -115,6 +120,25 @@ public class GameSession {
 	 */
 	public boolean stop(boolean force) {
 		
+		if (state == State.RUNNING && force) {
+			HandlerList.unregisterAll(bListener);
+			bListener = null;
+			
+			for (WWPlayer p : getAllPlayers()) {
+				removePlayer(p);
+			}
+			
+			state = State.STOPPED;
+			return true;
+		}
+		
+		if (state == State.OPEN) {
+			state = State.STOPPED;
+			for (WWPlayer p : getAllPlayers()) {
+				removePlayer(p);
+			}
+			return true;
+		}
 		
 		return false;
 	}
