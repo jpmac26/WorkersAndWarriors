@@ -67,9 +67,12 @@ public class DeathListener implements Listener {
 			
 			// If the killer was a Player entity, notify them
 			if (e.getDamager() instanceof Player) {
-				msgKiller((Player) e.getDamager(), e);
-				p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_DEATH, 10, 1);
-				((Player) e.getDamager()).playSound(p.getLocation(), Sound.ENTITY_VILLAGER_DEATH, 10, 1);
+				Player killer = ((Player) e.getDamager());
+				msgKiller(killer, e);
+				
+				killer.playSound(killer.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
+				p.getWorld().playSound(p.getLocation(), Sound.ENTITY_VILLAGER_DEATH, 10, 1);
+				p.getWorld().playSound(p.getLocation(), Sound.ENTITY_PLAYER_SMALL_FALL, 10, 1);
 			}
 			
 			// For gameplay, play audio for players

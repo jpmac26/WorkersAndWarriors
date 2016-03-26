@@ -12,6 +12,9 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Scoreboard;
 
 import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
 import nmt.minecraft.WorkersAndWarriors.Config.PluginConfiguration;
@@ -60,6 +63,9 @@ public class GameSession {
 	private BlockListener bListener;
 	private DeathListener dListener;
 	
+	private Scoreboard sBoard;
+	private Objective sideBar;
+	
 	/**
 	 * Create a new game session in the default stopped state and with the given name.<br />
 	 * <b>PLEASE NOTE</b>: The given name should be unique (see {@link #equals(Object)})
@@ -70,6 +76,12 @@ public class GameSession {
 		teams = new HashSet<Team>();
 		unsortedPlayers = new LinkedList<WWPlayer>();
 		this.sessionLobby = null;
+		
+		// Setup score board
+		this.sBoard = Bukkit.getScoreboardManager().getNewScoreboard();
+		sideBar = this.sBoard.registerNewObjective("Goals", "dummy");
+		this.sideBar.setDisplaySlot(DisplaySlot.SIDEBAR);
+		
 	}
 	
 	/**
@@ -122,17 +134,20 @@ public class GameSession {
 		// Team Balance
 		this.distributePlayers();
 		
-		// Spawn Players
-		for (Team t : teams)
-		for (WWPlayer p : t.getPlayers()) {
-			p.spawn(t.getRandomSpawn());
-		}
-		
-		// Distribute Blocks
+		// Distribute Blocks and scoreboard
 		for (Team t : teams) {
 			t.spawnTeam(this.maxTeamBlock);
 			t.resetFlagBlock();
+			
+			// Creates a score for the "team"
+			this.sideBar.getScore(t.getTeamName()).setScore(0);
 		}
+		
+		// Assign scorebaord
+			for (Team t : teams)
+			for (WWPlayer p : t.getPlayers()) {
+				((Player) p.getPlayer()).setScoreboard(sBoard);
+			}
 		
 		return true;
 	}
@@ -599,16 +614,13 @@ public class GameSession {
 		return true;
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	/**
+	 * Gets the {@link Scoreboard} for this session
+	 * @return A {@link Scoreboard}
+	 */
+	public Scoreboard getScoreboard() {
+		return this.sBoard;
+	}
 	
 	@Override
 	public boolean equals(Object o) {
