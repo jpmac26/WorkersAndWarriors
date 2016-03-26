@@ -4,6 +4,7 @@
 package nmt.minecraft.WorkersAndWarriors.Session;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -13,6 +14,8 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
+import nmt.minecraft.WorkersAndWarriors.Config.PluginConfiguration;
+import nmt.minecraft.WorkersAndWarriors.Scheduling.Scheduler;
 import nmt.minecraft.WorkersAndWarriors.Session.GameSession.State;
 import nmt.minecraft.WorkersAndWarriors.Team.Team;
 import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
@@ -83,12 +86,16 @@ public class DeathListener implements Listener {
 		// want to handle death by our own rules
 		e.setCancelled(true);
 		
+		//set player to intermediate state
+		p.setGameMode(GameMode.SPECTATOR);
+		p.setSpectatorTarget(e.getDamager());
+		
 		// Obtain WW player for respawn behavior
 		WWPlayer wPlayer = this.session.getPlayer(p);
 		Team wTeam = this.session.getTeam(p);
 		Respawn respawn = new Respawn(wPlayer, wTeam);
-		respawn.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 4, 4));
-		respawn.respawnPlayer();
+		respawn.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 40, 4));
+		Scheduler.getScheduler().schedule(respawn, null, PluginConfiguration.config.getRespawnCooldown());
 		
 	}
 	
