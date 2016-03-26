@@ -10,7 +10,9 @@ import org.bukkit.material.MaterialData;
 import org.bukkit.util.Vector;
 
 import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
+import nmt.minecraft.WorkersAndWarriors.Config.PluginConfiguration;
 import nmt.minecraft.WorkersAndWarriors.IO.ChatFormat;
+import nmt.minecraft.WorkersAndWarriors.Session.GameSession;
 import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
 
 /**
@@ -19,6 +21,8 @@ import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
  *
  */
 public class Team {
+	
+	private GameSession session;
 	
 	private List<WWPlayer> players;
 	
@@ -41,29 +45,29 @@ public class Team {
 	 * @param flagAreaPoint1
 	 * @param flagAreaPoint2
 	 */
-	public Team(Vector flagAreaPoint1, Vector flagAreaPoint2) {
-		this();
+	public Team(GameSession session, Vector flagAreaPoint1, Vector flagAreaPoint2) {
+		this(session);
 		this.flagArea = new FlagArea(flagAreaPoint1, flagAreaPoint2);
 	}
 	
-	public Team(String name) {
-		this();
+	public Team(GameSession session, String name) {
+		this(session);
 		this.teamName = name;
 	}
 	
-	public Team(String name, ChatColor color) {
-		this(name);
+	public Team(GameSession session, String name, ChatColor color) {
+		this(session, name);
 		this.teamColor = color;
 	}
 	
-	public Team(String name, ChatColor color, Vector flagArea1, Vector flagArea2) {
-		this(name, color);
+	public Team(GameSession session, String name, ChatColor color, Vector flagArea1, Vector flagArea2) {
+		this(session, name, color);
 		this.flagArea = new FlagArea(flagArea1, flagArea2);
 	}
 	
-	public Team(String name, ChatColor color, Vector flagArea1, Vector flagArea2, MaterialData blockType,
+	public Team(GameSession session, String name, ChatColor color, Vector flagArea1, Vector flagArea2, MaterialData blockType,
 			MaterialData goalType) {
-		this(name, color, flagArea1, flagArea2);
+		this(session, name, color, flagArea1, flagArea2);
 		this.goalType = goalType;
 		this.blockType = blockType;
 	}
@@ -71,7 +75,7 @@ public class Team {
 	/**
 	 * Creates a team with no defined flag area, no defined teamColor, and no Name!
 	 */
-	public Team() {
+	public Team(GameSession session) {
 		players = new LinkedList<WWPlayer>();
 		this.flagArea = null;
 		this.spawnPoints = new LinkedList<Location>();
@@ -344,7 +348,10 @@ public class Team {
 	public void addPoints(int count) {
 		points += count;
 		
-		//if (points > this.)
+		if (points > PluginConfiguration.config.getPointsToWin()) {
+			session.win(this);
+			
+		}
 	}
 	
 }

@@ -221,6 +221,18 @@ public class GameSession {
 		return false;
 	}
 	
+	/**
+	 * Performs a win for the given team.<br />
+	 * This stops the game and refreshes all the players back to non-game status
+	 * @param t The team that won
+	 * @return true if everything went well, false on error
+	 */
+	public boolean win(Team t) {
+		
+		
+		return true;
+	}
+	
 	public String getName() {
 		return this.name;
 	}

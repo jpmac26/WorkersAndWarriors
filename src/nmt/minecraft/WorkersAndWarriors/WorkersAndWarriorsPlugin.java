@@ -21,7 +21,6 @@ import nmt.minecraft.WorkersAndWarriors.IO.TeamCommands;
 import nmt.minecraft.WorkersAndWarriors.Session.BlockListener;
 import nmt.minecraft.WorkersAndWarriors.Session.GameSession;
 import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
-import org.bukkit.Bukkit;
 
 /**
  * Main plugin class. Creates top-level infrastructure, excluding game-session-specific componenets.
