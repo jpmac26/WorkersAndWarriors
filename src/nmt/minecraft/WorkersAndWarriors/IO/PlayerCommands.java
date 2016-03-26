@@ -222,7 +222,7 @@ public class PlayerCommands implements CommandExecutor {
 		
 		WWPlayer wp = session.getPlayer(sender);		
 		
-		String className = args[2].trim().toUpperCase();
+		String className = args[1].trim().toUpperCase();
 		
 		WWPlayer.Type cType = null;
 		try {
