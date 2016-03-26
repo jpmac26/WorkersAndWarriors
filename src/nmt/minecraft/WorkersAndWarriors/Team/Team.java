@@ -12,6 +12,7 @@ import org.bukkit.util.Vector;
 import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
 import nmt.minecraft.WorkersAndWarriors.Config.PluginConfiguration;
 import nmt.minecraft.WorkersAndWarriors.IO.ChatFormat;
+import nmt.minecraft.WorkersAndWarriors.Session.BlockListener;
 import nmt.minecraft.WorkersAndWarriors.Session.GameSession;
 import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
 
@@ -352,6 +353,24 @@ public class Team {
 			session.win(this);
 			
 		}
+	}
+	
+	/**
+	 * Sets the flag block to be the flag block. In other words, changes the block area from whatever it is
+	 * to the block type. This is great for returning the flag to it's original spot.<br />
+	 * <b>Be Careful</b> not to call this when the flag is still in game, or we will have <b>duplicates</b>
+	 */
+	public void resetFlagBlock() {
+		if (flagArea == null || spawnPoints.isEmpty()) {
+			return;
+		}
+		
+		Vector center = flagArea.getCenter();
+		Location flagLoc = new Location(spawnPoints.get(0).getWorld(),
+				center.getBlockX(),
+				center.getBlockY(),
+				center.getBlockZ());
+		BlockListener.setBlockType(flagLoc.getBlock(), goalType);
 	}
 	
 }
