@@ -1,8 +1,10 @@
 package nmt.minecraft.WorkersAndWarriors.Team.WWPlayer;
 
+import static nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin.plugin;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * Player wrapper class.
@@ -100,7 +102,7 @@ public class WWPlayer {
 	 * @param count
 	 */
 	public void giveBlock(int count) {
-		
+            this.getPlayer().getPlayer().getInventory().addItem(plugin.getSession(this).getTeam(this).getBlockType().toItemStack(count));
 	}
 	
 	

@@ -16,6 +16,7 @@ import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
 import nmt.minecraft.WorkersAndWarriors.Config.SessionConfiguration;
 import nmt.minecraft.WorkersAndWarriors.Session.GameSession;
 import nmt.minecraft.WorkersAndWarriors.Team.Team;
+import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
 
 public class CommandTabCompleter implements TabCompleter{
 	
@@ -110,6 +111,8 @@ public class CommandTabCompleter implements TabCompleter{
 				list = completePlayerTeamCommand((Player) sender, args);
 			} else if (args[0].equalsIgnoreCase(PlayerCommands.SubCommand.JOIN.getName())) {
 				list = completeSessionJoinCommand((Player) sender, args);
+			} else if (args[0].equalsIgnoreCase(PlayerCommands.SubCommand.CLASS.getName())) {
+				list = completeClassCommand((Player) sender, args);
 			}
 		}
 		
@@ -347,6 +350,19 @@ public class CommandTabCompleter implements TabCompleter{
 				if (args[3].isEmpty() || startsWithIgnoreCase(color.name(), args[3])) {
 					list.add(color.name());
 				}
+			}
+		}
+		
+		return list;
+	}
+	
+	private List<String> completeClassCommand(Player sender, String[] args) {
+		List<String> list = new ArrayList<>(WWPlayer.Type.values().length);
+		
+		for(WWPlayer.Type type : WWPlayer.Type.values()){
+			//should only match games started with what's already been typed in					
+			if(args[1].isEmpty() || startsWithIgnoreCase(type.name(),args[1])){
+				list.add(type.name());
 			}
 		}
 		

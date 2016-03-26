@@ -169,6 +169,10 @@ public class GameSession {
 				this.unsortedPlayers.add(cache);
 			}
 		}
+
+		if (unsortedPlayers.isEmpty()) {
+			return;
+		}
 		
 		//now, distribute displaced
 		it = unsortedPlayers.listIterator();
@@ -177,6 +181,11 @@ public class GameSession {
 				t.addPlayer(it.next());
 				it.remove();
 			}
+		}
+		
+
+		if (unsortedPlayers.isEmpty()) {
+			return;
 		}
 		
 		//finally, distribute extras (remainder)
@@ -211,7 +220,7 @@ public class GameSession {
 			bListener = null;
 			
 			for (WWPlayer p : getAllPlayers()) {
-				removePlayer(p);
+				removePlayer(p.getPlayer(), true);
 			}
 			
 			state = State.ENDED;
@@ -221,7 +230,7 @@ public class GameSession {
 		if (state == State.OPEN) {
 			state = State.ENDED;
 			for (WWPlayer p : getAllPlayers()) {
-				removePlayer(p);
+				removePlayer(p.getPlayer(), true);
 			}
 			return true;
 		}
@@ -460,6 +469,8 @@ public class GameSession {
 		if (player.isOnline())  {
 			player.getPlayer().sendMessage(ChatFormat.SUCCESS.wrap(
 					"You've joined the game session ") + ChatFormat.SESSION.wrap(name));
+			player.getPlayer().sendMessage(ChatFormat.INFO + "You've been given the " + ChatFormat.CLASS 
+						+ newPlayer.getType().name().toLowerCase() + ChatFormat.INFO.wrap(" class."));
 			player.getPlayer().teleport(sessionLobby);
 		}
 		
@@ -473,6 +484,10 @@ public class GameSession {
 	}
 	
 	public boolean removePlayer(OfflinePlayer player) {
+		return removePlayer(player, false);
+	}
+	
+	public boolean removePlayer(OfflinePlayer player, boolean teleport) {
 		if (unsortedPlayers != null && !unsortedPlayers.isEmpty()) {
 			Iterator<WWPlayer> it = unsortedPlayers.iterator();
 			WWPlayer cache;

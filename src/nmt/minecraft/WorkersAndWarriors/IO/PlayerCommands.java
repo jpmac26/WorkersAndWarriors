@@ -21,7 +21,8 @@ public class PlayerCommands implements CommandExecutor {
 		JOIN("join"),
 		LEAVE("leave"),
 		TEAM("team"),
-		MENU("menu");
+		MENU("menu"),
+		CLASS("class");
 		
 		private String commandName;
 		
@@ -87,6 +88,10 @@ public class PlayerCommands implements CommandExecutor {
 			
 			if (subCmd.equalsIgnoreCase(SubCommand.MENU.getName())) {
 				return menuCommand(player, args);
+			}
+			
+			if (subCmd.equalsIgnoreCase(SubCommand.CLASS.getName())) {
+				return classCommand(player, args);
 			}
 			
 			return false;
@@ -195,6 +200,42 @@ public class PlayerCommands implements CommandExecutor {
 	
 	private boolean menuCommand(Player sender, String[] args) {
 		sender.sendMessage(ChatFormat.INFO.wrap("Not yet implemented!"));
+		return true;
+	}
+	
+	private boolean classCommand(Player sender, String[]  args) {
+		//wwp class [class]
+		if (args.length != 2) {
+			sender.sendMessage(ChatFormat.USAGE + "Usage: /wwp " + SubCommand.CLASS.getName() 
+					+ ChatFormat.CLASS.wrap(" [class]"));
+			return true;
+		}
+		
+		GameSession session = WorkersAndWarriorsPlugin.plugin.getSession(sender);
+		
+		if (session == null) {
+			sender.sendMessage(ChatFormat.WARNING.wrap("You must join a session first!"));
+			sender.sendMessage(ChatFormat.INFO.wrap("To join, use /wwp join ") 
+					+ ChatFormat.SESSION.wrap("[session]"));
+			return true;			
+		}
+		
+		WWPlayer wp = session.getPlayer(sender);		
+		
+		String className = args[2].trim().toUpperCase();
+		
+		WWPlayer.Type cType = null;
+		try {
+			cType = WWPlayer.Type.valueOf(className);
+		} catch (Exception e) {
+			sender.sendMessage(ChatFormat.ERROR.wrap("Unable to determine which class " + args[2] + " refers to!"));
+			return true;
+		}
+		
+		wp.setType(cType);
+		sender.sendMessage(ChatFormat.SUCCESS.wrap("Your class has been changed to ") 
+				+ ChatFormat.CLASS.wrap(className.toLowerCase()));
+				
 		return true;
 	}
 
