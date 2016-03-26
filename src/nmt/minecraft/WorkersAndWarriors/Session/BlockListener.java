@@ -72,9 +72,11 @@ public class BlockListener implements Listener {
 
                     if (team.getBlockType().equals(e.getBlock().getState().getData())) {
                         flag0 = true;
+                        e.setCancelled(true);
+                        e.getBlock().setType(Material.AIR);
                         do {
                             int player = WorkersAndWarriorsPlugin.random.nextInt(session.getTeam(session.getPlayer(e.getPlayer())).getPlayers().size());
-                            WWPlayer wwp = session.getTeam(session.getPlayer(e.getPlayer())).getPlayers().get(player);
+                            WWPlayer wwp = team.getPlayers().get(player);
                             if (wwp.getType() == WWPlayer.Type.WORKER) {
                                 wwp.giveBlock(1);
                                 flag1 = true;
