@@ -229,8 +229,25 @@ public class GameSession {
 	 */
 	public boolean win(Team t) {
 		//TODO
+		for (Team team : teams) {
+			if (team.getTeamName().equals(t.getTeamName())) {
+				printWin(t);
+			} else {
+				printLose(t);
+			}
+		}
+		
+		stop(true);
 		
 		return true;
+	}
+	
+	private void printWin(Team t) {
+		t.sendMessage(ChatFormat.SUCCESS.wrap("Congratulations! You won!"));
+	}
+	
+	private void printLose(Team t) {
+		t.sendMessage(ChatFormat.WARNING.wrap("Conflatulations! You lose!"));		
 	}
 	
 	public String getName() {
@@ -435,6 +452,7 @@ public class GameSession {
 		if (player.isOnline())  {
 			player.getPlayer().sendMessage(ChatFormat.SUCCESS.wrap(
 					"You've joined the game session ") + ChatFormat.SESSION.wrap(name));
+			player.getPlayer().teleport(sessionLobby);
 		}
 		
 		this.unsortedPlayers.add(newPlayer);
@@ -449,9 +467,16 @@ public class GameSession {
 	public boolean removePlayer(OfflinePlayer player) {
 		if (unsortedPlayers != null && !unsortedPlayers.isEmpty()) {
 			Iterator<WWPlayer> it = unsortedPlayers.iterator();
+			WWPlayer cache;
 			while (it.hasNext()) {
-				if (it.next().getPlayer().getUniqueId().equals(player.getUniqueId())) {
+				cache = it.next();
+				if (cache.getPlayer().getUniqueId().equals(player.getUniqueId())) {
 					it.remove();
+					
+					if (player.isOnline() && cache.getPregameLocation() != null) {
+						((Player) player).teleport(cache.getPregameLocation());
+					}
+					
 					return true;
 				}
 			}

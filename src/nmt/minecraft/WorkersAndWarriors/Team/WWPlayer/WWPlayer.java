@@ -31,12 +31,24 @@ public class WWPlayer {
 	
 	private boolean hasFlag;
 	
+	private Location pregameLocation;
+	
 	public WWPlayer(OfflinePlayer player, Type type) {
 		this.player = player;
 		this.hasFlag = false;
 		this.type = type;
+		if (player.isOnline()) {
+			pregameLocation = ((Player) player).getLocation();
+		}
 	}
 	
+	public void setPregameLocation(Location l) {
+		this.pregameLocation = l;
+	}
+	
+	public Location getPregameLocation() {
+		return pregameLocation;
+	}
 	
 	public OfflinePlayer getPlayer() {
 		return player;
