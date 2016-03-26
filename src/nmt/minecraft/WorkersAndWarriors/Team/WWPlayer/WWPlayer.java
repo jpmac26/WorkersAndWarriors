@@ -1,9 +1,13 @@
 package nmt.minecraft.WorkersAndWarriors.Team.WWPlayer;
 
 import static nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin.plugin;
+
+import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -23,8 +27,29 @@ import org.bukkit.inventory.ItemStack;
 public class WWPlayer {
 	
 	public enum Type {
-		WORKER,
-		WARRIOR
+		WORKER(new ItemStack(Material.LEATHER_HELMET), null, null, null, new ItemStack(Material.STONE_PICKAXE), null),
+		WARRIOR(new ItemStack(Material.LEATHER_HELMET), new ItemStack(Material.CHAINMAIL_CHESTPLATE), new ItemStack(Material.CHAINMAIL_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS), new ItemStack(Material.STONE_SWORD), new ItemStack(Material.SHIELD));
+		
+		private ItemStack[] equips;
+		
+		private Type() {
+			equips = new ItemStack[6];
+		}
+		
+		private Type(ItemStack head, ItemStack chest, ItemStack legs, ItemStack boots, ItemStack main, ItemStack off) {
+			equips = new ItemStack[6];
+			equips[0] = head;
+			equips[1] = chest;
+			equips[2] = legs;
+			equips[3] = boots;
+			equips[4] = main;
+			equips[5] = off; 
+		}
+		
+		public void outfitPlayer(Player p) {
+			EntityEquipment equipment = p.getEquipment();
+			equipment.setArmorContents(equips);
+		}
 	}
 	
 	private OfflinePlayer player;
@@ -86,6 +111,11 @@ public class WWPlayer {
 		}
 		Player p = this.getPlayer().getPlayer();
 		p.teleport(spawnLocation);
+		
+		p.setGameMode(GameMode.SURVIVAL);
+		p.getInventory().clear();
+		
+		type.outfitPlayer(p);
 	}
 	
 	/**
