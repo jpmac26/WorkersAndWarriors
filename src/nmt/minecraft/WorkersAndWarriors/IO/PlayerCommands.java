@@ -220,7 +220,12 @@ public class PlayerCommands implements CommandExecutor {
 			return true;			
 		}
 		
-		WWPlayer wp = session.getPlayer(sender);		
+		WWPlayer wp = session.getPlayer(sender);
+		
+		if (session.getState() != GameSession.State.OPEN) {
+			sender.sendMessage(ChatFormat.ERROR.wrap("You cannot change your class once the game has started!"));
+			return true;
+		}
 		
 		String className = args[1].trim().toUpperCase();
 		
@@ -228,7 +233,7 @@ public class PlayerCommands implements CommandExecutor {
 		try {
 			cType = WWPlayer.Type.valueOf(className);
 		} catch (Exception e) {
-			sender.sendMessage(ChatFormat.ERROR.wrap("Unable to determine which class " + args[2] + " refers to!"));
+			sender.sendMessage(ChatFormat.ERROR.wrap("Unable to determine which class " + args[1] + " refers to!"));
 			return true;
 		}
 		
