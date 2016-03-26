@@ -2,6 +2,8 @@ package nmt.minecraft.WorkersAndWarriors.Team.WWPlayer;
 
 import static nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin.plugin;
 
+import org.bukkit.Color;
+import org.bukkit.DyeColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -11,6 +13,9 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+
+import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
+import nmt.minecraft.WorkersAndWarriors.Team.Team;
 
 /**
  * Player wrapper class.
@@ -47,20 +52,40 @@ public class WWPlayer {
 			equips[4] = main;
 			equips[5] = off; 
 			
-			for (ItemStack item : equips) {
-				if (item == null) {
-					continue;
-				}
-				
-				ItemMeta meta = item.getItemMeta();
-				if (meta instanceof LeatherArmorMeta) {
-					LeatherArmorMeta lMeta = (LeatherArmorMeta) meta;
-					//lMeta.setColor(arg0);
-				}
-			}
+			
 		}
 		
-		public void outfitPlayer(Player p) {
+		public void outfitPlayer(WWPlayer player) {
+			if (!player.getPlayer().isOnline()) {
+				return;
+			}
+			
+			Player p = player.getPlayer().getPlayer();
+			Team t = WorkersAndWarriorsPlugin.plugin.getSession(player).getTeam(player);
+			Color color = Color.AQUA;
+			DyeColor dc;
+			
+			try {
+				dc = DyeColor.valueOf(t.getTeamColor().name());
+			} catch (Exception e) {
+				//unable to get that color
+				dc = null;
+			}
+			if (dc != null) {
+				color = color.mixDyes(dc);
+				for (ItemStack item : equips) {
+					if (item == null) {
+						continue;
+					}
+					
+					ItemMeta meta = item.getItemMeta();
+					if (meta instanceof LeatherArmorMeta) {
+						LeatherArmorMeta lMeta = (LeatherArmorMeta) meta;
+						lMeta.setColor(color);
+					}
+				}
+			}
+			
 			EntityEquipment equipment = p.getEquipment();
 			equipment.setArmorContents(equips);
 		}
@@ -129,7 +154,7 @@ public class WWPlayer {
 		p.setGameMode(GameMode.SURVIVAL);
 		p.getInventory().clear();
 		
-		type.outfitPlayer(p);
+		type.outfitPlayer(this);
 	}
 	
 	/**
