@@ -40,7 +40,7 @@ public class BlockListener implements Listener {
      *
      * @param e
      */
-    private void onBlockBreak(BlockBreakEvent e) {
+    public void onBlockBreak(BlockBreakEvent e) {
         //check if player is a worker
         //if not, don't allow it
         //if so, make sure it's any team's block type
@@ -54,7 +54,7 @@ public class BlockListener implements Listener {
                 e.setCancelled(true);
             } else if (session.getPlayer(e.getPlayer()).getType() == WWPlayer.Type.WORKER) {
                 for (Team team : session.getTeams()) {
-                    if (team.getBlockType() == e.getBlock().getState().getData()) {
+                    if (team.getBlockType().equals(e.getBlock().getState().getData())) {
                         flag0 = true;
                         do {
                             int player = WorkersAndWarriorsPlugin.random.nextInt(session.getTeam(session.getPlayer(e.getPlayer())).getPlayers().size());
@@ -80,21 +80,32 @@ public class BlockListener implements Listener {
      *
      * @param e
      */
-    private void onBlockPlace(BlockPlaceEvent e) {
+    public void onBlockPlace(BlockPlaceEvent e) {
         //check if player is a worker AND this is in a valid place
         //if not, don't allow it
         //if so, make sure it's the opponent's block type
         //and if it is, allow it. 
         //otherwise, cancel
         //e.setCancelled(true);
+        if (session.getPlayer(e.getPlayer()) != null) {
+            if (session.getPlayer(e.getPlayer()).getType() == WWPlayer.Type.WARRIOR) {
+                e.setCancelled(true);
+            } else if (session.getPlayer(e.getPlayer()).getType() == WWPlayer.Type.WORKER) {
+                for (Team team : session.getTeams()) {
+                    if(team.getFlagArea().isIn(e.getBlock().getLocation())){
+                        e.setCancelled(true);
+                        break;
+                    }
+                }
+            }
 
+        }
     }
-
-    /**
-     * Called when a Flag block is broken
-     *
-     * @param e
-     */
+        /**
+         * Called when a Flag block is broken
+         *
+         * @param e
+         */
     private void onFlagBreak(BlockBreakEvent e) {
         boolean flag2 = false;
         if (session.getPlayer(e.getPlayer()) != null) {
@@ -104,6 +115,7 @@ public class BlockListener implements Listener {
                 for (Team team : session.getTeams()) {
                     if (team.getGoalType() == e.getBlock().getState().getData() && session.getTeam(session.getPlayer(e.getPlayer())).getGoalType() != e.getBlock().getState().getData()) {
                         flag2 = true;
+                        break;
                     }
                     if (flag2 = false) {
                         e.setCancelled(true);
@@ -112,11 +124,12 @@ public class BlockListener implements Listener {
             }
         }
     }
-        /**
-         * Called when a Flag block is being placed
-         *
-         * @param e
-         */
+
+    /**
+     * Called when a Flag block is being placed
+     *
+     * @param e
+     */
     private void onFlagPlace(BlockPlaceEvent e) {
 
     }
