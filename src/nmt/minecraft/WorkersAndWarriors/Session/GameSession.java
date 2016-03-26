@@ -200,6 +200,9 @@ public class GameSession {
 			
 			it = unsortedPlayers.listIterator();
 			for (Team t : teams) {
+				if(!it.hasNext()) {
+					break;
+				}
 				t.addPlayer(it.next());
 				it.remove();
 			}
