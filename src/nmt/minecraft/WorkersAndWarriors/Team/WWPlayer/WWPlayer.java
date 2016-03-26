@@ -2,6 +2,10 @@ package nmt.minecraft.WorkersAndWarriors.Team.WWPlayer;
 
 import static nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin.plugin;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.GameMode;
@@ -15,8 +19,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-
+import org.bukkit.material.MaterialData;
 import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
+import nmt.minecraft.WorkersAndWarriors.Session.GameSession;
 import nmt.minecraft.WorkersAndWarriors.Team.Team;
 
 /**
@@ -166,7 +171,28 @@ public class WWPlayer {
 		p.teleport(spawnLocation);
 		
 		p.setGameMode(GameMode.SURVIVAL);
-		p.getInventory().clear();
+		
+		GameSession session = WorkersAndWarriorsPlugin.plugin.getSession(player);
+		Team team = session.getTeam(this);
+		
+		List<MaterialData> goalDatas = new ArrayList<>(session.getTeams().size());
+		for (Team t : session.getTeams()) {
+			if (t.getTeamName().equals(team.getTeamName())) {
+				continue;
+			}
+			
+			goalDatas.add(t.getGoalType());
+		}
+		
+		Iterator<ItemStack> it = p.getInventory().iterator();
+		ItemStack item;
+		while (it.hasNext()) {
+			item = it.next();
+			if (item == null || !item.getData().equals(team.getBlockType())) {
+				
+			}
+		}
+		
 		
 		type.outfitPlayer(this);
 	}

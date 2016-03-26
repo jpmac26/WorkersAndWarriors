@@ -173,8 +173,8 @@ public class BlockListener implements Listener {
                         break;
                     }
                 }
-                e.getBlockReplacedState().setType(Material.AIR);
-
+                e.getBlock().setType(Material.AIR);
+                
                 e.getBlock().getLocation().getWorld().playEffect(e.getBlock().getLocation(), Effect.HAPPY_VILLAGER, 90000);
                 //TODO
                 break;

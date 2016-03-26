@@ -98,6 +98,7 @@ public class DeathListener implements Listener {
 		Team wTeam = this.session.getTeam(p);
 		Respawn respawn = new Respawn(wPlayer, wTeam);
 		respawn.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 40, 4));
+		respawn.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 900000, 0));
 		Scheduler.getScheduler().schedule(respawn, null, PluginConfiguration.config.getRespawnCooldown());
 		
 	}

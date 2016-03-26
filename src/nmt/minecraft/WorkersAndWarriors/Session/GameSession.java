@@ -518,7 +518,7 @@ public class GameSession {
 				if (cache.getPlayer().getUniqueId().equals(player.getUniqueId())) {
 					it.remove();
 					
-					if (player.isOnline() && cache.getPregameLocation() != null) {
+					if (teleport && player.isOnline() && cache.getPregameLocation() != null) {
 						((Player) player).teleport(cache.getPregameLocation());
 					}
 					
@@ -535,6 +535,9 @@ public class GameSession {
 		//they're on a team somewhere!
 		for (Team t : teams) {
 			if (t.removePlayer(p)) {
+				if (teleport && player.isOnline() && p.getPregameLocation() != null) {
+					((Player) player).teleport(p.getPregameLocation());
+				}
 				return true;
 			}
 		}
