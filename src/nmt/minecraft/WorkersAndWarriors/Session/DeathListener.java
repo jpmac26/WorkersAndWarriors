@@ -88,7 +88,7 @@ public class DeathListener implements Listener {
 		
 		//set player to intermediate state
 		p.setGameMode(GameMode.SPECTATOR);
-		
+		p.setSpectatorTarget(e.getDamager());
 		
 		// Obtain WW player for respawn behavior
 		WWPlayer wPlayer = this.session.getPlayer(p);
