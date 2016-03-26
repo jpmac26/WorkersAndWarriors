@@ -33,7 +33,7 @@ public class BlockListener implements Listener {
 
     public BlockListener(GameSession session) {
         this.session = session;
-        Bukkit.getPluginManager().registerEvents(WorkersAndWarriorsPlugin.plugin, this);
+        Bukkit.getPluginManager().registerEvents(this, WorkersAndWarriorsPlugin.plugin);
     }
 
     //REMEMBER: make sur a player is in a game before trying to handle anything.
