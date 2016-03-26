@@ -101,6 +101,7 @@ public class BlockListener implements Listener {
         //and if it is, allow it. 
         //otherwise, cancel
         //e.setCancelled(true);
+    	
         boolean flag4 = false;
         if (session.getPlayer(e.getPlayer()) != null) {
             if (session.getPlayer(e.getPlayer()).getType() == WWPlayer.Type.WARRIOR) {
@@ -113,9 +114,16 @@ public class BlockListener implements Listener {
                         break;
                     }
                 }
-
+                
+                /*
+                 * Team 1 TEAM1 
+                 * Team 2
+                 */
+                
+                //if (not my block || Its a flag and i handled it)
                 if (session.getTeam(session.getPlayer(e.getPlayer())).getBlockType() != e.getBlock().getState().getData() || flag4 == false) {
                     e.setCancelled(true);
+                    return;
                 }
                 for (Team team : session.getTeams()) {
                     if (team.getFlagArea().isIn(e.getBlock().getLocation())) {
