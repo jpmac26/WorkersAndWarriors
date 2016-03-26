@@ -39,8 +39,6 @@ public class WorkersAndWarriorsPlugin extends JavaPlugin {
         
         public BlockListener Listener;
 	
-
-	
 	
 	@Override
 	public void onLoad() {

@@ -9,6 +9,8 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 /**
  * Player wrapper class.
@@ -44,6 +46,18 @@ public class WWPlayer {
 			equips[3] = boots;
 			equips[4] = main;
 			equips[5] = off; 
+			
+			for (ItemStack item : equips) {
+				if (item == null) {
+					continue;
+				}
+				
+				ItemMeta meta = item.getItemMeta();
+				if (meta instanceof LeatherArmorMeta) {
+					LeatherArmorMeta lMeta = (LeatherArmorMeta) meta;
+					//lMeta.setColor(arg0);
+				}
+			}
 		}
 		
 		public void outfitPlayer(Player p) {
