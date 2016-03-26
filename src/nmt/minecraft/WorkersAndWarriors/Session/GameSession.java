@@ -108,6 +108,10 @@ public class GameSession {
 			return false;
 		}
 		
+		if (!canStart()) {
+			return false;
+		}
+		
 		this.bListener = new BlockListener(this);
 		
 		return true;
@@ -327,6 +331,10 @@ public class GameSession {
 		}
 		
 		if (getPlayer(player) != null) {
+			return null;
+		}
+		
+		if (state != State.OPEN) {
 			return null;
 		}
 		
