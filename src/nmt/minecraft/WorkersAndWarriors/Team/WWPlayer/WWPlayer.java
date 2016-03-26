@@ -83,8 +83,7 @@ public class WWPlayer {
 			return;
 		}
 		Player p = this.getPlayer().getPlayer();
-		// Wait for configured respawn time
-		
+		p.teleport(spawnLocation);
 	}
 	
 	/**
