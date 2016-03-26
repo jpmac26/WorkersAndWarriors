@@ -9,6 +9,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 
+import nmt.minecraft.WorkersAndWarriors.Scheduling.Tickable;
 import nmt.minecraft.WorkersAndWarriors.Team.Team;
 import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
 
@@ -22,7 +23,7 @@ import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
  * @author williamfong
  *
  */
-public class Respawn {
+public class Respawn implements Tickable{
 	
 	private WWPlayer wPlayer;
 	private Team wTeam;
@@ -68,5 +69,35 @@ public class Respawn {
 		}
 		
 		p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_DEATH, 1.0f, 1.0f);
+	}
+
+	@Override
+	public void alarm(Object reference) {
+		this.respawnPlayer();
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof Respawn)) {
+			return false;
+		}
+		Respawn r = (Respawn) o;
+		// Reference object is of type Respawn
+		// Respawns are only considered equivalent by wPlayer and Team, potion effects are not necessarily unique
+		return (this.getwPlayer() == r.getwPlayer()) && (this.getwTeam() == r.getwTeam());
+	}
+	
+	// Getters
+	
+	public WWPlayer getwPlayer() {
+		return wPlayer;
+	}
+
+	public Team getwTeam() {
+		return wTeam;
+	}
+
+	public List<PotionEffect> getEffects() {
+		return effects;
 	}
 }

@@ -1,15 +1,17 @@
 package nmt.minecraft.WorkersAndWarriors.Session;
 
-import nmt.minecraft.WorkersAndWarriors.Team.FlagArea;
-import nmt.minecraft.WorkersAndWarriors.Team.Team;
-import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
-import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
+import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.material.MaterialData;
+
+import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
+import nmt.minecraft.WorkersAndWarriors.Team.Team;
+import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
 
 /**
  * Listens for block changes, and updates the game session.
@@ -31,6 +33,7 @@ public class BlockListener implements Listener {
 
     public BlockListener(GameSession session) {
         this.session = session;
+        Bukkit.getPluginManager().registerEvents(this, WorkersAndWarriorsPlugin.plugin);
     }
 
     //REMEMBER: make sur a player is in a game before trying to handle anything.
@@ -40,6 +43,8 @@ public class BlockListener implements Listener {
      *
      * @param e
      */
+
+    @EventHandler
     public void onBlockBreak(BlockBreakEvent e) {
         //check if player is a worker
         //if not, don't allow it
@@ -54,33 +59,43 @@ public class BlockListener implements Listener {
                 e.setCancelled(true);
             } else if (session.getPlayer(e.getPlayer()).getType() == WWPlayer.Type.WORKER) {
                 for (Team team : session.getTeams()) {
-                    if (team.getBlockType().equals(e.getBlock().getState().getData())) {
-                        flag0 = true;
-                        do {
-                            int player = WorkersAndWarriorsPlugin.random.nextInt(session.getTeam(session.getPlayer(e.getPlayer())).getPlayers().size());
-                            WWPlayer wwp = session.getTeam(session.getPlayer(e.getPlayer())).getPlayers().get(player);
-                            if (wwp.getType() == WWPlayer.Type.WORKER) {
-                                wwp.giveBlock(1);
-                                flag1 = true;
-                            }
-                        } while (flag1 = false);
+                	
+                        if (team.getGoalType().equals(e.getBlock().getState().getData())) {
+                            flag0 = true;
+
+                            onFlagBreak(e);
+
+                            break;
+                        }
+
+                        if (team.getBlockType() == e.getBlock().getState().getData()) {
+                            flag0 = true;
+                            do {
+                                int player = WorkersAndWarriorsPlugin.random.nextInt(session.getTeam(session.getPlayer(e.getPlayer())).getPlayers().size());
+                                WWPlayer wwp = session.getTeam(session.getPlayer(e.getPlayer())).getPlayers().get(player);
+                                if (wwp.getType() == WWPlayer.Type.WORKER) {
+                                    wwp.giveBlock(1);
+                                    flag1 = true;
+                                }
+                            } while (flag1 = false);
+                        }
+                    }
+                    if (flag0 == false) {
+                        e.setCancelled(true);
+
                     }
                 }
-                if (flag0 = false) {
-                    e.setCancelled(true);
 
-                }
             }
-
         }
-    }
 
-    /**
-     * Called when a block is placed. NOT A FLAG BLOCK
-     *
-     * @param e
-     */
-    public void onBlockPlace(BlockPlaceEvent e) {
+        /**
+         * Called when a block is placed. NOT A FLAG BLOCK
+         *
+         * @param e
+         */
+        @EventHandler
+        public void onBlockPlace(BlockPlaceEvent e) {
         //check if player is a worker AND this is in a valid place
         //if not, don't allow it
         //if so, make sure it's the opponent's block type
@@ -88,40 +103,34 @@ public class BlockListener implements Listener {
         //otherwise, cancel
         //e.setCancelled(true);
         if (session.getPlayer(e.getPlayer()) != null) {
-            if (session.getPlayer(e.getPlayer()).getType() == WWPlayer.Type.WARRIOR) {
-                e.setCancelled(true);
-            } else if (session.getPlayer(e.getPlayer()).getType() == WWPlayer.Type.WORKER) {
-                for (Team team : session.getTeams()) {
-                    if(team.getFlagArea().isIn(e.getBlock().getLocation())){
-                        e.setCancelled(true);
-                        break;
+                if (session.getPlayer(e.getPlayer()).getType() == WWPlayer.Type.WARRIOR) {
+                    e.setCancelled(true);
+                } else if (session.getPlayer(e.getPlayer()).getType() == WWPlayer.Type.WORKER) {
+                    for (Team team : session.getTeams()) {
+                        if (team.getFlagArea().isIn(e.getBlock().getLocation())) {
+                            e.setCancelled(true);
+                            break;
+                        }
                     }
                 }
-            }
 
-        }
-    }
-        /**
-         * Called when a Flag block is broken
-         *
-         * @param e
-         */
-    private void onFlagBreak(BlockBreakEvent e) {
-        boolean flag2 = false;
-        if (session.getPlayer(e.getPlayer()) != null) {
-            if (session.getPlayer(e.getPlayer()).getType() == WWPlayer.Type.WARRIOR) {
-                e.setCancelled(true);
-            } else if (session.getPlayer(e.getPlayer()).getType() == WWPlayer.Type.WORKER) {
-                for (Team team : session.getTeams()) {
-                    if (team.getGoalType() == e.getBlock().getState().getData() && session.getTeam(session.getPlayer(e.getPlayer())).getGoalType() != e.getBlock().getState().getData()) {
-                        flag2 = true;
-                        break;
-                    }
-                    if (flag2 = false) {
-                        e.setCancelled(true);
-                    }
-                }
             }
+        }
+    
+
+    /**
+     * Called when a Flag block is broken Only called when a flag has been
+     * broken...
+     *
+     * @param e
+     */
+    private void onFlagBreak(BlockBreakEvent e) {
+        WWPlayer player = session.getPlayer(e.getPlayer());
+
+        if (session.getPlayer(e.getPlayer()).getType() == WWPlayer.Type.WARRIOR) {
+            e.setCancelled(true);
+        } else if (session.getPlayer(e.getPlayer()).getType() == WWPlayer.Type.WORKER) {
+            player.setFlag(true);
         }
     }
 
