@@ -153,6 +153,12 @@ public class BlockListener implements Listener {
      * @param e
      */
     private void onFlagPlace(BlockPlaceEvent e) {
+        for (Team team : session.getTeams()) {
+                    if (team.getFlagArea().isIn(e.getBlock().getLocation())) {
+                        team.addPoints(1);
+                        break;
+                    }
+        }
 
     }
 
