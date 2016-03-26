@@ -34,6 +34,8 @@ public class Team {
 	
 	private MaterialData goalType;
 	
+	private int points;
+	
 	/**
 	 * Creates a team, making a flag area from the passed points.
 	 * @param flagAreaPoint1
@@ -331,6 +333,18 @@ public class Team {
 		}
 		
 		return true;
+	}
+	
+	/**
+	 * Adds an amount of points to a team.<br />
+	 * If the point total after addition is equal to or greater than the defined point goal,
+	 * the game will be won.
+	 * @param count
+	 */
+	public void addPoints(int count) {
+		points += count;
+		
+		//if (points > this.)
 	}
 	
 }
