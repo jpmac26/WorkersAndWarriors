@@ -4,6 +4,7 @@
 package nmt.minecraft.WorkersAndWarriors.Session;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -62,7 +63,12 @@ public class DeathListener implements Listener {
 			// If the killer was a Player entity, notify them
 			if (e.getDamager() instanceof Player) {
 				msgKiller((Player) e.getDamager(), e);
+				p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_DEATH, 1, 1);
+				((Player) e.getDamager()).playSound(p.getLocation(), Sound.ENTITY_VILLAGER_DEATH, 1, 1);
 			}
+			
+			// For gameplay, play audio for players
+			
 		}	
 	}
 	
