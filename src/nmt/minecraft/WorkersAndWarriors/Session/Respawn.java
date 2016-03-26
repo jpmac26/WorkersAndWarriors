@@ -23,7 +23,7 @@ import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
  * @author williamfong
  *
  */
-public class Respawn implements Tickable{
+public class Respawn implements Tickable<Object>{
 	
 	private WWPlayer wPlayer;
 	private Team wTeam;

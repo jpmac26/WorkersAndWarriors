@@ -3,6 +3,7 @@
  */
 package nmt.minecraft.WorkersAndWarriors.Session;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -20,6 +21,13 @@ import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
  *
  */
 public class DeathListener implements Listener {
+	
+	private GameSession session;
+	
+	public DeathListener(GameSession session) {
+		this.session = session;
+		Bukkit.getPluginManager().registerEvents(this, WorkersAndWarriorsPlugin.plugin);
+	}
 
 	/**
 	 * This method determines if the damage event is appropriate for<br />
@@ -35,17 +43,14 @@ public class DeathListener implements Listener {
 		}
 		
 		Player p = (Player) e.getEntity();
-		WorkersAndWarriorsPlugin plugin = WorkersAndWarriorsPlugin.plugin;
 		
-		// Check to see if player is even in a working session
-		GameSession session = plugin.getSession(p);
-		if (session == null) {
-			// Player was not found!
+		if (this.session == null) {
+			// Listener was not correctly instantiated
 			return;
 		}
 		
 		//Check to see if session is active
-		if (session.getState() != State.RUNNING) {
+		if (this.session.getState() != State.RUNNING) {
 			// The player's session is currently not running
 			// TODO may require additional behavior
 			return;
@@ -53,7 +58,7 @@ public class DeathListener implements Listener {
 		
 		// Check to see if damage is 'fatal'
 		if (p.getHealth() - e.getDamage() < 1) {
-			this.handleDeath(p, e, session);
+			this.handleDeath(p, e);
 		}
 		
 		// If the killer was a Player entity, notify them
@@ -66,14 +71,14 @@ public class DeathListener implements Listener {
 	 * This method handles the death event.
 	 * @param p
 	 */
-	private void handleDeath(Player p, EntityDamageByEntityEvent e, GameSession s) {
+	private void handleDeath(Player p, EntityDamageByEntityEvent e) {
 		// Player's should NOT 'die' by Minecraft definition, we 
 		// want to handle death by our own rules
 		e.setCancelled(true);
 		
 		// Obtain WW player for respawn behavior
-		WWPlayer wPlayer = s.getPlayer(p);
-		Team wTeam = s.getTeam(p);
+		WWPlayer wPlayer = this.session.getPlayer(p);
+		Team wTeam = this.session.getTeam(p);
 		Location respawnPoint = wTeam.getRandomSpawn();
 		wPlayer.spawn(respawnPoint);
 		

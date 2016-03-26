@@ -58,6 +58,7 @@ public class GameSession {
 	private Location sessionLobby;
 	
 	private BlockListener bListener;
+	private DeathListener dListener;
 	
 	/**
 	 * Create a new game session in the default stopped state and with the given name.<br />
@@ -116,6 +117,7 @@ public class GameSession {
 		state = State.RUNNING;
 		
 		this.bListener = new BlockListener(this);
+		this.dListener = new DeathListener(this);
 		
 		// Team Balance
 		this.distributePlayers();
@@ -220,7 +222,9 @@ public class GameSession {
 		
 		if (state == State.RUNNING && force) {
 			HandlerList.unregisterAll(bListener);
+			HandlerList.unregisterAll(dListener);
 			bListener = null;
+			dListener = null;
 			
 			for (WWPlayer p : getAllPlayers()) {
 				removePlayer(p.getPlayer(), true);
