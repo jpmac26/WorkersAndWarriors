@@ -43,7 +43,6 @@ public class BlockListener implements Listener {
      *
      * @param e
      */
-
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e) {
         //check if player is a worker
@@ -59,64 +58,75 @@ public class BlockListener implements Listener {
                 e.setCancelled(true);
             } else if (session.getPlayer(e.getPlayer()).getType() == WWPlayer.Type.WORKER) {
                 for (Team team : session.getTeams()) {
-                	
-                        if (team.getGoalType().equals(e.getBlock().getState().getData())) {
-                            flag0 = true;
 
-                            onFlagBreak(e);
+                    if (team.getGoalType().equals(e.getBlock().getState().getData())) {
+                        flag0 = true;
 
-                            break;
-                        }
+                        onFlagBreak(e);
 
-                        if (team.getBlockType() == e.getBlock().getState().getData()) {
-                            flag0 = true;
-                            do {
-                                int player = WorkersAndWarriorsPlugin.random.nextInt(session.getTeam(session.getPlayer(e.getPlayer())).getPlayers().size());
-                                WWPlayer wwp = session.getTeam(session.getPlayer(e.getPlayer())).getPlayers().get(player);
-                                if (wwp.getType() == WWPlayer.Type.WORKER) {
-                                    wwp.giveBlock(1);
-                                    flag1 = true;
-                                }
-                            } while (flag1 = false);
-                        }
+                        break;
                     }
-                    if (flag0 == false) {
-                        e.setCancelled(true);
 
+                    if (team.getBlockType().equals(e.getBlock().getState().getData())) {
+                        flag0 = true;
+                        do {
+                            int player = WorkersAndWarriorsPlugin.random.nextInt(session.getTeam(session.getPlayer(e.getPlayer())).getPlayers().size());
+                            WWPlayer wwp = session.getTeam(session.getPlayer(e.getPlayer())).getPlayers().get(player);
+                            if (wwp.getType() == WWPlayer.Type.WORKER) {
+                                wwp.giveBlock(1);
+                                flag1 = true;
+                            }
+                        } while (flag1 = false);
                     }
                 }
+                if (flag0 == false) {
+                    e.setCancelled(true);
 
+                }
             }
-        }
 
-        /**
-         * Called when a block is placed. NOT A FLAG BLOCK
-         *
-         * @param e
-         */
-        @EventHandler
-        public void onBlockPlace(BlockPlaceEvent e) {
+        }
+    }
+
+    /**
+     * Called when a block is placed. NOT A FLAG BLOCK
+     *
+     * @param e
+     */
+    @EventHandler
+    public void onBlockPlace(BlockPlaceEvent e) {
         //check if player is a worker AND this is in a valid place
         //if not, don't allow it
         //if so, make sure it's the opponent's block type
         //and if it is, allow it. 
         //otherwise, cancel
         //e.setCancelled(true);
+        boolean flag4 = false;
         if (session.getPlayer(e.getPlayer()) != null) {
-                if (session.getPlayer(e.getPlayer()).getType() == WWPlayer.Type.WARRIOR) {
-                    e.setCancelled(true);
-                } else if (session.getPlayer(e.getPlayer()).getType() == WWPlayer.Type.WORKER) {
-                    for (Team team : session.getTeams()) {
-                        if (team.getFlagArea().isIn(e.getBlock().getLocation())) {
-                            e.setCancelled(true);
-                            break;
-                        }
+            if (session.getPlayer(e.getPlayer()).getType() == WWPlayer.Type.WARRIOR) {
+                e.setCancelled(true);
+            } else if (session.getPlayer(e.getPlayer()).getType() == WWPlayer.Type.WORKER) {
+                for (Team team : session.getTeams()) {
+                    if (team.getGoalType().equals(e.getBlock().getState().getData()) && !team.equals(session.getTeam(session.getPlayer(e.getPlayer())))) {
+                        flag4 = true;
+                        this.onFlagPlace(e);
+                        break;
                     }
                 }
 
+                if (session.getTeam(session.getPlayer(e.getPlayer())).getBlockType() != e.getBlock().getState().getData() || flag4 == false) {
+                    e.setCancelled(true);
+                }
+                for (Team team : session.getTeams()) {
+                    if (team.getFlagArea().isIn(e.getBlock().getLocation())) {
+                        e.setCancelled(true);
+                        break;
+                    }
+                }
             }
+
         }
-    
+    }
 
     /**
      * Called when a Flag block is broken Only called when a flag has been
