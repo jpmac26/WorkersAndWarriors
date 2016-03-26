@@ -17,8 +17,9 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.material.MaterialData;
-
 import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
 import nmt.minecraft.WorkersAndWarriors.Session.GameSession;
 import nmt.minecraft.WorkersAndWarriors.Team.Team;
@@ -144,6 +145,12 @@ public class WWPlayer {
 	}
 	
 	public void setFlag(boolean flag) {
+		if (flag) {
+			PotionEffect glow = new PotionEffect(PotionEffectType.GLOWING, 10000, 0);
+			((Player) this.getPlayer()).addPotionEffect(glow);
+		} else {
+			((Player) this.getPlayer()).removePotionEffect(PotionEffectType.GLOWING);
+		}
 		this.hasFlag = flag;
 	}
 	
