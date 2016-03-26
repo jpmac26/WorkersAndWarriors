@@ -87,7 +87,12 @@ public class WWPlayer {
 			}
 			
 			EntityEquipment equipment = p.getEquipment();
-			equipment.setArmorContents(equips);
+			equipment.setHelmet(equips[0]);
+			equipment.setChestplate(equips[1]);
+			equipment.setLeggings(equips[2]);
+			equipment.setBoots(equips[3]);
+			equipment.setItemInMainHand(equips[4]);
+			equipment.setItemInOffHand(equips[5]);
 		}
 	}
 	
