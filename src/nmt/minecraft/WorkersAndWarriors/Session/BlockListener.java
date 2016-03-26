@@ -14,6 +14,7 @@ import org.bukkit.material.MaterialData;
 import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
 import nmt.minecraft.WorkersAndWarriors.Team.Team;
 import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * Listens for block changes, and updates the game session.
@@ -146,6 +147,8 @@ public class BlockListener implements Listener {
             e.setCancelled(true);
         } else if (session.getPlayer(e.getPlayer()).getType() == WWPlayer.Type.WORKER) {
             player.setFlag(true);
+            e.getBlock().getDrops().clear();
+            player.getPlayer().getPlayer().getInventory().addItem(new ItemStack(e.getBlock().getState().getType(), 1));
         }
     }
 
