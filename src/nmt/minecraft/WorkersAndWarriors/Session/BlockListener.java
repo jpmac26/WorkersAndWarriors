@@ -1,6 +1,8 @@
 package nmt.minecraft.WorkersAndWarriors.Session;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Effect;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.event.EventHandler;
@@ -153,9 +155,16 @@ public class BlockListener implements Listener {
      * @param e
      */
     private void onFlagPlace(BlockPlaceEvent e) {
+    	WWPlayer player = session.getPlayer(e.getPlayer());
         for (Team team : session.getTeams()) {
                     if (team.getFlagArea().isIn(e.getBlock().getLocation())) {
                         team.addPoints(1);
+                        player.setFlag(false);
+                        team.resetFlagBlock();
+                        e.getBlockReplacedState().setType(Material.AIR);
+                        
+                        e.getBlock().getLocation().getWorld().playEffect(e.getBlock().getLocation(), Effect.HAPPY_VILLAGER, 90000);
+                        //TODO
                         break;
                     }
         }
