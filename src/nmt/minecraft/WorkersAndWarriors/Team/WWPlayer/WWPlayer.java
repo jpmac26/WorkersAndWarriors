@@ -40,17 +40,17 @@ import nmt.minecraft.WorkersAndWarriors.Team.Team;
 public class WWPlayer {
 	
 	public enum Type {
-		WORKER(new ItemStack(Material.LEATHER_HELMET), null, null, null, new ItemStack(Material.STONE_PICKAXE), null),
-		WARRIOR(new ItemStack(Material.LEATHER_HELMET), new ItemStack(Material.CHAINMAIL_CHESTPLATE), new ItemStack(Material.CHAINMAIL_LEGGINGS), new ItemStack(Material.LEATHER_BOOTS), new ItemStack(Material.STONE_SWORD), new ItemStack(Material.SHIELD));
+		WORKER(Material.LEATHER_HELMET, null, null, null, Material.STONE_PICKAXE, null),
+		WARRIOR(Material.LEATHER_HELMET, Material.CHAINMAIL_CHESTPLATE, Material.CHAINMAIL_LEGGINGS, Material.LEATHER_BOOTS, Material.STONE_SWORD, Material.SHIELD);
 		
-		private ItemStack[] equips;
+		private Material[] equips;
 		
 		private Type() {
-			equips = new ItemStack[6];
+			equips = new Material[6];
 		}
 		
-		private Type(ItemStack head, ItemStack chest, ItemStack legs, ItemStack boots, ItemStack main, ItemStack off) {
-			equips = new ItemStack[6];
+		private Type(Material head, Material chest, Material legs, Material boots, Material main, Material off) {
+			equips = new Material[6];
 			equips[0] = head;
 			equips[1] = chest;
 			equips[2] = legs;
@@ -77,29 +77,36 @@ public class WWPlayer {
 				//unable to get that color
 				dc = null;
 			}
-			if (dc != null) {
-				color = color.mixDyes(dc);
-				for (ItemStack item : equips) {
-					if (item == null) {
-						continue;
-					}
-					
-					ItemMeta meta = item.getItemMeta();
+			
+			ItemStack[] equipment = new ItemStack[6];
+			
+			
+			for (int i = 0; i < equips.length; i++) {
+				if (equips[i] == null) {
+					continue;
+				}
+				
+				equipment[i] = new ItemStack(equips[i]);
+				
+				if (dc != null) {
+					color = color.mixDyes(dc);
+					ItemMeta meta = equipment[i].getItemMeta();
 					if (meta instanceof LeatherArmorMeta) {
 						LeatherArmorMeta lMeta = (LeatherArmorMeta) meta;
 						lMeta.setColor(color);
-						item.setItemMeta(lMeta);
+						equipment[i].setItemMeta(lMeta);
 					}
+					
 				}
 			}
 			
-			EntityEquipment equipment = p.getEquipment();
-			equipment.setHelmet(equips[0]);
-			equipment.setChestplate(equips[1]);
-			equipment.setLeggings(equips[2]);
-			equipment.setBoots(equips[3]);
-			equipment.setItemInMainHand(equips[4]);
-			equipment.setItemInOffHand(equips[5]);
+			EntityEquipment peq = p.getEquipment();
+			peq.setHelmet(equipment[0]);
+			peq.setChestplate(equipment[1]);
+			peq.setLeggings(equipment[2]);
+			peq.setBoots(equipment[3]);
+			peq.setItemInMainHand(equipment[4]);
+			peq.setItemInOffHand(equipment[5]);
 		}
 	}
 	
@@ -182,7 +189,13 @@ public class WWPlayer {
 		while (it.hasNext()) {
 			item = it.next();
 			if (item == null || !item.getData().equals(team.getBlockType())) {
+				for (MaterialData data : goalDatas) {
+					if (item.getData().equals(data)) {
+						continue;
+					}
+				}
 				
+				it.remove();
 			}
 		}
 		
