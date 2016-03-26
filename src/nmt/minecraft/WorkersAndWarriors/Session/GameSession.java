@@ -169,6 +169,10 @@ public class GameSession {
 				this.unsortedPlayers.add(cache);
 			}
 		}
+
+		if (unsortedPlayers.isEmpty()) {
+			return;
+		}
 		
 		//now, distribute displaced
 		it = unsortedPlayers.listIterator();
@@ -177,6 +181,11 @@ public class GameSession {
 				t.addPlayer(it.next());
 				it.remove();
 			}
+		}
+		
+
+		if (unsortedPlayers.isEmpty()) {
+			return;
 		}
 		
 		//finally, distribute extras (remainder)
