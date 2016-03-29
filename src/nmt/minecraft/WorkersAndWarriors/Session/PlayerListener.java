@@ -55,6 +55,14 @@ public class PlayerListener implements Listener {
 			return;
 		}
 		
+		WWPlayer wPlayer = session.getPlayer(p);
+		if (wPlayer == null) {
+			//player isn't in this session
+			return;
+		}
+		
+		
+		
 		//Check to see if session is active
 		if (this.session.getState() != State.RUNNING) {
 			// The player's session is currently not running
