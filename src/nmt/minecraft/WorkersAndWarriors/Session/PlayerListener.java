@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -21,15 +22,15 @@ import nmt.minecraft.WorkersAndWarriors.Team.Team;
 import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
 
 /**
- * This class handles all player deaths within WorkersAndWarriors.
- * @author williamfong
+ * This class handles all player deaths within WorkersAndWarriors. It also handles player disconnects.
+ * @author williamfong, Skyler
  *
  */
-public class DeathListener implements Listener {
+public class PlayerListener implements Listener {
 	
 	private GameSession session;
 	
-	public DeathListener(GameSession session) {
+	public PlayerListener(GameSession session) {
 		this.session = session;
 		Bukkit.getPluginManager().registerEvents(this, WorkersAndWarriorsPlugin.plugin);
 	}
@@ -78,6 +79,17 @@ public class DeathListener implements Listener {
 			// For gameplay, play audio for players
 			
 		}	
+	}
+	
+	@EventHandler
+	public void onPlayerDisconnect(PlayerQuitEvent e) {
+		GameSession session = WorkersAndWarriorsPlugin.plugin.getSession(e.getPlayer());
+		
+		if (session != null) {
+			//that player was in a session!
+			session.removePlayer(e.getPlayer());
+		}
+			
 	}
 	
 	/**

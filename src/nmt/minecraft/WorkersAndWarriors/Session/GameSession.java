@@ -61,7 +61,7 @@ public class GameSession {
 	private Location sessionLobby;
 	
 	private BlockListener bListener;
-	private DeathListener dListener;
+	private PlayerListener dListener;
 	
 	private Scoreboard sBoard;
 	private Objective sideBar;
@@ -129,7 +129,7 @@ public class GameSession {
 		state = State.RUNNING;
 		
 		this.bListener = new BlockListener(this);
-		this.dListener = new DeathListener(this);
+		this.dListener = new PlayerListener(this);
 		
 		// Team Balance
 		this.distributePlayers();

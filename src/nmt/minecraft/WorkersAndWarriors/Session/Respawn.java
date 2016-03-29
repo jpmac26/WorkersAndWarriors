@@ -15,7 +15,7 @@ import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
 
 /**
  * This class handles the respawn mechanics
- * TODO Make it work with the scheduler, so the {@link DeathListener} only <br />
+ * TODO Make it work with the scheduler, so the {@link PlayerListener} only <br />
  * has to handle scheduling the respawn. The class does the rest.
  * TODO We might also need to make sure the player is still logged <br />
  * into a session, they may disconnect in the time from when the <br />
