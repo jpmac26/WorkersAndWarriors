@@ -270,10 +270,10 @@ public class GameSession {
 	public boolean win(Team t) {
 		//TODO
 		for (Team team : teams) {
-			if (team.getTeamName().equals(t.getTeamName())) {
-				printWin(t);
+			if (team.getTeamName().equals(team.getTeamName())) {
+				printWin(team);
 			} else {
-				printLose(t);
+				printLose(team);
 			}
 		}
 		
