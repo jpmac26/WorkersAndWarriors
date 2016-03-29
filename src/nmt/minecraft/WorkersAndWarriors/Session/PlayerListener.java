@@ -58,7 +58,11 @@ public class PlayerListener implements Listener {
 		//Check to see if session is active
 		if (this.session.getState() != State.RUNNING) {
 			// The player's session is currently not running
-			// TODO may require additional behavior
+			if (session.getState() == State.OPEN) {
+				if (p.getHealth() - e.getDamage() < 1) {
+					e.setDamage(0);
+				}
+			}
 			return;
 		}
 		
