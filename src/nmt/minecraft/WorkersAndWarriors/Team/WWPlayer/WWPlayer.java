@@ -119,12 +119,15 @@ public class WWPlayer {
 	
 	private Location pregameLocation;
 	
+	private ItemStack[] itemStore;
+	
 	public WWPlayer(OfflinePlayer player, Type type) {
 		this.player = player;
 		this.hasFlag = false;
 		this.type = type;
 		if (player.isOnline()) {
 			pregameLocation = ((Player) player).getLocation();
+			itemStore = ((Player) player).getInventory().getContents();
 		}
 	}
 	
@@ -134,6 +137,10 @@ public class WWPlayer {
 	
 	public Location getPregameLocation() {
 		return pregameLocation;
+	}
+	
+	public ItemStack[] getPregameItems() {
+		return itemStore;
 	}
 	
 	public OfflinePlayer getPlayer() {
@@ -218,6 +225,10 @@ public class WWPlayer {
 	 * Handles gamemode, potion effects, etc
 	 */
 	public void die() {
+		
+	}
+	
+	public void restore() {
 		
 	}
 	

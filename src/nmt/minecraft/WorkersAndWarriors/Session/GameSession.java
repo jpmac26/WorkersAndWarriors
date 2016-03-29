@@ -510,7 +510,7 @@ public class GameSession {
 		return removePlayer(player, false);
 	}
 	
-	public boolean removePlayer(OfflinePlayer player, boolean teleport) {
+	public boolean removePlayer(OfflinePlayer player, boolean restore) {
 		if (unsortedPlayers != null && !unsortedPlayers.isEmpty()) {
 			Iterator<WWPlayer> it = unsortedPlayers.iterator();
 			WWPlayer cache;
@@ -519,8 +519,17 @@ public class GameSession {
 				if (cache.getPlayer().getUniqueId().equals(player.getUniqueId())) {
 					it.remove();
 					
-					if (teleport && player.isOnline() && cache.getPregameLocation() != null) {
-						((Player) player).teleport(cache.getPregameLocation());
+					if (player.isOnline()) {
+						((Player) player).getInventory().clear();
+					}
+					
+					if (restore && player.isOnline()) {
+						if (cache.getPregameLocation() != null) {
+							((Player) player).teleport(cache.getPregameLocation());
+						}
+						if (cache.getPregameItems() != null) {
+							((Player) player).getInventory().setContents(cache.getPregameItems());
+						}
 					}
 					
 					checkState();
@@ -537,9 +546,20 @@ public class GameSession {
 		//they're on a team somewhere!
 		for (Team t : teams) {
 			if (t.removePlayer(p)) {
-				if (teleport && player.isOnline() && p.getPregameLocation() != null) {
-					((Player) player).teleport(p.getPregameLocation());
+				
+				if (player.isOnline()) {
+					((Player) player).getInventory().clear();
 				}
+				
+				if (restore && player.isOnline()) {
+					if (p.getPregameLocation() != null) {
+						((Player) player).teleport(p.getPregameLocation());
+					}
+					if (p.getPregameItems() != null) {
+						((Player) player).getInventory().setContents(p.getPregameItems());
+					}
+				}
+				
 				checkState();
 				return true;
 			}

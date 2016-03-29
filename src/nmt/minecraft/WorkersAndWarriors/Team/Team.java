@@ -353,7 +353,7 @@ public class Team {
 	public void addPoints(int count) {
 		points += count;
 		
-		if (points > PluginConfiguration.config.getPointsToWin()) {
+		if (points >= PluginConfiguration.config.getPointsToWin()) {
 			session.win(this);
 			
 		}
