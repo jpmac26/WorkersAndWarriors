@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -33,6 +34,34 @@ public class PlayerListener implements Listener {
 	public PlayerListener(GameSession session) {
 		this.session = session;
 		Bukkit.getPluginManager().registerEvents(this, WorkersAndWarriorsPlugin.plugin);
+	}
+	
+	@EventHandler
+	public void onPlayerDamage(EntityDamageEvent e) {
+		if (e instanceof EntityDamageByEntityEvent) {
+			return; //handled in onPlayerDamage(EntityDamageByEntityEvent)
+		}
+		
+		if (!(e.getEntity() instanceof Player)) {
+			return;
+		}
+		
+		Player p = (Player) e.getEntity();
+		
+		if (this.session == null) {
+			// Listener was not correctly instantiated
+			return;
+		}
+		
+		if (session.getPlayer(p) == null) {
+			return;
+		}
+		
+		if (session.getState() == State.OPEN || session.getState() == State.RUNNING)
+		if (e.getFinalDamage() >= p.getHealth()) {
+			e.setCancelled(true);
+			return;
+		}
 	}
 
 	/**
@@ -69,7 +98,7 @@ public class PlayerListener implements Listener {
 			//the damager is on the same team. Disallow if game is running
 			if (session.getState() == State.RUNNING) {
 				e.setCancelled(true);
-				return;
+				return; 
 			}
 		}
 		
