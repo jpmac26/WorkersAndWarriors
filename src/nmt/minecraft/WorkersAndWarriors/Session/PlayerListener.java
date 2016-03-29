@@ -59,7 +59,7 @@ public class PlayerListener implements Listener {
 		
 		if (session.getState() == State.OPEN || session.getState() == State.RUNNING)
 		if (e.getFinalDamage() >= p.getHealth()) {
-			e.setCancelled(true);
+			e.setDamage(0);
 			return;
 		}
 	}

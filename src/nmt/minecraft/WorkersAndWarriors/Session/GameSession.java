@@ -96,6 +96,8 @@ public class GameSession {
 		}
 		
 		state = State.OPEN;
+
+		this.dListener = new PlayerListener(this);
 		
 		if (PluginConfiguration.config.getBroadcastOpen()) {
 			for (Player p : Bukkit.getOnlinePlayers()) {
@@ -129,7 +131,6 @@ public class GameSession {
 		state = State.RUNNING;
 		
 		this.bListener = new BlockListener(this);
-		this.dListener = new PlayerListener(this);
 		
 		// Team Balance
 		this.distributePlayers();
