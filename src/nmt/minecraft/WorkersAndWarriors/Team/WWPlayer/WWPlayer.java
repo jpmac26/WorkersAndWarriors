@@ -195,14 +195,17 @@ public class WWPlayer {
 		ItemStack item;
 		while (it.hasNext()) {
 			item = it.next();
-			if (item == null || !item.getData().equals(team.getBlockType())) {
+			if (item == null) {
+				continue;
+			}
+			if (!item.getData().equals(team.getBlockType())) {
 				for (MaterialData data : goalDatas) {
 					if (item.getData().equals(data)) {
 						continue;
 					}
 				}
 				
-				it.remove();
+				p.getInventory().remove(item);
 			}
 		}
 		
