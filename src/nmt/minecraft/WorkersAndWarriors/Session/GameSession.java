@@ -522,6 +522,7 @@ public class GameSession {
 						((Player) player).teleport(cache.getPregameLocation());
 					}
 					
+					checkState();
 					return true;
 				}
 			}
@@ -538,11 +539,49 @@ public class GameSession {
 				if (teleport && player.isOnline() && p.getPregameLocation() != null) {
 					((Player) player).teleport(p.getPregameLocation());
 				}
+				checkState();
 				return true;
 			}
 		}
 		
 		return false;
+	}
+	
+	/**
+	 * Private method used to make sure that the game is okay to keep running.<br />
+	 * This is particularly useful when the game state has changed in a way that would make it wise to stop
+	 * the game. An easy example is a player just disconnected. Should we keep going? Or do we need to stop
+	 * and get some winners?
+	 */
+	private void checkState() {
+		//if only one player is left, make their team win.
+		if (getAllPlayers().size() == 1) {
+			win(getTeam(getAllPlayers().iterator().next()));
+		}
+		
+		//else if only one team is left, make that team win.
+		boolean multi = false;
+		Team wTeam = null;
+		for (Team t : teams) {
+			if (!t.getPlayers().isEmpty()) {
+				if (!multi) {
+					multi = true;
+					wTeam = t;
+					continue;
+				} else {
+					//multi already was true, so more than one.
+					return; //we can keep playing
+				}
+			}
+		}
+		
+		//if we get here, we only had one team. Or no teams.
+		if (wTeam == null) {
+			WorkersAndWarriorsPlugin.plugin.getLogger().warning("Ended game but found zero teams!");
+			return;
+		}
+		
+		win(wTeam); //else one team, so make them win
 	}
 	
 	public State getState() {

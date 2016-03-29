@@ -87,7 +87,8 @@ public class PlayerListener implements Listener {
 		
 		if (session != null) {
 			//that player was in a session!
-			session.removePlayer(e.getPlayer());
+			//remove them and teleport them back before they leave
+			session.removePlayer(e.getPlayer(), true);
 		}
 			
 	}
