@@ -61,7 +61,17 @@ public class PlayerListener implements Listener {
 			return;
 		}
 		
+		Team team = session.getTeam(wPlayer);
 		
+		if (team != null)
+		if (e.getDamager() instanceof Player)
+		if (team.getPlayer((Player) e.getDamager()) != null) {
+			//the damager is on the same team. Disallow if game is running
+			if (session.getState() == State.RUNNING) {
+				e.setCancelled(true);
+				return;
+			}
+		}
 		
 		//Check to see if session is active
 		if (this.session.getState() != State.RUNNING) {
