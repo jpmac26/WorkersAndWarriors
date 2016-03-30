@@ -352,10 +352,24 @@ public class Team {
 	 */
 	public void addPoints(int count) {
 		points += count;
+		int pointsToWin = PluginConfiguration.config.getPointsToWin();
 		
-		if (points >= PluginConfiguration.config.getPointsToWin()) {
+		if (points >= pointsToWin) {
 			session.win(this);
 			
+		} else {
+			
+			if (pointsToWin - points == 3) {
+				for (Team t : session.getTeams()) {
+					t.sendMessage(ChatFormat.INFO + "Team " + teamColor + ChatFormat.INFO
+							+ " only needs " + ChatFormat.ERROR + "3 " + ChatFormat.INFO.wrap("to win!"));
+				}
+			} else if (pointsToWin - points == 1) {
+				for (Team t : session.getTeams()) {
+					t.sendMessage(ChatFormat.WARNING + "Team " + teamColor + ChatFormat.WARNING
+							+ " only needs " + ChatFormat.ERROR + "1 " + ChatFormat.WARNING.wrap("to win!"));
+				}				
+			}
 		}
 		
 		// Update score
