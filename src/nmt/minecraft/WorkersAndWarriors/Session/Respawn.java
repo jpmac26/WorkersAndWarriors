@@ -3,7 +3,6 @@ package nmt.minecraft.WorkersAndWarriors.Session;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -57,12 +56,13 @@ public class Respawn implements Tickable<Object>{
 	public void respawnPlayer() {
 		Location spawnLocation = this.wTeam.getRandomSpawn();
 		Player p = (Player) this.wPlayer.getPlayer();
-		p.teleport(spawnLocation);
-		p.setGameMode(GameMode.SURVIVAL);
-		p.setHealth(p.getMaxHealth());
-		p.setExhaustion(0.0f);
-		p.setSaturation(15.0f);
-		p.setFoodLevel(20);
+		//p.teleport(spawnLocation);
+		//p.setGameMode(GameMode.SURVIVAL);
+//		p.setHealth(p.getMaxHealth());
+//		p.setExhaustion(0.0f);
+//		p.setSaturation(15.0f);
+//		p.setFoodLevel(20);
+		wPlayer.spawn(spawnLocation);
 		p.getActivePotionEffects().clear();
 		// Apply potion effects
 		for (PotionEffect e : this.effects){

@@ -2,9 +2,7 @@ package nmt.minecraft.WorkersAndWarriors.Team.WWPlayer;
 
 import static nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin.plugin;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
@@ -20,7 +18,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.material.MaterialData;
+
 import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
 import nmt.minecraft.WorkersAndWarriors.Session.GameSession;
 import nmt.minecraft.WorkersAndWarriors.Team.Team;
@@ -89,18 +87,18 @@ public class WWPlayer {
 				}
 				
 				equipment[i] = new ItemStack(equips[i]);
-				
+
+				ItemMeta meta = equipment[i].getItemMeta();
+				meta.spigot().setUnbreakable(true);
 				if (dc != null) {
 					color = color.mixDyes(dc);
-					ItemMeta meta = equipment[i].getItemMeta();
-					meta.spigot().setUnbreakable(true);
 					if (meta instanceof LeatherArmorMeta) {
 						LeatherArmorMeta lMeta = (LeatherArmorMeta) meta;
 						lMeta.setColor(color);
-						equipment[i].setItemMeta(lMeta);
 					}
 					
 				}
+				equipment[i].setItemMeta(meta);
 			}
 			
 			EntityEquipment peq = p.getEquipment();
@@ -130,6 +128,8 @@ public class WWPlayer {
 		if (player.isOnline()) {
 			pregameLocation = ((Player) player).getLocation();
 			itemStore = ((Player) player).getInventory().getContents();
+			((Player) player).getInventory().clear();
+			((Player) player).updateInventory();
 		}
 	}
 	
@@ -191,15 +191,6 @@ public class WWPlayer {
 		GameSession session = WorkersAndWarriorsPlugin.plugin.getSession(player);
 		Team team = session.getTeam(this);
 		
-		List<MaterialData> goalDatas = new ArrayList<>(session.getTeams().size());
-		for (Team t : session.getTeams()) {
-			if (t.getTeamName().equals(team.getTeamName())) {
-				continue;
-			}
-			
-			goalDatas.add(t.getGoalType());
-		}
-		
 		Iterator<ItemStack> it = p.getInventory().iterator();
 		ItemStack item;
 		while (it.hasNext()) {
@@ -208,12 +199,7 @@ public class WWPlayer {
 				continue;
 			}
 			if (!item.getData().equals(team.getBlockType())) {
-				for (MaterialData data : goalDatas) {
-					if (item.getData().equals(data)) {
-						continue;
-					}
-				}
-				
+							
 				p.getInventory().remove(item);
 			}
 		}
@@ -222,6 +208,8 @@ public class WWPlayer {
 		type.outfitPlayer(this);
 		p.setHealth(p.getMaxHealth());
 		p.setFoodLevel(20);
+		p.setExhaustion(0.0f);
+		p.setSaturation(15.0f);
 		
 		p.updateInventory();
 	}

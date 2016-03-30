@@ -3,6 +3,7 @@ package nmt.minecraft.WorkersAndWarriors.Session;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.event.EventHandler;
@@ -159,6 +160,7 @@ public class BlockListener implements Listener {
             player.getPlayer().getPlayer().getInventory().addItem(stack);
             e.setCancelled(true);
             e.getBlock().setType(Material.AIR);
+            e.getBlock().getWorld().playSound(e.getBlock().getLocation(), Sound.BLOCK_STONE_BREAK, 1f, 1f);
 
         }
     }

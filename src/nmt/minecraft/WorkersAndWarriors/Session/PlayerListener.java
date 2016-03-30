@@ -3,8 +3,12 @@
  */
 package nmt.minecraft.WorkersAndWarriors.Session;
 
+import java.util.ListIterator;
+
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -14,6 +18,8 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.MaterialData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -156,6 +162,10 @@ public class PlayerListener implements Listener {
 		// want to handle death by our own rules
 		e.setCancelled(true);
 		
+		//We need to use the player's location as soon as they die. Rather than mess with teleports, we'll
+		//store it as soon as they 'die'
+		Location deathLocation = p.getEyeLocation();
+		
 		//set player to intermediate state
 		p.setGameMode(GameMode.SPECTATOR);
 		p.setSpectatorTarget(e.getDamager());
@@ -166,6 +176,23 @@ public class PlayerListener implements Listener {
 		Respawn respawn = new Respawn(wPlayer, wTeam);
 		respawn.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 40, 4));
 		Scheduler.getScheduler().schedule(respawn, null, PluginConfiguration.config.getRespawnCooldown());
+		
+		//Drop any flags they may have
+		ListIterator<ItemStack> it = p.getInventory().iterator();
+		ItemStack item;
+		while (it.hasNext()) {
+			item = it.next();
+			if (item == null || item.getType() == Material.AIR) {
+				continue;
+			}
+			
+			for (MaterialData data : session.getGoalTypes()) {
+				if (item.getData().equals(data)) {
+					//drop the goal
+					deathLocation.getWorld().dropItemNaturally(deathLocation, item);
+				}
+			}
+		}
 		
 	}
 	
@@ -226,7 +253,7 @@ public class PlayerListener implements Listener {
 	@EventHandler
 	public void onItemThrow(PlayerDropItemEvent e) {
 		if (session.getPlayer(e.getPlayer()) != null)
-		if (session.getState() == State.RUNNING) {
+		if (session.getState() == State.RUNNING || session.getState() == State.OPEN) {
 			e.setCancelled(true);
 			e.getPlayer().sendMessage(ChatFormat.WARNING.wrap("You cannot discard items!"));
 		}

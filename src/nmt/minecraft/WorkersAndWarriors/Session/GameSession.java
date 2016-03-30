@@ -1,5 +1,6 @@
 package nmt.minecraft.WorkersAndWarriors.Session;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -12,6 +13,7 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+import org.bukkit.material.MaterialData;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
@@ -66,6 +68,8 @@ public class GameSession {
 	private Scoreboard sBoard;
 	private Objective sideBar;
 	
+	private List<MaterialData> goalTypes;
+	
 	/**
 	 * Create a new game session in the default stopped state and with the given name.<br />
 	 * <b>PLEASE NOTE</b>: The given name should be unique (see {@link #equals(Object)})
@@ -96,6 +100,12 @@ public class GameSession {
 		}
 		
 		state = State.OPEN;
+		
+		this.goalTypes = new ArrayList<>(getTeams().size());
+		for (Team t : getTeams()) {
+						
+			goalTypes.add(t.getGoalType());
+		}
 
 		this.dListener = new PlayerListener(this);
 		
@@ -304,6 +314,15 @@ public class GameSession {
 	
 	public Location getLobbyLocation() {
 		return sessionLobby;
+	}
+	
+	/**
+	 * Returns a pre-generated list (generated on open) of goal material datas, so teams don't
+	 * have to be queried every time.
+	 * @return
+	 */
+	public List<MaterialData> getGoalTypes() {
+		return goalTypes;
 	}
 	
 	public int getMaxTeams() {
