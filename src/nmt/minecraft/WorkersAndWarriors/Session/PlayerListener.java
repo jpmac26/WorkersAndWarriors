@@ -11,12 +11,15 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
 import nmt.minecraft.WorkersAndWarriors.Config.PluginConfiguration;
+import nmt.minecraft.WorkersAndWarriors.IO.ChatFormat;
 import nmt.minecraft.WorkersAndWarriors.Scheduling.Scheduler;
 import nmt.minecraft.WorkersAndWarriors.Session.GameSession.State;
 import nmt.minecraft.WorkersAndWarriors.Team.Team;
@@ -179,5 +182,53 @@ public class PlayerListener implements Listener {
 		String vName = victim.getDisplayName();
 		killer.sendMessage("Eliminated: " + vName);
 	
+	}
+	
+	@EventHandler
+	public void onItemPickup(PlayerPickupItemEvent e) {
+		WWPlayer wp = session.getPlayer(e.getPlayer());
+		
+		if (wp == null) {
+			return;
+		}
+		
+		//can pick up flags. That's it.
+		for (Team t : session.getTeams()) {
+			if (t.getGoalType().equals(e.getItem().getItemStack().getData())) {
+				//It's alright. But we need to check if it's their own team's flag
+				
+				if (t.getPlayer(e.getPlayer()) != null) {
+					//they're on that team. E.g. team recovered their flag
+					reclaimFlag(wp, t, e);
+					
+				}
+				
+				return;
+			}
+		}
+		
+		//we went through each team, no match. So it's not a flag. It's some debris. Leave it.
+		e.setCancelled(true);
+	}
+	
+	/**
+	 * A team has just recovered their flag by killing the theif and picking the item up.
+	 * @param player
+	 * @param team
+	 */
+	private void reclaimFlag(WWPlayer player, Team team, PlayerPickupItemEvent e) {
+		team.sendMessage(ChatFormat.SUCCESS.wrap(player.getPlayer().getName() + " just recovered your flag!"));
+		e.setCancelled(true);
+		e.getItem().remove();
+		team.resetFlagBlock();
+	}
+	
+	@EventHandler
+	public void onItemThrow(PlayerDropItemEvent e) {
+		if (session.getPlayer(e.getPlayer()) != null)
+		if (session.getState() == State.RUNNING) {
+			e.setCancelled(true);
+			e.getPlayer().sendMessage(ChatFormat.WARNING.wrap("You cannot discard items!"));
+		}
 	}
 }
