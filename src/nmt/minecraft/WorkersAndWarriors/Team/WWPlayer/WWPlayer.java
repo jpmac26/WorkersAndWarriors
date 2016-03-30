@@ -93,6 +93,7 @@ public class WWPlayer {
 				if (dc != null) {
 					color = color.mixDyes(dc);
 					ItemMeta meta = equipment[i].getItemMeta();
+					meta.spigot().setUnbreakable(true);
 					if (meta instanceof LeatherArmorMeta) {
 						LeatherArmorMeta lMeta = (LeatherArmorMeta) meta;
 						lMeta.setColor(color);
