@@ -218,6 +218,10 @@ public class WWPlayer {
 		
 		
 		type.outfitPlayer(this);
+		p.setHealth(p.getMaxHealth());
+		p.setFoodLevel(20);
+		
+		p.updateInventory();
 	}
 	
 	/**
