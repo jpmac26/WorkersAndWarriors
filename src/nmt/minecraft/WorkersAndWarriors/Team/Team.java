@@ -391,4 +391,14 @@ public class Team {
 		BlockListener.setBlockType(flagLoc.getBlock(), goalType);
 	}
 	
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof Team)
+		if (((Team) o).session.equals(session))
+		if (((Team) o).getTeamName().equals(teamName)) {
+			return true;
+		}
+		
+		return false;
+	}
 }

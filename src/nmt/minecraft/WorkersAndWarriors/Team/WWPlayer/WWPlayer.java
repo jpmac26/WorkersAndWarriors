@@ -12,6 +12,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
@@ -242,7 +243,11 @@ public class WWPlayer {
 	 * @param count
 	 */
 	public void giveBlock(int count) {
+		if (!player.isOnline()) {
+			return;
+		}
             this.getPlayer().getPlayer().getInventory().addItem(plugin.getSession(this).getTeam(this).getBlockType().toItemStack(count));
+            player.getPlayer().playSound(player.getPlayer().getLocation(), Sound.ENTITY_ITEM_PICKUP, 1f, 1f);
 	}
 	
 	

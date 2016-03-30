@@ -63,6 +63,13 @@ public class BlockListener implements Listener {
                 for (Team team : session.getTeams()) {
 
                     if (team.getGoalType().equals(e.getBlock().getState().getData())) {
+                    	
+                    	//make sure it's not their own flag
+                    	if (session.getTeam(e.getPlayer()).equals(team)) {
+                    		e.setCancelled(true);
+                    		return;
+                    	}
+                    	
                         flag0 = true;
 
                         onFlagBreak(e);
