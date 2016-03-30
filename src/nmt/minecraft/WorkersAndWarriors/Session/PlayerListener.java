@@ -194,6 +194,8 @@ public class PlayerListener implements Listener {
 			}
 		}
 		
+		wPlayer.setFlag(false);
+		
 	}
 	
 	/**
@@ -228,6 +230,8 @@ public class PlayerListener implements Listener {
 					//they're on that team. E.g. team recovered their flag
 					reclaimFlag(wp, t, e);
 					
+				} else {
+					wp.setFlag(true);
 				}
 				
 				return;

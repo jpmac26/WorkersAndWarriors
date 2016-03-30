@@ -95,6 +95,8 @@ public class BlockListener implements Listener {
                 if (flag0 == false) {
                     e.setCancelled(true);
 
+                } else {
+                	e.getBlock().getWorld().playSound(e.getBlock().getLocation(), Sound.BLOCK_STONE_BREAK, 1f, 1f);
                 }
             }
 
@@ -160,8 +162,7 @@ public class BlockListener implements Listener {
             player.getPlayer().getPlayer().getInventory().addItem(stack);
             e.setCancelled(true);
             e.getBlock().setType(Material.AIR);
-            e.getBlock().getWorld().playSound(e.getBlock().getLocation(), Sound.BLOCK_STONE_BREAK, 1f, 1f);
-
+            
         }
     }
 
