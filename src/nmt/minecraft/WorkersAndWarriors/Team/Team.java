@@ -351,6 +351,20 @@ public class Team {
 	 * @param count
 	 */
 	public void addPoints(int count) {
+		// Update score
+		// Since we are returned a set of scores, assume the first
+		Score s = this.session.getScoreboard().getScores(this.teamName).iterator().next();
+		s.setScore(points);
+		
+		// Alert players
+		this.sendMessage("Your team scored!");;
+		for (WWPlayer p : this.getPlayers()) {
+			Player tmp = ((Player) p.getPlayer());
+			tmp.playSound(tmp.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 10, 1);
+			tmp.playSound(tmp.getLocation(), Sound.ENTITY_FIREWORK_BLAST, 8, 1);
+			tmp.playSound(tmp.getLocation(), Sound.ENTITY_FIREWORK_LARGE_BLAST, 8, 1);
+		}
+		
 		points += count;
 		int pointsToWin = PluginConfiguration.config.getPointsToWin();
 		
@@ -372,19 +386,7 @@ public class Team {
 			}
 		}
 		
-		// Update score
-		// Since we are returned a set of scores, assume the first
-		Score s = this.session.getScoreboard().getScores(this.teamName).iterator().next();
-		s.setScore(points);
 		
-		// Alert players
-		this.sendMessage("Your team scored!");;
-		for (WWPlayer p : this.getPlayers()) {
-			Player tmp = ((Player) p.getPlayer());
-			tmp.playSound(tmp.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 10, 1);
-			tmp.playSound(tmp.getLocation(), Sound.ENTITY_FIREWORK_BLAST, 8, 1);
-			tmp.playSound(tmp.getLocation(), Sound.ENTITY_FIREWORK_LARGE_BLAST, 8, 1);
-		}
 	}
 	
 	/**

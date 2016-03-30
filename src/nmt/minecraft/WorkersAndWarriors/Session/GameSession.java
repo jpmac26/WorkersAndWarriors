@@ -538,8 +538,10 @@ public class GameSession {
 				if (cache.getPlayer().getUniqueId().equals(player.getUniqueId())) {
 					it.remove();
 					
+					
 					if (player.isOnline()) {
 						((Player) player).getInventory().clear();
+						((Player) player).setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
 					}
 					
 					if (restore && player.isOnline()) {
