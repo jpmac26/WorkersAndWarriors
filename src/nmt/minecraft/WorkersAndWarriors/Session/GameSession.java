@@ -241,12 +241,12 @@ public class GameSession {
 			HandlerList.unregisterAll(dListener);
 			bListener = null;
 			dListener = null;
-			
+
+			state = State.ENDED;
 			for (WWPlayer p : getAllPlayers()) {
 				removePlayer(p.getPlayer(), true);
 			}
 			
-			state = State.ENDED;
 			return true;
 		}
 		
@@ -270,7 +270,7 @@ public class GameSession {
 	public boolean win(Team t) {
 		//TODO
 		for (Team team : teams) {
-			if (team.getTeamName().equals(team.getTeamName())) {
+			if (team.getTeamName().equals(t.getTeamName())) {
 				printWin(team);
 			} else {
 				printLose(team);
@@ -575,9 +575,16 @@ public class GameSession {
 	 * and get some winners?
 	 */
 	private void checkState() {
+		//if we're closing down, don't bother
+		if (state == State.ENDED) {
+			return;
+		}
+		
+		
 		//if only one player is left, make their team win.
 		if (getAllPlayers().size() == 1) {
 			win(getTeam(getAllPlayers().iterator().next()));
+			return;
 		}
 		
 		//else if only one team is left, make that team win.
