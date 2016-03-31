@@ -103,7 +103,7 @@ public abstract class SessionConfiguration {
 		Team team;
 		if (teams != null && !teams.isEmpty())
 		for (TeamConfiguration tf : teams) {
-			team = new Team();
+			team = new Team(session);
 			if (!tf.getSpawns().isEmpty()) {
 				for (Location spawn : tf.getSpawns()) {
 					team.addSpawnPoint(spawn);

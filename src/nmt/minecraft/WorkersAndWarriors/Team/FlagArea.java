@@ -52,7 +52,7 @@ public class FlagArea {
 		
 		Vector diff = new Vector(radius, radius, radius);
 		this.max = center.clone().add(diff).toBlockVector();
-		this.min = center.clone().add(diff.multiply(-1).toBlockVector());
+		this.min = center.clone().add(diff.add(new Vector(1,1,1)).multiply(-1).toBlockVector());
 	}
 	
 	/**

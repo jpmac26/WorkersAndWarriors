@@ -1,15 +1,22 @@
 package nmt.minecraft.WorkersAndWarriors.Session;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
+import org.bukkit.material.MaterialData;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Scoreboard;
 
 import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
 import nmt.minecraft.WorkersAndWarriors.Config.PluginConfiguration;
@@ -55,6 +62,14 @@ public class GameSession {
 	 */
 	private Location sessionLobby;
 	
+	private BlockListener bListener;
+	private PlayerListener dListener;
+	
+	private Scoreboard sBoard;
+	private Objective sideBar;
+	
+	private List<MaterialData> goalTypes;
+	
 	/**
 	 * Create a new game session in the default stopped state and with the given name.<br />
 	 * <b>PLEASE NOTE</b>: The given name should be unique (see {@link #equals(Object)})
@@ -65,6 +80,12 @@ public class GameSession {
 		teams = new HashSet<Team>();
 		unsortedPlayers = new LinkedList<WWPlayer>();
 		this.sessionLobby = null;
+		
+		// Setup score board
+		this.sBoard = Bukkit.getScoreboardManager().getNewScoreboard();
+		sideBar = this.sBoard.registerNewObjective("Goals", "dummy");
+		this.sideBar.setDisplaySlot(DisplaySlot.SIDEBAR);
+		
 	}
 	
 	/**
@@ -79,6 +100,14 @@ public class GameSession {
 		}
 		
 		state = State.OPEN;
+		
+		this.goalTypes = new ArrayList<>(getTeams().size());
+		for (Team t : getTeams()) {
+						
+			goalTypes.add(t.getGoalType());
+		}
+
+		this.dListener = new PlayerListener(this);
 		
 		if (PluginConfiguration.config.getBroadcastOpen()) {
 			for (Player p : Bukkit.getOnlinePlayers()) {
@@ -105,7 +134,109 @@ public class GameSession {
 			return false;
 		}
 		
+		if (!canStart()) {
+			return false;
+		}
+		
+		state = State.RUNNING;
+		
+		this.bListener = new BlockListener(this);
+		
+		// Team Balance
+		this.distributePlayers();
+		
+		// Distribute Blocks and scoreboard
+		for (Team t : teams) {
+			t.spawnTeam(this.maxTeamBlock);
+			t.resetFlagBlock();
+			
+			// Creates a score for the "team"
+			this.sideBar.getScore(t.getTeamName()).setScore(0);
+		}
+		
+		// Assign scorebaord
+			for (Team t : teams)
+			for (WWPlayer p : t.getPlayers()) {
+				((Player) p.getPlayer()).setScoreboard(sBoard);
+			}
+		
 		return true;
+	}
+	
+	/**
+	 * Moves players and automatically balances teams.
+	 * This method performs the balancing and returns nothing.
+	 */
+	private void distributePlayers() {
+		//first figure out how many players each team should have. Then add unsorted
+		//to below that. Then take max, apply to min?
+		
+		//where do we stop? It won't be exactly even.
+		//maybe get number for each, re-add each player and take those that are over and put in pool.
+		
+		//two pass; First pass, chop extra
+		//second pass, fill
+		
+		int cap = (getAllPlayers().size() / teams.size()); //rounds down
+		int extra = (getAllPlayers().size() % teams.size());
+		
+		ListIterator<WWPlayer> it;
+		WWPlayer cache;
+		int localCap;
+		
+		for (Team t : teams) {
+			localCap = cap + (extra-- > 0 ? 1 : 0);
+			if (t.getPlayers().size() > localCap) {
+				it = t.getPlayers().listIterator();
+				for (int i = 0; i < localCap; i++) {
+					it.next();
+				}
+				
+				cache = it.next();
+				t.removePlayer(cache);
+				this.unsortedPlayers.add(cache);
+			}
+		}
+
+		if (unsortedPlayers.isEmpty()) {
+			return;
+		}
+		
+		//now, distribute displaced
+		it = unsortedPlayers.listIterator();
+		for (Team t : teams) {
+			if (t.getPlayers().size() < cap) {
+				t.addPlayer(it.next());
+				it.remove();
+			}
+		}
+		
+
+		if (unsortedPlayers.isEmpty()) {
+			return;
+		}
+		
+		//finally, distribute extras (remainder)
+		if (!unsortedPlayers.isEmpty()) {
+			//sanity check
+			if (unsortedPlayers.size() >= teams.size()) {
+				WorkersAndWarriorsPlugin.plugin.getLogger().warning("Invalid size in distribution!!!");
+				WorkersAndWarriorsPlugin.plugin.getLogger().warning("unsorted held " + unsortedPlayers.size()
+						+ " players modulus!");
+				return;
+			}
+			
+			it = unsortedPlayers.listIterator();
+			for (Team t : teams) {
+				if(!it.hasNext()) {
+					break;
+				}
+				t.addPlayer(it.next());
+				it.remove();
+			}
+			
+		}
+		
 	}
 	
 	/**
@@ -115,8 +246,58 @@ public class GameSession {
 	 */
 	public boolean stop(boolean force) {
 		
+		if (state == State.RUNNING && force) {
+			HandlerList.unregisterAll(bListener);
+			HandlerList.unregisterAll(dListener);
+			bListener = null;
+			dListener = null;
+
+			state = State.ENDED;
+			for (WWPlayer p : getAllPlayers()) {
+				removePlayer(p.getPlayer(), true);
+			}
+			
+			return true;
+		}
+		
+		if (state == State.OPEN) {
+			state = State.ENDED;
+			for (WWPlayer p : getAllPlayers()) {
+				removePlayer(p.getPlayer(), true);
+			}
+			return true;
+		}
 		
 		return false;
+	}
+	
+	/**
+	 * Performs a win for the given team.<br />
+	 * This stops the game and refreshes all the players back to non-game status
+	 * @param t The team that won
+	 * @return true if everything went well, false on error
+	 */
+	public boolean win(Team t) {
+		//TODO
+		for (Team team : teams) {
+			if (team.getTeamName().equals(t.getTeamName())) {
+				printWin(team);
+			} else {
+				printLose(team);
+			}
+		}
+		
+		stop(true);
+		
+		return true;
+	}
+	
+	private void printWin(Team t) {
+		t.sendMessage(ChatFormat.SUCCESS.wrap("Congratulations! You won!"));
+	}
+	
+	private void printLose(Team t) {
+		t.sendMessage(ChatFormat.WARNING.wrap("Conflatulations! You lose!"));		
 	}
 	
 	public String getName() {
@@ -133,6 +314,15 @@ public class GameSession {
 	
 	public Location getLobbyLocation() {
 		return sessionLobby;
+	}
+	
+	/**
+	 * Returns a pre-generated list (generated on open) of goal material datas, so teams don't
+	 * have to be queried every time.
+	 * @return
+	 */
+	public List<MaterialData> getGoalTypes() {
+		return goalTypes;
 	}
 	
 	public int getMaxTeams() {
@@ -306,6 +496,10 @@ public class GameSession {
 			return null;
 		}
 		
+		if (state != State.OPEN) {
+			return null;
+		}
+		
 		WWPlayer.Type[] types = WWPlayer.Type.values();
 		WWPlayer newPlayer = new WWPlayer(player, 
 				types[
@@ -317,6 +511,9 @@ public class GameSession {
 		if (player.isOnline())  {
 			player.getPlayer().sendMessage(ChatFormat.SUCCESS.wrap(
 					"You've joined the game session ") + ChatFormat.SESSION.wrap(name));
+			player.getPlayer().sendMessage(ChatFormat.INFO + "You've been given the " + ChatFormat.CLASS 
+						+ newPlayer.getType().name().toLowerCase() + ChatFormat.INFO.wrap(" class."));
+			player.getPlayer().teleport(sessionLobby);
 		}
 		
 		this.unsortedPlayers.add(newPlayer);
@@ -329,11 +526,34 @@ public class GameSession {
 	}
 	
 	public boolean removePlayer(OfflinePlayer player) {
+		return removePlayer(player, false);
+	}
+	
+	public boolean removePlayer(OfflinePlayer player, boolean restore) {
 		if (unsortedPlayers != null && !unsortedPlayers.isEmpty()) {
 			Iterator<WWPlayer> it = unsortedPlayers.iterator();
+			WWPlayer cache;
 			while (it.hasNext()) {
-				if (it.next().getPlayer().getUniqueId().equals(player.getUniqueId())) {
+				cache = it.next();
+				if (cache.getPlayer().getUniqueId().equals(player.getUniqueId())) {
 					it.remove();
+					
+					
+					if (player.isOnline()) {
+						((Player) player).getInventory().clear();
+						((Player) player).setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
+					}
+					
+					if (restore && player.isOnline()) {
+						if (cache.getPregameLocation() != null) {
+							((Player) player).teleport(cache.getPregameLocation());
+						}
+						if (cache.getPregameItems() != null) {
+							((Player) player).getInventory().setContents(cache.getPregameItems());
+						}
+					}
+					
+					checkState();
 					return true;
 				}
 			}
@@ -347,11 +567,70 @@ public class GameSession {
 		//they're on a team somewhere!
 		for (Team t : teams) {
 			if (t.removePlayer(p)) {
+				
+				if (player.isOnline()) {
+					((Player) player).getInventory().clear();
+				}
+				
+				if (restore && player.isOnline()) {
+					if (p.getPregameLocation() != null) {
+						((Player) player).teleport(p.getPregameLocation());
+					}
+					if (p.getPregameItems() != null) {
+						((Player) player).getInventory().setContents(p.getPregameItems());
+					}
+				}
+				
+				checkState();
 				return true;
 			}
 		}
 		
 		return false;
+	}
+	
+	/**
+	 * Private method used to make sure that the game is okay to keep running.<br />
+	 * This is particularly useful when the game state has changed in a way that would make it wise to stop
+	 * the game. An easy example is a player just disconnected. Should we keep going? Or do we need to stop
+	 * and get some winners?
+	 */
+	private void checkState() {
+		//if we're closing down, don't bother
+		if (state == State.ENDED) {
+			return;
+		}
+		
+		
+		//if only one player is left, make their team win.
+		if (getAllPlayers().size() == 1) {
+			win(getTeam(getAllPlayers().iterator().next()));
+			return;
+		}
+		
+		//else if only one team is left, make that team win.
+		boolean multi = false;
+		Team wTeam = null;
+		for (Team t : teams) {
+			if (!t.getPlayers().isEmpty()) {
+				if (!multi) {
+					multi = true;
+					wTeam = t;
+					continue;
+				} else {
+					//multi already was true, so more than one.
+					return; //we can keep playing
+				}
+			}
+		}
+		
+		//if we get here, we only had one team. Or no teams.
+		if (wTeam == null) {
+			WorkersAndWarriorsPlugin.plugin.getLogger().warning("Ended game but found zero teams!");
+			return;
+		}
+		
+		win(wTeam); //else one team, so make them win
 	}
 	
 	public State getState() {
@@ -423,16 +702,13 @@ public class GameSession {
 		return true;
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	/**
+	 * Gets the {@link Scoreboard} for this session
+	 * @return A {@link Scoreboard}
+	 */
+	public Scoreboard getScoreboard() {
+		return this.sBoard;
+	}
 	
 	@Override
 	public boolean equals(Object o) {

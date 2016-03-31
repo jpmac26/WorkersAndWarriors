@@ -6,11 +6,17 @@ import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
+import org.bukkit.entity.Player;
 import org.bukkit.material.MaterialData;
+import org.bukkit.scoreboard.Score;
 import org.bukkit.util.Vector;
 
 import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
+import nmt.minecraft.WorkersAndWarriors.Config.PluginConfiguration;
 import nmt.minecraft.WorkersAndWarriors.IO.ChatFormat;
+import nmt.minecraft.WorkersAndWarriors.Session.BlockListener;
+import nmt.minecraft.WorkersAndWarriors.Session.GameSession;
 import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
 
 /**
@@ -19,6 +25,8 @@ import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
  *
  */
 public class Team {
+	
+	private GameSession session;
 	
 	private List<WWPlayer> players;
 	
@@ -34,34 +42,36 @@ public class Team {
 	
 	private MaterialData goalType;
 	
+	private int points;
+	
 	/**
 	 * Creates a team, making a flag area from the passed points.
 	 * @param flagAreaPoint1
 	 * @param flagAreaPoint2
 	 */
-	public Team(Vector flagAreaPoint1, Vector flagAreaPoint2) {
-		this();
+	public Team(GameSession session, Vector flagAreaPoint1, Vector flagAreaPoint2) {
+		this(session);
 		this.flagArea = new FlagArea(flagAreaPoint1, flagAreaPoint2);
 	}
 	
-	public Team(String name) {
-		this();
+	public Team(GameSession session, String name) {
+		this(session);
 		this.teamName = name;
 	}
 	
-	public Team(String name, ChatColor color) {
-		this(name);
+	public Team(GameSession session, String name, ChatColor color) {
+		this(session, name);
 		this.teamColor = color;
 	}
 	
-	public Team(String name, ChatColor color, Vector flagArea1, Vector flagArea2) {
-		this(name, color);
+	public Team(GameSession session, String name, ChatColor color, Vector flagArea1, Vector flagArea2) {
+		this(session, name, color);
 		this.flagArea = new FlagArea(flagArea1, flagArea2);
 	}
 	
-	public Team(String name, ChatColor color, Vector flagArea1, Vector flagArea2, MaterialData blockType,
+	public Team(GameSession session, String name, ChatColor color, Vector flagArea1, Vector flagArea2, MaterialData blockType,
 			MaterialData goalType) {
-		this(name, color, flagArea1, flagArea2);
+		this(session, name, color, flagArea1, flagArea2);
 		this.goalType = goalType;
 		this.blockType = blockType;
 	}
@@ -69,10 +79,11 @@ public class Team {
 	/**
 	 * Creates a team with no defined flag area, no defined teamColor, and no Name!
 	 */
-	public Team() {
+	public Team(GameSession session) {
 		players = new LinkedList<WWPlayer>();
 		this.flagArea = null;
 		this.spawnPoints = new LinkedList<Location>();
+		this.session = session;
 	}
 	
 	/**
@@ -333,4 +344,77 @@ public class Team {
 		return true;
 	}
 	
+	/**
+	 * Adds an amount of points to a team.<br />
+	 * If the point total after addition is equal to or greater than the defined point goal,
+	 * the game will be won.
+	 * @param count
+	 */
+	public void addPoints(int count) {
+		// Update score
+		// Since we are returned a set of scores, assume the first
+		Score s = this.session.getScoreboard().getScores(this.teamName).iterator().next();
+		s.setScore(points);
+		
+		// Alert players
+		this.sendMessage("Your team scored!");;
+		for (WWPlayer p : this.getPlayers()) {
+			Player tmp = ((Player) p.getPlayer());
+			tmp.playSound(tmp.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 10, 1);
+			tmp.playSound(tmp.getLocation(), Sound.ENTITY_FIREWORK_BLAST, 8, 1);
+			tmp.playSound(tmp.getLocation(), Sound.ENTITY_FIREWORK_LARGE_BLAST, 8, 1);
+		}
+		
+		points += count;
+		int pointsToWin = PluginConfiguration.config.getPointsToWin();
+		
+		if (points >= pointsToWin) {
+			session.win(this);
+			
+		} else {
+			
+			if (pointsToWin - points == 3) {
+				for (Team t : session.getTeams()) {
+					t.sendMessage(ChatFormat.INFO + "Team " + teamColor + ChatFormat.INFO
+							+ " only needs " + ChatFormat.ERROR + "3 " + ChatFormat.INFO.wrap("to win!"));
+				}
+			} else if (pointsToWin - points == 1) {
+				for (Team t : session.getTeams()) {
+					t.sendMessage(ChatFormat.WARNING + "Team " + teamColor + ChatFormat.WARNING
+							+ " only needs " + ChatFormat.ERROR + "1 " + ChatFormat.WARNING.wrap("to win!"));
+				}				
+			}
+		}
+		
+		
+	}
+	
+	/**
+	 * Sets the flag block to be the flag block. In other words, changes the block area from whatever it is
+	 * to the block type. This is great for returning the flag to it's original spot.<br />
+	 * <b>Be Careful</b> not to call this when the flag is still in game, or we will have <b>duplicates</b>
+	 */
+	public void resetFlagBlock() {
+		if (flagArea == null || spawnPoints.isEmpty()) {
+			return;
+		}
+		
+		Vector center = flagArea.getCenter();
+		Location flagLoc = new Location(spawnPoints.get(0).getWorld(),
+				center.getBlockX(),
+				center.getBlockY(),
+				center.getBlockZ());
+		BlockListener.setBlockType(flagLoc.getBlock(), goalType);
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof Team)
+		if (((Team) o).session.equals(session))
+		if (((Team) o).getTeamName().equals(teamName)) {
+			return true;
+		}
+		
+		return false;
+	}
 }
