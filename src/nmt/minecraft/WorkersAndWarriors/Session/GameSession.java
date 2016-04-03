@@ -195,7 +195,7 @@ public class GameSession implements Listener{
 		
 		for (Team t : teams) {
 			//check if size - cap > 1
-			if (t.getPlayers().size() - cap > 1) {
+			if (t.getPlayers().size() > (extra > 0 ? cap + 1 : cap)) {
 				localCap = cap + (extra-- > 0 ? 1 : 0);
 				//unbalanced. Chop off extra
 				it = t.getPlayers().listIterator(localCap);
@@ -569,7 +569,7 @@ public class GameSession implements Listener{
 				if (cache.getPlayer().getUniqueId().equals(player.getUniqueId())) {
 					it.remove();
 					
-					
+					System.out.println("Called!");
 					if (player.isOnline()) {
 						((Player) player).getInventory().clear();
 						((Player) player).setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
@@ -603,6 +603,8 @@ public class GameSession implements Listener{
 				
 				if (player.isOnline()) {
 					((Player) player).getInventory().clear();
+					((Player) player).setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
+					((Player) player).setGameMode(GameMode.SURVIVAL);
 				}
 				
 				if (restore && player.isOnline()) {

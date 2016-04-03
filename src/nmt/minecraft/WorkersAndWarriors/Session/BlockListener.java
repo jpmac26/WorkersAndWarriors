@@ -255,7 +255,6 @@ public class BlockListener implements Listener, Tickable<Integer> {
     
     @Override
     public void alarm(Integer key) {
-    	System.out.println("Alarm with " + key);
     	//make sure we're not at an empty list
     	if (blockList.isEmpty()) {
     		Vector v;
@@ -271,8 +270,7 @@ public class BlockListener implements Listener, Tickable<Integer> {
     	//start at 1 second, 1, 1, 1, 1, .9, .8, .7, .6, .5... to .1
     	//double nextTime = ((1/((double) key / (double) 4)) / 5); //makes a nice pattern
     	double nextTime = ((1/((double) key / (double) 10)) / 2);
-    	nextTime = Math.max(nextTime, 1);
-    	System.out.println("nextime: " + nextTime);
+    	nextTime = Math.min(nextTime, 1);
     	
     	//remove block
     	Location cache = blockList.remove(WorkersAndWarriorsPlugin.random.nextInt(blockList.size()));
