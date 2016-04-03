@@ -130,6 +130,13 @@ public class PlayerCommands implements CommandExecutor {
 			sender.sendMessage(ChatFormat.ERROR.wrap("You are already part of that session!"));
 			return true;
 		}
+		
+		//give player informatin
+		sender.sendMessage(ChatFormat.INFO + "Use /wwp team " + ChatFormat.TEAM + "[team]" 
+				+ ChatFormat.INFO.wrap(" to change teams"));
+
+		sender.sendMessage(ChatFormat.INFO + "Use /wwp class " + ChatFormat.CLASS + "[class]" 
+				+ ChatFormat.INFO.wrap(" to change classes"));
 				
 		return true;
 	}
