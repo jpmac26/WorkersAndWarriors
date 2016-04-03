@@ -541,8 +541,7 @@ public class GameSession {
 					
 					if (player.isOnline()) {
 						((Player) player).getInventory().clear();
-						//((Player) player).setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
-						((Player) player).setScoreboard(null);
+						((Player) player).setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
 					}
 					
 					if (restore && player.isOnline()) {
