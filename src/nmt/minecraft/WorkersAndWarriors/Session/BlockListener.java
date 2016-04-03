@@ -269,12 +269,17 @@ public class BlockListener implements Listener, Tickable<Integer> {
     	}
     	
     	//start at 1 second, 1, 1, 1, 1, .9, .8, .7, .6, .5... to .1
-    	double nextTime = ((1/((double) key / (double) 4)) / 5); //makes a nice pattern
+    	//double nextTime = ((1/((double) key / (double) 4)) / 5); //makes a nice pattern
+    	double nextTime = ((1/((double) key / (double) 10)) / 2);
+    	nextTime = Math.max(nextTime, 1);
     	System.out.println("nextime: " + nextTime);
     	
     	//remove block
-    	blockList.get(WorkersAndWarriorsPlugin.random.nextInt(blockList.size()))
-    		.getBlock().setType(Material.AIR);
+    	Location cache = blockList.remove(WorkersAndWarriorsPlugin.random.nextInt(blockList.size()));
+    	
+    	cache.getBlock().setType(Material.AIR);
+    	cache.getWorld().playSound(cache, Sound.BLOCK_STONE_BREAK, 1, 1);
+    	
     	
     	//schedule next decay
     	Scheduler.getScheduler().schedule(this, key + 1, nextTime);

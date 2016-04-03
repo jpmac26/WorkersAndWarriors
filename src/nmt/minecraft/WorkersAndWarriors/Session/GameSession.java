@@ -316,6 +316,8 @@ public class GameSession implements Listener{
 			}
 		}
 		
+		Bukkit.getPluginManager().registerEvents(this, WorkersAndWarriorsPlugin.plugin);
+		
 		// Start Decay
 		bListener.startDecay(false);
 		return true;
