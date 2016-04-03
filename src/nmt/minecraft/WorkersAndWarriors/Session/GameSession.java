@@ -187,20 +187,39 @@ public class GameSession implements Listener{
 		ListIterator<WWPlayer> it;
 		WWPlayer cache;
 		int localCap;
+
+		/*
+		 * Look at teams. Unblananced (diff > 1)?
+		 * Find teams with diff > 1, chop off extra
+		 */
 		
 		for (Team t : teams) {
-			localCap = cap + (extra-- > 0 ? 1 : 0);
-			if (t.getPlayers().size() > localCap) {
-				it = t.getPlayers().listIterator();
-				for (int i = 0; i < localCap; i++) {
-					it.next();
+			//check if size - cap > 1
+			if (t.getPlayers().size() - cap > 1) {
+				localCap = cap + (extra-- > 0 ? 1 : 0);
+				//unbalanced. Chop off extra
+				it = t.getPlayers().listIterator(localCap);
+				while (it.hasNext()) {
+					cache = it.next();
+					t.removePlayer(cache);
+					unsortedPlayers.add(cache);
 				}
-				
-				cache = it.next();
-				t.removePlayer(cache);
-				this.unsortedPlayers.add(cache);
 			}
 		}
+		
+//		for (Team t : teams) {
+//			localCap = cap + (extra-- > 0 ? 1 : 0);
+//			if (t.getPlayers().size() > localCap) {
+//				it = t.getPlayers().listIterator();
+//				for (int i = 0; i < localCap; i++) {
+//					it.next();
+//				}
+//				
+//				cache = it.next();
+//				t.removePlayer(cache);
+//				this.unsortedPlayers.add(cache);
+//			}
+//		}
 
 		if (unsortedPlayers.isEmpty()) {
 			return;
@@ -208,38 +227,40 @@ public class GameSession implements Listener{
 		
 		//now, distribute displaced
 		it = unsortedPlayers.listIterator();
-		for (Team t : teams) {
-			if (t.getPlayers().size() < cap) {
-				t.addPlayer(it.next());
-				it.remove();
+		while (it.hasNext()) {
+			for (Team t : teams) {
+				if (t.getPlayers().size() < cap) {
+					t.addPlayer(it.next());
+					it.remove();
+				}
 			}
 		}
 		
 
-		if (unsortedPlayers.isEmpty()) {
-			return;
-		}
+//		if (unsortedPlayers.isEmpty()) {
+//			return;
+//		}
 		
-		//finally, distribute extras (remainder)
-		if (!unsortedPlayers.isEmpty()) {
-			//sanity check
-			if (unsortedPlayers.size() >= teams.size()) {
-				WorkersAndWarriorsPlugin.plugin.getLogger().warning("Invalid size in distribution!!!");
-				WorkersAndWarriorsPlugin.plugin.getLogger().warning("unsorted held " + unsortedPlayers.size()
-						+ " players modulus!");
-				return;
-			}
-			
-			it = unsortedPlayers.listIterator();
-			for (Team t : teams) {
-				if(!it.hasNext()) {
-					break;
-				}
-				t.addPlayer(it.next());
-				it.remove();
-			}
-			
-		}
+//		//finally, distribute extras (remainder)
+//		if (!unsortedPlayers.isEmpty()) {
+//			//sanity check
+//			if (unsortedPlayers.size() >= teams.size()) {
+//				WorkersAndWarriorsPlugin.plugin.getLogger().warning("Invalid size in distribution!!!");
+//				WorkersAndWarriorsPlugin.plugin.getLogger().warning("unsorted held " + unsortedPlayers.size()
+//						+ " players modulus!");
+//				return;
+//			}
+//			
+//			it = unsortedPlayers.listIterator();
+//			for (Team t : teams) {
+//				if(!it.hasNext()) {
+//					break;
+//				}
+//				t.addPlayer(it.next());
+//				it.remove();
+//			}
+//			
+//		}
 		
 	}
 	

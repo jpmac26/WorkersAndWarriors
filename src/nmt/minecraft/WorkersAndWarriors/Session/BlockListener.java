@@ -16,6 +16,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
+import org.bukkit.util.Vector;
 
 import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
 import nmt.minecraft.WorkersAndWarriors.Scheduling.GameFinishAnimationEndEvent;
@@ -246,19 +247,27 @@ public class BlockListener implements Listener, Tickable<Integer> {
     	
     	//do decay animation
     	//start off with big times, then go small
-    	Scheduler.getScheduler().schedule(this, 0, 1);
+    	Scheduler.getScheduler().schedule(this, 1, 1);
     }
     
     @Override
     public void alarm(Integer key) {
+    	System.out.println("Alarm with " + key);
     	//make sure we're not at an empty list
     	if (blockList.isEmpty()) {
+    		Vector v;
+    		for (Team t : session.getTeams()) {
+    			v = t.getFlagArea().getCenter();
+    			new Location(t.getRandomSpawn().getWorld(), v.getBlockX(), v.getBlockY(), v.getBlockZ())
+    				.getBlock().setType(Material.AIR);
+    		}
     		Bukkit.getPluginManager().callEvent(new GameFinishAnimationEndEvent(session));
     		return;
     	}
     	
     	//start at 1 second, 1, 1, 1, 1, .9, .8, .7, .6, .5... to .1
-    	int nextTime = (1/(key / 4)) / 5; //makes a nice pattern
+    	double nextTime = ((1/((double) key / (double) 4)) / 5); //makes a nice pattern
+    	System.out.println("nextime: " + nextTime);
     	
     	//remove block
     	blockList.get(WorkersAndWarriorsPlugin.random.nextInt(blockList.size()))
