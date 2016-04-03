@@ -195,7 +195,7 @@ public class BlockListener implements Listener, Tickable<Integer> {
                 for (Team team2 : session.getTeams()) {
                     if (team2.getGoalType().equals(e.getBlock().getState().getData())) {
                         team2.resetFlagBlock();
-                        return;
+                        break;
                     }
                 }
                 e.getBlock().setType(Material.AIR);
