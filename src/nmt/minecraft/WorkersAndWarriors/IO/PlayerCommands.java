@@ -183,6 +183,11 @@ public class PlayerCommands implements CommandExecutor {
 			return true;			
 		}
 		
+		if (session.getState() != GameSession.State.OPEN) {
+			sender.sendMessage(ChatFormat.ERROR.wrap("You cannot change teams after the game has closed!"));
+			return true;
+		}
+		
 		WWPlayer wp = session.getPlayer(sender);		
 		
 		Team team = session.getTeam(args[1]);
@@ -229,7 +234,7 @@ public class PlayerCommands implements CommandExecutor {
 		
 		WWPlayer wp = session.getPlayer(sender);
 		
-		if (session.getState() != GameSession.State.OPEN) {
+		if (session.getState() != GameSession.State.OPEN && session.getState() != GameSession.State.STARTING) {
 			sender.sendMessage(ChatFormat.ERROR.wrap("You cannot change your class once the game has started!"));
 			return true;
 		}

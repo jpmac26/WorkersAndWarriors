@@ -44,6 +44,7 @@ public class GameSession implements Listener, Tickable<Reminders>{
 	public enum State {
 		STOPPED,
 		OPEN,
+		STARTING,
 		RUNNING,
 		ENDED;
 	}
@@ -156,7 +157,7 @@ public class GameSession implements Listener, Tickable<Reminders>{
 			return false;
 		}
 		
-		state = State.RUNNING;
+		state = State.STARTING;
 		
 		this.bListener = new BlockListener(this);
 		
@@ -314,7 +315,7 @@ public class GameSession implements Listener, Tickable<Reminders>{
 	 */
 	public boolean stop(boolean force) {
 		
-		if (state == State.RUNNING && force) {
+		if ((state == State.STARTING || state == State.RUNNING) && force) {
 			HandlerList.unregisterAll(bListener);
 			HandlerList.unregisterAll(dListener);
 			bListener = null;
@@ -810,7 +811,9 @@ public class GameSession implements Listener, Tickable<Reminders>{
 	public void alarm(Reminders reference) {
 		
 		if (reference == Reminders.SPAWNPLAYERS) {
-			//Distribute Blocks and scoreboard
+			state = State.RUNNING;
+			
+			//Distribute Blocks
 			for (Team t : teams) {
 				t.spawnTeam(this.maxTeamBlock);
 				t.resetFlagBlock();
