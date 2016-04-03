@@ -26,6 +26,9 @@ import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
 import nmt.minecraft.WorkersAndWarriors.Config.PluginConfiguration;
 import nmt.minecraft.WorkersAndWarriors.IO.ChatFormat;
 import nmt.minecraft.WorkersAndWarriors.Scheduling.GameFinishAnimationEndEvent;
+import nmt.minecraft.WorkersAndWarriors.Scheduling.Scheduler;
+import nmt.minecraft.WorkersAndWarriors.Scheduling.Tickable;
+import nmt.minecraft.WorkersAndWarriors.Session.GameSession.Reminders;
 import nmt.minecraft.WorkersAndWarriors.Team.Team;
 import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
 
@@ -36,13 +39,17 @@ import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
  * @author Skyler
  *
  */
-public class GameSession implements Listener{
+public class GameSession implements Listener, Tickable<Reminders>{
 	
 	public enum State {
 		STOPPED,
 		OPEN,
 		RUNNING,
 		ENDED;
+	}
+	
+	public enum Reminders {
+		SPAWNPLAYERS;
 	}
 	
 	private State state;
@@ -74,6 +81,8 @@ public class GameSession implements Listener{
 	private Objective sideBar;
 	
 	private List<MaterialData> goalTypes;
+	
+	public static final double startCountdown = 10.0;
 	
 	/**
 	 * Create a new game session in the default stopped state and with the given name.<br />
@@ -150,20 +159,38 @@ public class GameSession implements Listener{
 		// Team Balance
 		this.distributePlayers();
 		
-		// Distribute Blocks and scoreboard
-		for (Team t : teams) {
-			t.spawnTeam(this.maxTeamBlock);
-			t.resetFlagBlock();
-			
-			// Creates a score for the "team"
-			this.sideBar.getScore(t.getTeamName()).setScore(0);
-		}
-		
 		// Assign scorebaord
-			for (Team t : teams)
+		for (Team t : teams) {
+			this.sideBar.getScore(t.getTeamName()).setScore(0);
 			for (WWPlayer p : t.getPlayers()) {
 				((Player) p.getPlayer()).setScoreboard(sBoard);
 			}
+		}
+		
+		//start timer
+		Scheduler.getScheduler().schedule(this, Reminders.SPAWNPLAYERS, startCountdown);
+		
+		int workers, warriors;
+		for (Team t : teams) {
+			t.sendMessage(ChatFormat.SESSION.wrap("Game starting in " + startCountdown + " seconds!"));
+			workers = warriors = 0;
+			
+			for (WWPlayer player : t.getPlayers()) {
+				if (player.getType() == WWPlayer.Type.WARRIOR) {
+					warriors++;
+				} else if (player.getType() == WWPlayer.Type.WORKER) {
+					workers++;
+				}
+				
+			}
+			
+			t.sendMessage(ChatFormat.INFO + "Your team has " + ChatFormat.IMPORTANT + workers 
+					+ ChatFormat.INFO.wrap(" workers"));
+			
+			t.sendMessage(ChatFormat.INFO + "Your team has " + ChatFormat.IMPORTANT + warriors 
+					+ ChatFormat.INFO.wrap(" warriors"));
+			
+		}
 		
 		return true;
 	}
@@ -773,6 +800,19 @@ public class GameSession implements Listener{
 		}
 		
 		return false;
+	}
+
+	@Override
+	public void alarm(Reminders reference) {
+		
+		if (reference == Reminders.SPAWNPLAYERS) {
+			//Distribute Blocks and scoreboard
+			for (Team t : teams) {
+				t.spawnTeam(this.maxTeamBlock);
+				t.resetFlagBlock();
+				
+			}
+		}
 	}
 	
 }
