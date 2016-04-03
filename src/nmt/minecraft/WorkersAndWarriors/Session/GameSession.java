@@ -9,6 +9,7 @@ import java.util.ListIterator;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -203,6 +204,11 @@ public class GameSession implements Listener{
 					cache = it.next();
 					t.removePlayer(cache);
 					unsortedPlayers.add(cache);
+					
+					if (cache.getPlayer().isOnline()) {
+						cache.getPlayer().getPlayer().sendMessage(ChatFormat.WARNING.wrap("You have been removed "
+								+ "from your team for balancing."));
+					}
 				}
 			}
 		}
@@ -230,8 +236,14 @@ public class GameSession implements Listener{
 		while (it.hasNext()) {
 			for (Team t : teams) {
 				if (t.getPlayers().size() < cap) {
-					t.addPlayer(it.next());
+					cache = it.next();
+					t.addPlayer(cache);
 					it.remove();
+					
+					if (cache.getPlayer().isOnline()) {
+						cache.getPlayer().getPlayer().sendMessage(ChatFormat.WARNING + "You have been moved "
+								+ "to Team " + t.getTeamColor() + t.getTeamName() + ChatColor.RESET);
+					}
 				}
 			}
 		}
