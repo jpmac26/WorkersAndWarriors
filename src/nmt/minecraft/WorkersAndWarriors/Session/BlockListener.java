@@ -1,7 +1,11 @@
 package nmt.minecraft.WorkersAndWarriors.Session;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -10,12 +14,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 
 import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
 import nmt.minecraft.WorkersAndWarriors.Team.Team;
 import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
-import org.bukkit.inventory.ItemStack;
 
 /**
  * Listens for block changes, and updates the game session.
@@ -34,9 +38,12 @@ import org.bukkit.inventory.ItemStack;
 public class BlockListener implements Listener {
 
     private GameSession session;
+    
+    private List<Location> blockList;
 
     public BlockListener(GameSession session) {
         this.session = session;
+        this.blockList = new LinkedList<Location>();
         Bukkit.getPluginManager().registerEvents(this, WorkersAndWarriorsPlugin.plugin);
     }
 
@@ -82,6 +89,7 @@ public class BlockListener implements Listener {
                         flag0 = true;
                         e.setCancelled(true);
                         e.getBlock().setType(Material.AIR);
+                        blockList.remove(e.getBlock().getLocation());
                         do {
                             int player = WorkersAndWarriorsPlugin.random.nextInt(team.getPlayers().size());
                             WWPlayer wwp = team.getPlayers().get(player);
@@ -139,6 +147,9 @@ public class BlockListener implements Listener {
                         break;
                     }
                 }
+                
+                //block is legal, put it down
+                blockList.add(e.getBlock().getLocation());
             }
 
         }
@@ -208,6 +219,16 @@ public class BlockListener implements Listener {
         BlockState state = block.getState();
         state.setData(data);
         state.update();
+    }
+    
+    /**
+     * Calls for the start of block removal from the map.<br />
+     * This is <i>intended</i> for use only when the game is over, and the map is cleaning itself up.
+     * If the second parameter is true, the cool decay animation is not done and all blocks are just
+     * returned to air status.
+     */
+    public void startDecay(boolean skipAnimation) {
+    	
     }
 
 }
