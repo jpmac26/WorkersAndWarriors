@@ -13,7 +13,9 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
 import org.bukkit.material.MaterialData;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
@@ -22,6 +24,7 @@ import org.bukkit.scoreboard.Scoreboard;
 import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
 import nmt.minecraft.WorkersAndWarriors.Config.PluginConfiguration;
 import nmt.minecraft.WorkersAndWarriors.IO.ChatFormat;
+import nmt.minecraft.WorkersAndWarriors.Scheduling.GameFinishAnimationEndEvent;
 import nmt.minecraft.WorkersAndWarriors.Team.Team;
 import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
 
@@ -32,7 +35,7 @@ import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
  * @author Skyler
  *
  */
-public class GameSession {
+public class GameSession implements Listener{
 	
 	public enum State {
 		STOPPED,
@@ -290,9 +293,10 @@ public class GameSession {
 			for (WWPlayer wp : team.getPlayers()) {
 				((Player) wp.getPlayer()).setGameMode(GameMode.SPECTATOR);
 			}
+			
+			// Start Decay
+			bListener.startDecay(false);
 		}
-		
-		stop(true);
 		
 		return true;
 	}
@@ -547,6 +551,7 @@ public class GameSession {
 					if (player.isOnline()) {
 						((Player) player).getInventory().clear();
 						((Player) player).setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
+						((Player) player).setGameMode(GameMode.SURVIVAL);
 					}
 					
 					if (restore && player.isOnline()) {
@@ -715,6 +720,11 @@ public class GameSession {
 	 */
 	public Scoreboard getScoreboard() {
 		return this.sBoard;
+	}
+	
+	@EventHandler
+	public void onGameFinishAnimationEndEvent(GameFinishAnimationEndEvent e) {
+		stop(true);
 	}
 	
 	@Override
