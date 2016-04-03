@@ -173,7 +173,7 @@ public class GameSession implements Listener, Tickable<Reminders>{
 		}
 		
 		//start timer
-		Scheduler.getScheduler().schedule(this, Reminders.SPAWNPLAYERS, startCountdown);
+		Scheduler.getScheduler().schedule(this, Reminders.FIVESECONDS, startCountdown - 5);
 		
 		int workers, warriors;
 		for (Team t : teams) {
