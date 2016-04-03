@@ -82,12 +82,6 @@ public class WorkersAndWarriorsPlugin extends JavaPlugin {
 		PlayerCommands.getExecutor();
 		TeamCommands.getExecutor();
 		
-		MaterialData d1 = new MaterialData(Material.TORCH, (byte) 0),
-				d2 = new MaterialData(Material.TORCH, (byte) 0);
-		
-		System.out.println(d1.equals(d2) ? "Success" : "OOOOOOOOOOOOOOOOO<MMMMMGAGSGGGGGGGGGGGGGGGG");
-                
-                //Bukkit.getPluginManager().registerEvents(Listener, this);
 	}
 	
 	@Override
