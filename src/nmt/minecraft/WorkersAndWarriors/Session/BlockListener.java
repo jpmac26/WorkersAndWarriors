@@ -18,6 +18,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 
 import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
+import nmt.minecraft.WorkersAndWarriors.Scheduling.GameFinishAnimationEndEvent;
+import nmt.minecraft.WorkersAndWarriors.Scheduling.Scheduler;
+import nmt.minecraft.WorkersAndWarriors.Scheduling.Tickable;
 import nmt.minecraft.WorkersAndWarriors.Team.Team;
 import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
 
@@ -35,7 +38,7 @@ import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
  * @author Skyler
  *
  */
-public class BlockListener implements Listener {
+public class BlockListener implements Listener, Tickable<Integer> {
 
     private GameSession session;
     
@@ -229,6 +232,40 @@ public class BlockListener implements Listener {
      */
     public void startDecay(boolean skipAnimation) {
     	
+    	if (blockList.isEmpty() || skipAnimation) {
+    		//just remove blocks, throw event
+    		
+    		if (!blockList.isEmpty())
+    		for (Location l : blockList) {
+    			l.getBlock().setType(Material.AIR);
+    		}
+    		
+    		Bukkit.getPluginManager().callEvent(new GameFinishAnimationEndEvent(session));
+    		return;
+    	}
+    	
+    	//do decay animation
+    	//start off with big times, then go small
+    	Scheduler.getScheduler().schedule(this, 0, 1);
+    }
+    
+    @Override
+    public void alarm(Integer key) {
+    	//make sure we're not at an empty list
+    	if (blockList.isEmpty()) {
+    		Bukkit.getPluginManager().callEvent(new GameFinishAnimationEndEvent(session));
+    		return;
+    	}
+    	
+    	//start at 1 second, 1, 1, 1, 1, .9, .8, .7, .6, .5... to .1
+    	int nextTime = (1/(key / 4)) / 5; //makes a nice pattern
+    	
+    	//remove block
+    	blockList.get(WorkersAndWarriorsPlugin.random.nextInt(blockList.size()))
+    		.getBlock().setType(Material.AIR);
+    	
+    	//schedule next decay
+    	Scheduler.getScheduler().schedule(this, key + 1, nextTime);
     }
 
 }
