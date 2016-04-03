@@ -375,12 +375,12 @@ public class Team {
 			
 			if (pointsToWin - points == 3) {
 				for (Team t : session.getTeams()) {
-					t.sendMessage(ChatFormat.INFO + "Team " + teamColor + ChatFormat.INFO
+					t.sendMessage(ChatFormat.INFO + "Team " + teamColor + t.getTeamName() + ChatFormat.INFO
 							+ " only needs " + ChatFormat.ERROR + "3 " + ChatFormat.INFO.wrap("to win!"));
 				}
 			} else if (pointsToWin - points == 1) {
 				for (Team t : session.getTeams()) {
-					t.sendMessage(ChatFormat.WARNING + "Team " + teamColor + ChatFormat.WARNING
+					t.sendMessage(ChatFormat.WARNING + "Team " + teamColor + t.getTeamName() + ChatFormat.WARNING
 							+ " only needs " + ChatFormat.ERROR + "1 " + ChatFormat.WARNING.wrap("to win!"));
 				}				
 			}

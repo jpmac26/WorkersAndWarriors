@@ -553,7 +553,8 @@ public class GameSession {
 						}
 					}
 					
-					checkState();
+					if (state == State.RUNNING)
+						checkState();
 					return true;
 				}
 			}
@@ -581,7 +582,8 @@ public class GameSession {
 					}
 				}
 				
-				checkState();
+				if (state == State.RUNNING)
+					checkState();
 				return true;
 			}
 		}
