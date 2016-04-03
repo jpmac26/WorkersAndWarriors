@@ -9,6 +9,7 @@ import java.util.ListIterator;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -284,6 +285,10 @@ public class GameSession {
 				printWin(team);
 			} else {
 				printLose(team);
+			}
+			// Set everyone to spectator
+			for (WWPlayer wp : team.getPlayers()) {
+				((Player) wp.getPlayer()).setGameMode(GameMode.SPECTATOR);
 			}
 		}
 		
