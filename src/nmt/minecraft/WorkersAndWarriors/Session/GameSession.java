@@ -314,11 +314,10 @@ public class GameSession implements Listener{
 			for (WWPlayer wp : team.getPlayers()) {
 				((Player) wp.getPlayer()).setGameMode(GameMode.SPECTATOR);
 			}
-			
-			// Start Decay
-			bListener.startDecay(false);
 		}
 		
+		// Start Decay
+		bListener.startDecay(false);
 		return true;
 	}
 	
