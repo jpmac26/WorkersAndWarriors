@@ -195,16 +195,19 @@ public class BlockListener implements Listener, Tickable<Integer> {
                 for (Team team2 : session.getTeams()) {
                     if (team2.getGoalType().equals(e.getBlock().getState().getData())) {
                         team2.resetFlagBlock();
-                        break;
+                        return;
                     }
                 }
                 e.getBlock().setType(Material.AIR);
                 
                 e.getBlock().getLocation().getWorld().playEffect(e.getBlock().getLocation(), Effect.HAPPY_VILLAGER, 90000);
                 //TODO
-                break;
+                return;
             }
         }
+        
+        //not in an area
+        e.setCancelled(true);
 
     }
 
