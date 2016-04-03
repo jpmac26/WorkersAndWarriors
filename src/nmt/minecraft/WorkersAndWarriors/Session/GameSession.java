@@ -49,6 +49,10 @@ public class GameSession implements Listener, Tickable<Reminders>{
 	}
 	
 	public enum Reminders {
+		FIVESECONDS,
+		THREESECONDS,
+		TWOSECONDS,
+		ONESECOND,
 		SPAWNPLAYERS;
 	}
 	
@@ -810,8 +814,47 @@ public class GameSession implements Listener, Tickable<Reminders>{
 			for (Team t : teams) {
 				t.spawnTeam(this.maxTeamBlock);
 				t.resetFlagBlock();
+				t.sendMessage(ChatFormat.SUCCESS.wrap("The game has started!"));
 				
 			}
+			
+			return;
+		}
+		
+		if (reference == Reminders.FIVESECONDS) {
+			for (Team t : teams) {
+				t.sendMessage(ChatFormat.WARNING.wrap("Game starting in 5 seconds!"));
+			}
+			
+			Scheduler.getScheduler().schedule(this, Reminders.THREESECONDS, 2);
+			return;
+		}
+		
+		if (reference == Reminders.THREESECONDS) {
+			for (Team t : teams) {
+				t.sendMessage(ChatFormat.ERROR.wrap("Game starting in 3 seconds!"));
+			}
+			
+			Scheduler.getScheduler().schedule(this, Reminders.TWOSECONDS, 1);
+			return;
+		}
+		
+		if (reference == Reminders.TWOSECONDS) {
+			for (Team t : teams) {
+				t.sendMessage(ChatFormat.ERROR.wrap("Game starting in  seconds!"));
+			}
+			
+			Scheduler.getScheduler().schedule(this, Reminders.ONESECOND, 1);
+			return;
+		}
+		
+		if (reference == Reminders.ONESECOND) {
+			for (Team t : teams) {
+				t.sendMessage(ChatFormat.ERROR.wrap("Game starting in  seconds!"));
+			}
+			
+			Scheduler.getScheduler().schedule(this, Reminders.SPAWNPLAYERS, 1);
+			return;
 		}
 	}
 	
