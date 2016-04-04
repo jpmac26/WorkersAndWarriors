@@ -9,10 +9,14 @@ import java.util.ListIterator;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
 import org.bukkit.material.MaterialData;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
@@ -21,6 +25,10 @@ import org.bukkit.scoreboard.Scoreboard;
 import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
 import nmt.minecraft.WorkersAndWarriors.Config.PluginConfiguration;
 import nmt.minecraft.WorkersAndWarriors.IO.ChatFormat;
+import nmt.minecraft.WorkersAndWarriors.Scheduling.GameFinishAnimationEndEvent;
+import nmt.minecraft.WorkersAndWarriors.Scheduling.Scheduler;
+import nmt.minecraft.WorkersAndWarriors.Scheduling.Tickable;
+import nmt.minecraft.WorkersAndWarriors.Session.GameSession.Reminders;
 import nmt.minecraft.WorkersAndWarriors.Team.Team;
 import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
 
@@ -31,13 +39,22 @@ import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
  * @author Skyler
  *
  */
-public class GameSession {
+public class GameSession implements Listener, Tickable<Reminders>{
 	
 	public enum State {
 		STOPPED,
 		OPEN,
+		STARTING,
 		RUNNING,
 		ENDED;
+	}
+	
+	public enum Reminders {
+		FIVESECONDS,
+		THREESECONDS,
+		TWOSECONDS,
+		ONESECOND,
+		SPAWNPLAYERS;
 	}
 	
 	private State state;
@@ -69,6 +86,8 @@ public class GameSession {
 	private Objective sideBar;
 	
 	private List<MaterialData> goalTypes;
+	
+	public static final double startCountdown = 10.0;
 	
 	/**
 	 * Create a new game session in the default stopped state and with the given name.<br />
@@ -138,27 +157,45 @@ public class GameSession {
 			return false;
 		}
 		
-		state = State.RUNNING;
+		state = State.STARTING;
 		
 		this.bListener = new BlockListener(this);
 		
 		// Team Balance
 		this.distributePlayers();
 		
-		// Distribute Blocks and scoreboard
-		for (Team t : teams) {
-			t.spawnTeam(this.maxTeamBlock);
-			t.resetFlagBlock();
-			
-			// Creates a score for the "team"
-			this.sideBar.getScore(t.getTeamName()).setScore(0);
-		}
-		
 		// Assign scorebaord
-			for (Team t : teams)
+		for (Team t : teams) {
+			this.sideBar.getScore(t.getTeamName()).setScore(0);
 			for (WWPlayer p : t.getPlayers()) {
 				((Player) p.getPlayer()).setScoreboard(sBoard);
 			}
+		}
+		
+		//start timer
+		Scheduler.getScheduler().schedule(this, Reminders.FIVESECONDS, startCountdown - 5);
+		
+		int workers, warriors;
+		for (Team t : teams) {
+			t.sendMessage(ChatFormat.SESSION.wrap("Game starting in " + startCountdown + " seconds!"));
+			workers = warriors = 0;
+			
+			for (WWPlayer player : t.getPlayers()) {
+				if (player.getType() == WWPlayer.Type.WARRIOR) {
+					warriors++;
+				} else if (player.getType() == WWPlayer.Type.WORKER) {
+					workers++;
+				}
+				
+			}
+			
+			t.sendMessage(ChatFormat.INFO + "Your team has " + ChatFormat.IMPORTANT + workers 
+					+ ChatFormat.INFO.wrap(" workers"));
+			
+			t.sendMessage(ChatFormat.INFO + "Your team has " + ChatFormat.IMPORTANT + warriors 
+					+ ChatFormat.INFO.wrap(" warriors"));
+			
+		}
 		
 		return true;
 	}
@@ -183,20 +220,44 @@ public class GameSession {
 		ListIterator<WWPlayer> it;
 		WWPlayer cache;
 		int localCap;
+
+		/*
+		 * Look at teams. Unblananced (diff > 1)?
+		 * Find teams with diff > 1, chop off extra
+		 */
 		
 		for (Team t : teams) {
-			localCap = cap + (extra-- > 0 ? 1 : 0);
-			if (t.getPlayers().size() > localCap) {
-				it = t.getPlayers().listIterator();
-				for (int i = 0; i < localCap; i++) {
-					it.next();
+			//check if size - cap > 1
+			if (t.getPlayers().size() > (extra > 0 ? cap + 1 : cap)) {
+				localCap = cap + (extra-- > 0 ? 1 : 0);
+				//unbalanced. Chop off extra
+				it = t.getPlayers().listIterator(localCap);
+				while (it.hasNext()) {
+					cache = it.next();
+					t.removePlayer(cache);
+					unsortedPlayers.add(cache);
+					
+					if (cache.getPlayer().isOnline()) {
+						cache.getPlayer().getPlayer().sendMessage(ChatFormat.WARNING.wrap("You have been removed "
+								+ "from your team for balancing."));
+					}
 				}
-				
-				cache = it.next();
-				t.removePlayer(cache);
-				this.unsortedPlayers.add(cache);
 			}
 		}
+		
+//		for (Team t : teams) {
+//			localCap = cap + (extra-- > 0 ? 1 : 0);
+//			if (t.getPlayers().size() > localCap) {
+//				it = t.getPlayers().listIterator();
+//				for (int i = 0; i < localCap; i++) {
+//					it.next();
+//				}
+//				
+//				cache = it.next();
+//				t.removePlayer(cache);
+//				this.unsortedPlayers.add(cache);
+//			}
+//		}
 
 		if (unsortedPlayers.isEmpty()) {
 			return;
@@ -204,38 +265,46 @@ public class GameSession {
 		
 		//now, distribute displaced
 		it = unsortedPlayers.listIterator();
-		for (Team t : teams) {
-			if (t.getPlayers().size() < cap) {
-				t.addPlayer(it.next());
-				it.remove();
+		while (it.hasNext()) {
+			for (Team t : teams) {
+				if (t.getPlayers().size() < cap) {
+					cache = it.next();
+					t.addPlayer(cache);
+					it.remove();
+					
+					if (cache.getPlayer().isOnline()) {
+						cache.getPlayer().getPlayer().sendMessage(ChatFormat.WARNING + "You have been moved "
+								+ "to Team " + t.getTeamColor() + t.getTeamName() + ChatColor.RESET);
+					}
+				}
 			}
 		}
 		
 
-		if (unsortedPlayers.isEmpty()) {
-			return;
-		}
+//		if (unsortedPlayers.isEmpty()) {
+//			return;
+//		}
 		
-		//finally, distribute extras (remainder)
-		if (!unsortedPlayers.isEmpty()) {
-			//sanity check
-			if (unsortedPlayers.size() >= teams.size()) {
-				WorkersAndWarriorsPlugin.plugin.getLogger().warning("Invalid size in distribution!!!");
-				WorkersAndWarriorsPlugin.plugin.getLogger().warning("unsorted held " + unsortedPlayers.size()
-						+ " players modulus!");
-				return;
-			}
-			
-			it = unsortedPlayers.listIterator();
-			for (Team t : teams) {
-				if(!it.hasNext()) {
-					break;
-				}
-				t.addPlayer(it.next());
-				it.remove();
-			}
-			
-		}
+//		//finally, distribute extras (remainder)
+//		if (!unsortedPlayers.isEmpty()) {
+//			//sanity check
+//			if (unsortedPlayers.size() >= teams.size()) {
+//				WorkersAndWarriorsPlugin.plugin.getLogger().warning("Invalid size in distribution!!!");
+//				WorkersAndWarriorsPlugin.plugin.getLogger().warning("unsorted held " + unsortedPlayers.size()
+//						+ " players modulus!");
+//				return;
+//			}
+//			
+//			it = unsortedPlayers.listIterator();
+//			for (Team t : teams) {
+//				if(!it.hasNext()) {
+//					break;
+//				}
+//				t.addPlayer(it.next());
+//				it.remove();
+//			}
+//			
+//		}
 		
 	}
 	
@@ -246,7 +315,7 @@ public class GameSession {
 	 */
 	public boolean stop(boolean force) {
 		
-		if (state == State.RUNNING && force) {
+		if ((state == State.STARTING || state == State.RUNNING) && force) {
 			HandlerList.unregisterAll(bListener);
 			HandlerList.unregisterAll(dListener);
 			bListener = null;
@@ -285,10 +354,16 @@ public class GameSession {
 			} else {
 				printLose(team);
 			}
+			// Set everyone to spectator
+			for (WWPlayer wp : team.getPlayers()) {
+				((Player) wp.getPlayer()).setGameMode(GameMode.SPECTATOR);
+			}
 		}
 		
-		stop(true);
+		Bukkit.getPluginManager().registerEvents(this, WorkersAndWarriorsPlugin.plugin);
 		
+		// Start Decay
+		bListener.startDecay(false);
 		return true;
 	}
 	
@@ -538,10 +613,11 @@ public class GameSession {
 				if (cache.getPlayer().getUniqueId().equals(player.getUniqueId())) {
 					it.remove();
 					
-					
+					System.out.println("Called!");
 					if (player.isOnline()) {
 						((Player) player).getInventory().clear();
 						((Player) player).setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
+						((Player) player).setGameMode(GameMode.SURVIVAL);
 					}
 					
 					if (restore && player.isOnline()) {
@@ -553,7 +629,8 @@ public class GameSession {
 						}
 					}
 					
-					checkState();
+					if (state == State.RUNNING)
+						checkState();
 					return true;
 				}
 			}
@@ -570,6 +647,8 @@ public class GameSession {
 				
 				if (player.isOnline()) {
 					((Player) player).getInventory().clear();
+					((Player) player).setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
+					((Player) player).setGameMode(GameMode.SURVIVAL);
 				}
 				
 				if (restore && player.isOnline()) {
@@ -581,7 +660,8 @@ public class GameSession {
 					}
 				}
 				
-				checkState();
+				if (state == State.RUNNING)
+					checkState();
 				return true;
 			}
 		}
@@ -710,6 +790,11 @@ public class GameSession {
 		return this.sBoard;
 	}
 	
+	@EventHandler
+	public void onGameFinishAnimationEndEvent(GameFinishAnimationEndEvent e) {
+		stop(true);
+	}
+	
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof GameSession) {
@@ -720,6 +805,60 @@ public class GameSession {
 		}
 		
 		return false;
+	}
+
+	@Override
+	public void alarm(Reminders reference) {
+		
+		if (reference == Reminders.SPAWNPLAYERS) {
+			state = State.RUNNING;
+			
+			//Distribute Blocks
+			for (Team t : teams) {
+				t.spawnTeam(this.maxTeamBlock);
+				t.resetFlagBlock();
+				t.sendMessage(ChatFormat.SUCCESS.wrap("The game has started!"));
+				
+			}
+			
+			return;
+		}
+		
+		if (reference == Reminders.FIVESECONDS) {
+			for (Team t : teams) {
+				t.sendMessage(ChatFormat.WARNING.wrap("Game starting in 5 seconds!"));
+			}
+			
+			Scheduler.getScheduler().schedule(this, Reminders.THREESECONDS, 2);
+			return;
+		}
+		
+		if (reference == Reminders.THREESECONDS) {
+			for (Team t : teams) {
+				t.sendMessage(ChatFormat.ERROR.wrap("Game starting in 3 seconds!"));
+			}
+			
+			Scheduler.getScheduler().schedule(this, Reminders.TWOSECONDS, 1);
+			return;
+		}
+		
+		if (reference == Reminders.TWOSECONDS) {
+			for (Team t : teams) {
+				t.sendMessage(ChatFormat.ERROR.wrap("Game starting in  seconds!"));
+			}
+			
+			Scheduler.getScheduler().schedule(this, Reminders.ONESECOND, 1);
+			return;
+		}
+		
+		if (reference == Reminders.ONESECOND) {
+			for (Team t : teams) {
+				t.sendMessage(ChatFormat.ERROR.wrap("Game starting in  seconds!"));
+			}
+			
+			Scheduler.getScheduler().schedule(this, Reminders.SPAWNPLAYERS, 1);
+			return;
+		}
 	}
 	
 }

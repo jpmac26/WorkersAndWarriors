@@ -130,6 +130,13 @@ public class PlayerCommands implements CommandExecutor {
 			sender.sendMessage(ChatFormat.ERROR.wrap("You are already part of that session!"));
 			return true;
 		}
+		
+		//give player informatin
+		sender.sendMessage(ChatFormat.INFO + "Use /wwp team " + ChatFormat.TEAM + "[team]" 
+				+ ChatFormat.INFO.wrap(" to change teams"));
+
+		sender.sendMessage(ChatFormat.INFO + "Use /wwp class " + ChatFormat.CLASS + "[class]" 
+				+ ChatFormat.INFO.wrap(" to change classes"));
 				
 		return true;
 	}
@@ -174,6 +181,11 @@ public class PlayerCommands implements CommandExecutor {
 			sender.sendMessage(ChatFormat.INFO.wrap("To join, use /wwp join ") 
 					+ ChatFormat.SESSION.wrap("[session]"));
 			return true;			
+		}
+		
+		if (session.getState() != GameSession.State.OPEN) {
+			sender.sendMessage(ChatFormat.ERROR.wrap("You cannot change teams after the game has closed!"));
+			return true;
 		}
 		
 		WWPlayer wp = session.getPlayer(sender);		
@@ -222,7 +234,7 @@ public class PlayerCommands implements CommandExecutor {
 		
 		WWPlayer wp = session.getPlayer(sender);
 		
-		if (session.getState() != GameSession.State.OPEN) {
+		if (session.getState() != GameSession.State.OPEN && session.getState() != GameSession.State.STARTING) {
 			sender.sendMessage(ChatFormat.ERROR.wrap("You cannot change your class once the game has started!"));
 			return true;
 		}

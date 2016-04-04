@@ -1,7 +1,11 @@
 package nmt.minecraft.WorkersAndWarriors.Session;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -10,12 +14,16 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
+import org.bukkit.util.Vector;
 
 import nmt.minecraft.WorkersAndWarriors.WorkersAndWarriorsPlugin;
+import nmt.minecraft.WorkersAndWarriors.Scheduling.GameFinishAnimationEndEvent;
+import nmt.minecraft.WorkersAndWarriors.Scheduling.Scheduler;
+import nmt.minecraft.WorkersAndWarriors.Scheduling.Tickable;
 import nmt.minecraft.WorkersAndWarriors.Team.Team;
 import nmt.minecraft.WorkersAndWarriors.Team.WWPlayer.WWPlayer;
-import org.bukkit.inventory.ItemStack;
 
 /**
  * Listens for block changes, and updates the game session.
@@ -31,12 +39,15 @@ import org.bukkit.inventory.ItemStack;
  * @author Skyler
  *
  */
-public class BlockListener implements Listener {
+public class BlockListener implements Listener, Tickable<Integer> {
 
     private GameSession session;
+    
+    private List<Location> blockList;
 
     public BlockListener(GameSession session) {
         this.session = session;
+        this.blockList = new LinkedList<Location>();
         Bukkit.getPluginManager().registerEvents(this, WorkersAndWarriorsPlugin.plugin);
     }
 
@@ -82,6 +93,7 @@ public class BlockListener implements Listener {
                         flag0 = true;
                         e.setCancelled(true);
                         e.getBlock().setType(Material.AIR);
+                        blockList.remove(e.getBlock().getLocation());
                         do {
                             int player = WorkersAndWarriorsPlugin.random.nextInt(team.getPlayers().size());
                             WWPlayer wwp = team.getPlayers().get(player);
@@ -139,6 +151,9 @@ public class BlockListener implements Listener {
                         break;
                     }
                 }
+                
+                //block is legal, put it down
+                blockList.add(e.getBlock().getLocation());
             }
 
         }
@@ -187,9 +202,12 @@ public class BlockListener implements Listener {
                 
                 e.getBlock().getLocation().getWorld().playEffect(e.getBlock().getLocation(), Effect.HAPPY_VILLAGER, 90000);
                 //TODO
-                break;
+                return;
             }
         }
+        
+        //not in an area
+        e.setCancelled(true);
 
     }
 
@@ -208,6 +226,61 @@ public class BlockListener implements Listener {
         BlockState state = block.getState();
         state.setData(data);
         state.update();
+    }
+    
+    /**
+     * Calls for the start of block removal from the map.<br />
+     * This is <i>intended</i> for use only when the game is over, and the map is cleaning itself up.
+     * If the second parameter is true, the cool decay animation is not done and all blocks are just
+     * returned to air status.
+     */
+    public void startDecay(boolean skipAnimation) {
+    	
+    	if (blockList.isEmpty() || skipAnimation) {
+    		//just remove blocks, throw event
+    		
+    		if (!blockList.isEmpty())
+    		for (Location l : blockList) {
+    			l.getBlock().setType(Material.AIR);
+    		}
+    		
+    		Bukkit.getPluginManager().callEvent(new GameFinishAnimationEndEvent(session));
+    		return;
+    	}
+    	
+    	//do decay animation
+    	//start off with big times, then go small
+    	Scheduler.getScheduler().schedule(this, 1, 1);
+    }
+    
+    @Override
+    public void alarm(Integer key) {
+    	//make sure we're not at an empty list
+    	if (blockList.isEmpty()) {
+    		Vector v;
+    		for (Team t : session.getTeams()) {
+    			v = t.getFlagArea().getCenter();
+    			new Location(t.getRandomSpawn().getWorld(), v.getBlockX(), v.getBlockY(), v.getBlockZ())
+    				.getBlock().setType(Material.AIR);
+    		}
+    		Bukkit.getPluginManager().callEvent(new GameFinishAnimationEndEvent(session));
+    		return;
+    	}
+    	
+    	//start at 1 second, 1, 1, 1, 1, .9, .8, .7, .6, .5... to .1
+    	//double nextTime = ((1/((double) key / (double) 4)) / 5); //makes a nice pattern
+    	double nextTime = ((1/((double) key / (double) 10)) / 2);
+    	nextTime = Math.min(nextTime, 1);
+    	
+    	//remove block
+    	Location cache = blockList.remove(WorkersAndWarriorsPlugin.random.nextInt(blockList.size()));
+    	
+    	cache.getBlock().setType(Material.AIR);
+    	cache.getWorld().playSound(cache, Sound.BLOCK_STONE_BREAK, 1, 1);
+    	
+    	
+    	//schedule next decay
+    	Scheduler.getScheduler().schedule(this, key + 1, nextTime);
     }
 
 }

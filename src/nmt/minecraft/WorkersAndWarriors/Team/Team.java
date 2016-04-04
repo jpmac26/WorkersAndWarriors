@@ -353,6 +353,7 @@ public class Team {
 	public void addPoints(int count) {
 		// Update score
 		// Since we are returned a set of scores, assume the first
+		points += count;
 		Score s = this.session.getScoreboard().getScores(this.teamName).iterator().next();
 		s.setScore(points);
 		
@@ -365,7 +366,7 @@ public class Team {
 			tmp.playSound(tmp.getLocation(), Sound.ENTITY_FIREWORK_LARGE_BLAST, 8, 1);
 		}
 		
-		points += count;
+		
 		int pointsToWin = PluginConfiguration.config.getPointsToWin();
 		
 		if (points >= pointsToWin) {
@@ -375,12 +376,12 @@ public class Team {
 			
 			if (pointsToWin - points == 3) {
 				for (Team t : session.getTeams()) {
-					t.sendMessage(ChatFormat.INFO + "Team " + teamColor + ChatFormat.INFO
+					t.sendMessage(ChatFormat.INFO + "Team " + teamColor + getTeamName() + ChatFormat.INFO
 							+ " only needs " + ChatFormat.ERROR + "3 " + ChatFormat.INFO.wrap("to win!"));
 				}
 			} else if (pointsToWin - points == 1) {
 				for (Team t : session.getTeams()) {
-					t.sendMessage(ChatFormat.WARNING + "Team " + teamColor + ChatFormat.WARNING
+					t.sendMessage(ChatFormat.WARNING + "Team " + teamColor + getTeamName() + ChatFormat.WARNING
 							+ " only needs " + ChatFormat.ERROR + "1 " + ChatFormat.WARNING.wrap("to win!"));
 				}				
 			}
